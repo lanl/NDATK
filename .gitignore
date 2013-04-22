@@ -1,0 +1,6 @@
+*~
+*.pyc
+*.o
+test_utils
+test_chart
+test_library
