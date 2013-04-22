@@ -3,38 +3,51 @@
 #include <string>
 #include "chart.hh"
 
-
 int main(int argc, char *argv[])
 {
-
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " filename" << std::endl;
     exit(1);
   }
-  std::ifstream f(argv[1]);     // open filename
 
-  ndatk::NuclidesChart x(f);     // parse f
+  ndatk::Chart x(argv[1]);     // parse filename
 
+  // Print file header
+  std::cout << x.get(ndatk::Chart::string_val::NAME) << std::endl
+            << x.get(ndatk::Chart::string_val::DATE) << std::endl
+            << x.get(ndatk::Chart::string_val::INFO) << std::endl;
+
+  // Print Periodic Table entries for the first 10 elements
   std::cout << "Read " << 
-    x.get_int_val(ndatk::NuclidesChart::NUM_ELEMENTS) << 
+    x.get(ndatk::Chart::int_val::NUM_ELEMENTS) << 
     " elements" << std::endl;
   for (int i = 0; i < 10; i++) {
     std::cout << i << ": " << 
-      x.get_string_val_n(ndatk::NuclidesChart::SYMBOL, i) <<
-      " " << x.get_float_val_n(ndatk::NuclidesChart::AWR, i) << 
-      " " << x.get_float_val_n(ndatk::NuclidesChart::AT_WGT, i) <<
-      " " << x.get_string_val_n(ndatk::NuclidesChart::NAME, i) << std::endl;
+      x.get(ndatk::Chart::string_val_n::SYMBOL, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::AWR, i) << 
+      " " << x.get(ndatk::Chart::float_val_n::AT_WGT, i) <<
+      " " << x.get(ndatk::Chart::string_val_n::NAME, i) << std::endl;
   }
 
+  // Print Chart of the Nuclides entries for H isotopes
   std::cout << "Read " << 
-    x.get_int_val(ndatk::NuclidesChart::NUM_NUCLIDES) <<
+    x.get(ndatk::Chart::int_val::NUM_NUCLIDES) <<
     " nuclides" << std::endl;
   for (int i = 1001; i < 1007; i++) {
     std::cout << i << 
-      ": " << x.get_float_val_n(ndatk::NuclidesChart::AWR, i) <<
-      " " << x.get_float_val_n(ndatk::NuclidesChart::AT_WGT, i) <<
-      " " << x.get_float_val_n(ndatk::NuclidesChart::ABUNDANCE, i) <<
-      " " << x.get_float_val_n(ndatk::NuclidesChart::HALF_LIFE, i) << std::endl;
+      ": " << x.get(ndatk::Chart::float_val_n::AWR, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::AT_WGT, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::ABUNDANCE, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::HALF_LIFE, i) << std::endl;
+  }
+
+  // Print Chart of the Nuclides entries for U isotopes
+  for (int i = 92217; i < 92243; i++) {
+    std::cout << i << 
+      ": " << x.get(ndatk::Chart::float_val_n::AWR, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::AT_WGT, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::ABUNDANCE, i) <<
+      " " << x.get(ndatk::Chart::float_val_n::HALF_LIFE, i) << std::endl;
   }
   return 0;
 }

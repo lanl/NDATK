@@ -1,3 +1,4 @@
+#include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include "chart.hh"
@@ -5,6 +6,8 @@
 
 namespace ndatk
 {
+  using namespace std;
+
   // Canonicalize: convert z000 to z; pass other sza unchanged
   int canonicalize(int sza)
   {
@@ -14,10 +17,8 @@ namespace ndatk
       return sza;
   }
 
-  using namespace std;
-
   // Construct Chart of the Nuclides from input stream
-  NuclidesChart::NuclidesChart(istream &s)
+  void Chart::parse(istream &s)
   {
     string line;
     enum states {START, TABLE, CHART}; // Parser states
@@ -27,52 +28,56 @@ namespace ndatk
     ElementData e;
     NuclideData n;
 
-    // function getlogicalline: get line with continuation
-    while (getline(s, line)) {
-      trim(line);      // remove leading, trailing whitespace
-      if (line.size() > 0 && line[0] != '#') {
-        if (starts_with_nocase(line, "NAME:")) {
-          getline(s, line);
-          trim(line);
-          name = line;
-        } else if (starts_with_nocase(line, "NAME:")) {
-          getline(s, line);
-          trim(line);
-          name = line;
-        } else if (starts_with_nocase(line, "NAME:")) {
-          getline(s, line);
-          trim(line);
-          name = line;
-        } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
-          state = TABLE;
-        } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {
-          state = CHART;
-        } else if (state == TABLE) {
-          // function split: tokenize line into words
-          istringstream iline(line);
-          iline >> sza >> e.symbol >> e.at_wgt >> e.name;
-          element.push_back(e);
-        } else if (state == CHART) {
-          // function split: tokenize line into words
-          istringstream iline(line);
-          iline >> sza >> n.awr >> n.abundance >> n.half_life;
-          nuclide.insert(Nuclide_map::value_type(sza, n));
-        }
+    while (get_logical_line(s, line)) {
+      if (starts_with_nocase(line, "NAME:")) {
+        get_logical_line(s, name);
+      } else if (starts_with_nocase(line, "DATE:")) {
+        get_logical_line(s, date);
+      } else if (starts_with_nocase(line, "INFO:")) {
+        get_logical_line(s, info);
+      } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
+        state = TABLE;
+      } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {
+        state = CHART;
+      } else if (state == TABLE) {
+        // function split: tokenize line into words
+        istringstream iline(line);
+        iline >> sza >> e.symbol >> e.at_wgt >> e.name;
+        element.push_back(e);
+      } else if (state == CHART) {
+        // function split: tokenize line into words
+        istringstream iline(line);
+        iline >> sza >> n.awr >> n.abundance >> n.half_life;
+        nuclide.insert(Nuclide_map::value_type(sza, n));
       }
     }
   }
 
-  // Return string value based on key
-  string NuclidesChart::get_string_val(string_val key) const
+  // Construct Chart from data in stream
+  Chart::Chart(std::istream& s)
   {
-    switch (key) {
-    case LIBRARY:
+    Chart::parse(s);
+  }
+
+  // Construct Chart from data on filename
+  Chart::Chart(std::string filename)
+  {
+    std::ifstream s(filename.c_str());
+    Chart::parse(s);
+    s.close();
+  }
+
+  // Return string value based on key
+  string Chart::get(string_val::key k) const
+  {
+    switch (k) {
+    case string_val::NAME:
       return name;
       break;
-    case DATE:
+    case string_val::DATE:
       return date;
       break;
-    case INFO:
+    case string_val::INFO:
       return info;
       break;
     default:
@@ -81,13 +86,13 @@ namespace ndatk
   }
 
   // Return int value based on key
-  int NuclidesChart::get_int_val(int_val key) const
+  int Chart::get(int_val::key k) const
   {
-    switch (key) {
-    case NUM_ELEMENTS:
+    switch (k) {
+    case int_val::NUM_ELEMENTS:
       return element.size();
       break;
-    case NUM_NUCLIDES:
+    case int_val::NUM_NUCLIDES:
       return nuclide.size();
       break;
     default:
@@ -96,14 +101,14 @@ namespace ndatk
   }
         
   // Return string value based on key and index
-  string NuclidesChart::get_string_val_n(string_val_n key, int sza) const
+  string Chart::get(string_val_n::key k, int sza) const
   {
     int n = canonicalize(sza);             // Canonicalize SZA
-    switch (key) {
-    case SYMBOL:
+    switch (k) {
+    case string_val_n::SYMBOL:
       return element.at(n).symbol;
       break;
-    case NAME:
+    case string_val_n::NAME:
       return element.at(n).name;
       break;
     default:
@@ -112,15 +117,15 @@ namespace ndatk
   }
 
   // Return double value based on key and index
-  double NuclidesChart::get_float_val_n(float_val_n key, int sza) const
+  double Chart::get(float_val_n::key k, int sza) const
   {
     int n = canonicalize(sza);
     if (n < element.size()) {  // Element data
-      switch(key) {
-      case AT_WGT:
+      switch(k) {
+      case float_val_n::AT_WGT:
         return element.at(n).at_wgt;
         break;
-      case AWR:
+      case float_val_n::AWR:
         return element.at(n).at_wgt / element.at(0).at_wgt;
         break;
       default:
@@ -128,17 +133,17 @@ namespace ndatk
       }
     } else {
       NuclideData d = map_at(nuclide, n);
-      switch (key) {            // Nuclide data
-      case  AT_WGT:
+      switch (k) {            // Nuclide data
+      case  float_val_n::AT_WGT:
         return d.awr * element.at(0).at_wgt;
         break;
-      case AWR:
+      case float_val_n::AWR:
         return d.awr;
         break;
-      case ABUNDANCE:
+      case float_val_n::ABUNDANCE:
         return d.abundance;
         break;
-      case HALF_LIFE:
+      case float_val_n::HALF_LIFE:
         return d.half_life;
         break;
       default:

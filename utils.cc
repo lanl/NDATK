@@ -67,7 +67,7 @@ namespace ndatk {
   {
     while (getline(s, line)) {
         string::iterator j = line.end();
-        line.erase(find(line.begin(), j, '#'), j); // truncate after comment
+        line.erase(find(line.begin(), j, '#'), j); // truncate at comment
         trim(line);                     // trim surrounding spaces
         j = line.end() - 1;             // pointer to last char
         if (*j == '\\' || *j == '+') {  // concatenate next line

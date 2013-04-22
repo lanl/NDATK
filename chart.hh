@@ -8,40 +8,52 @@
 
 namespace ndatk
 {
-  class NuclidesChart
+  class Chart
   {
   public:
-    NuclidesChart(std::istream &s);
+    Chart(std::istream& s);
+    Chart(std::string filename);
 
     // Queries
-    enum string_val {
-      LIBRARY,                  // Library name
-      DATE,                     // Library date
-      INFO                      // Library Info
+    struct string_val {
+      enum key {
+        NAME,                   // Library name
+        DATE,                   // Library date
+        INFO                    // Library Info
+      };
     };
-    std::string get_string_val(string_val key)const;
+    std::string get(string_val::key)const;
 
-    enum int_val {
-      NUM_ELEMENTS,             // Number of elements in table
-      NUM_NUCLIDES              // Number of nuclides in chart
+    struct int_val {
+      enum key {
+        NUM_ELEMENTS,           // Number of elements in table
+        NUM_NUCLIDES            // Number of nuclides in chart
+      };
     };
-    int get_int_val(int_val key) const;
+    int get(int_val::key) const;
 
-    enum string_val_n {
-      NAME,                      // Element name by Z or Z000
-      SYMBOL                   // Element symbol by Z or Z000
+    struct string_val_n {
+      enum key {
+        NAME,                   // Element name by Z or Z000
+        SYMBOL                  // Element symbol by Z or Z000
+      };
     };
-    std::string get_string_val_n(string_val_n key, int sza) const;
+    std::string get(string_val_n::key, int sza) const;
 
-    enum float_val_n {
-      AT_WGT,                   // Atomic weight (u) by Z or SZA
-      AWR,                      // Atomic weight ratio by Z or SZA
-      ABUNDANCE,                // Atom percent abundance by SZA
-      HALF_LIFE                 // Half life (s) by SZA
+    struct float_val_n {
+      enum key {
+        AT_WGT,                 // Atomic weight (u) by Z or SZA
+        AWR,                    // Atomic weight ratio by Z or SZA
+        ABUNDANCE,              // Atom percent abundance by SZA
+        HALF_LIFE               // Half life (s) by SZA
+      };
     };
-    double get_float_val_n(float_val_n key, int sza) const;
+    double get(float_val_n::key, int sza) const;
 
   private:
+
+    void parse(std::istream& s);
+
     // Periodic Table Values
     struct ElementData
     {
