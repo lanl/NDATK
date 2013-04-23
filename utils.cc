@@ -35,6 +35,26 @@ namespace ndatk {
     return (s2.size() > s1.size()) ? false: true;
   }
 
+  // Compare start of string to pattern "\d\d/\d\d/\d\d"
+  bool is_date(const string &s)
+  {
+
+    if (s.size() < 8 || s.size() > 10) return false;
+
+    for (int i = 0;  i < 8; i++) {
+      switch (i) {
+      case 2:
+      case 5:
+        if (s[i] != '/') return false;
+        break;
+      default:
+        if (!isdigit(s[i])) return false;
+      }
+    }
+    return true;
+  }
+            
+    
   /* Split string into vector of words.
    *
    * See "Accelerated C++" p. 103

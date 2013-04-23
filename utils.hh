@@ -77,6 +77,9 @@ namespace ndatk {
   // Compare start of first string with second; ignore case.
   extern bool starts_with_nocase(const std::string &, const std::string &);
 
+  // Compare string to date pattern
+  extern bool is_date(const std::string &);
+
   // Split string into vector of words.
   extern std::vector<std::string> split(const std::string &s);
 
