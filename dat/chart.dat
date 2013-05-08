@@ -1,9 +1,12 @@
 NAME:
 endf-b/vii
+
 DATE:
 04/01/2013
+
 INFO:
 Element data: "Nuclides and Isotopes" 16ed, Nuclide Data: ENDF-B/VII
+
 PERIODIC_TABLE:
 # See: "Nuclides and Isotopes" 16ed. p 0
 # Z sym at_wgt(u) name
@@ -111,6 +114,7 @@ PERIODIC_TABLE:
 101 Md 258 mendelevium
 102 No 259 nobelium
 103 Lr 262 lawrencium
+
 CHART_OF_THE_NUCLIDES:
 # See: ENDF/B-VII, MF=1, MT=451 
 #    sza        awr        abu half-life(s)
