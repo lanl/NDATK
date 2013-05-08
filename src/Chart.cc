@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include "chart.hh"
+#include "Chart.hh"
 #include "utils.hh"
 
 namespace ndatk
@@ -80,6 +80,33 @@ namespace ndatk
     default:
       throw out_of_range("Key not found!");
     }
+    return 0;
+  }
+
+  // Return vector of ints based on key
+  vector<int> Chart::get(int_vec_n::key k, int sza) const
+  {
+    vector<int> v;
+    int n = canonicalize(sza);
+    switch(k) {
+    case int_vec_n::ISOTOPES:
+      for (Nuclide_map::const_iterator it = nuclide.begin();
+           it != nuclide.end(); it++)
+        if (it->first/1000 == n)
+          v.push_back(it->first);
+      return v;
+      break;
+    case int_vec_n::ISOMERS:
+      for (Nuclide_map::const_iterator it = nuclide.begin();
+           it != nuclide.end(); it++)
+        if (it->first % 1000000 == n % 1000000)
+          v.push_back(it->first);
+      return v;
+      break;
+    default:
+      throw out_of_range("Key not found!");
+    }
+    return v;
   }
         
   // Return string value based on key and index
@@ -96,12 +123,13 @@ namespace ndatk
     default:
       throw out_of_range("Key not found!");
     }
+    return string("");
   }
 
   // Return double value based on key and index
   double Chart::get(float_val_n::key k, int sza) const
   {
-    int n = canonicalize(sza);
+    unsigned int n = canonicalize(sza);
     if (n < element.size()) {  // Element data
       switch(k) {
       case float_val_n::AT_WGT:
@@ -132,5 +160,6 @@ namespace ndatk
         throw out_of_range("Key not found!");
       }
     }
+    return 0.0;
   }
 }

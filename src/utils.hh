@@ -85,5 +85,16 @@ namespace ndatk {
 
   // Get Logical line from stream.
   extern std::istream &get_logical_line(std::istream &s, std::string &line);
+
+  extern std::istream &quoted_str(std::istream &is, std::string &s);
+
+  // Capitalize first character, lowercase others
+  extern std::string title(const std::string s);
+ 
+  // Is string all alphas?
+  extern bool is_all_alphas(const std::string &s);
+
+  // Is string all digits?
+  extern bool is_all_digits(const std::string &s);
 }
 #endif

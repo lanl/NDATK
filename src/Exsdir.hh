@@ -1,25 +1,25 @@
-#ifndef LIBRARY_HH
-#define LIBRARY_HH
+#ifndef EXSDIR_HH
+#define EXSDIR_HH
 
 #include <string>
 #include <vector>
 #include <map>
 #include <istream>
-#include "provendata.hh"
+#include "CuratedData.hh"
 
 namespace ndatk
 {
-  // Library of data tables
-  class Library: public ProvenData
+  // Extended cross section directory
+  class Exsdir: public CuratedData
   {
   public:
 
-    Library(const std::string filename);
-    Library(std::istream &s);
+    Exsdir(const std::string filename);
+    Exsdir(std::istream &s);
 
     // Queries
-    typedef ProvenData::string_val string_val;
-    std::string get(string_val::key k) const { return ProvenData::get(k); }
+    typedef CuratedData::string_val string_val;
+    std::string get(string_val::key k) const { return CuratedData::get(k); }
 
     struct string_val_n {
       enum key {
@@ -60,7 +60,7 @@ namespace ndatk
 
     void parse(std::istream& s);
 
-    // Library list of table Ids
+    // Exsdir list of table Ids
     typedef std::vector<std::string> Id_vector;
 
     // XSDIR directory data

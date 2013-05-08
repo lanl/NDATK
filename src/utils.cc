@@ -41,7 +41,7 @@ namespace ndatk {
 
     if (s.size() < 8 || s.size() > 10) return false;
 
-    for (int i = 0;  i < 8; i++) {
+    for (string::size_type i = 0;  i < 8; i++) {
       switch (i) {
       case 2:
       case 5:
@@ -83,7 +83,7 @@ namespace ndatk {
    * line ends in continuation characters ('\' or '+').
    * Returns stream as I/O status.
    */
-  std::istream &get_logical_line(std::istream &s, std::string &line)
+  istream &get_logical_line(istream &s, string &line)
   {
     while (getline(s, line)) {
         string::iterator j = line.end();
@@ -92,12 +92,74 @@ namespace ndatk {
         j = line.end() - 1;             // pointer to last char
         if (*j == '\\' || *j == '+') {  // concatenate next line
           *j = ' ';
-          std::string next_line;
+          string next_line;
           if (!get_logical_line(s, next_line)) return s;
           line.append(next_line);
         }
         if (line.size() != 0) return s;
       }
     return s;
+  }
+
+  // Get quoted string from stream
+  istream &quoted(istream &is, string &s)
+  {
+    char c;
+    is >> c;
+    if (c == '\"') {
+      s = "";
+      bool end = false;
+      do {
+        if (is.get(c)) {
+          switch(c) {
+          case '\"':
+            end = true;
+            break;
+          case '\\':
+            if (is.get(c)) s += c;
+            break;
+          default:
+            s += c;
+            break;
+          }
+        } else {
+          end = true;
+        }
+      } while (!end);
+    } else {
+      is.putback(c);
+      is >> s;
+    }
+    return is;
+  }
+
+  // Capitalize first character, lowercase remaining characters
+  string title(const string s)
+  {
+    string t = s;
+    for (string::size_type i = 0; i < t.size(); i++)
+      if (i == 0)
+        t[i] = toupper(t[i]);   // Uppercase first character
+      else
+        t[i] = tolower(t[i]);   // Lowercase remaining characters
+    return t;
+  }
+
+  // Is string blank or all alphas?
+  bool is_all_alphas(const string &s)
+  {
+    for (string::size_type i = 0; i < s.size(); i++)
+      if (!isalpha(s[i]))
+        return false;
+    return true;
+  }
+
+  // Is string blank or all decimal digits?
+  bool is_all_digits(const string &s)
+  {
+    for (string::size_type i = 0; i < s.size(); i++)
+      if (!isdigit(s[i]))
+        return false;
+    return true;
   }
 }

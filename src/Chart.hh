@@ -5,21 +5,21 @@
 #include <vector>
 #include <map>
 #include <istream>
-#include "provendata.hh"
+#include "CuratedData.hh"
 
 namespace ndatk
 {
   // Chart of the nuclides
-  class Chart: public ProvenData
+  class Chart: public CuratedData
   {
   public:
     Chart(std::istream& s);
     Chart(std::string filename);
 
     // Queries
-    typedef ProvenData::string_val string_val;
+    typedef CuratedData::string_val string_val;
     std::string get(string_val::key k) const { 
-      return ProvenData::get(k); }
+      return CuratedData::get(k); }
 
     struct int_val {
       enum key {
@@ -28,6 +28,14 @@ namespace ndatk
       };
     };
     int get(int_val::key) const;
+    
+    struct int_vec_n {
+      enum key {
+        ISOTOPES,               // Vector of isotopes in element
+        ISOMERS                 // Vector of isomers in isotope
+      };
+    };
+    std::vector<int> get(int_vec_n::key, int sza) const;
 
     struct string_val_n {
       enum key {
