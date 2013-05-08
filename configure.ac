@@ -17,13 +17,8 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
-AC_C_CONST
-AC_C_INLINE
 
 # Checks for library functions.
 
