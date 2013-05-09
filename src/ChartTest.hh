@@ -6,7 +6,7 @@
 using namespace std;
 using namespace ndatk;
 
-static istringstream cd( 
+static istringstream chart_dat( 
   "NAME:\n"
   "early_universe\n"
   "DATE:\n"
@@ -16,7 +16,7 @@ static istringstream cd(
   "PERIODIC_TABLE:\n"
   "# See: \"Nuclides and Isotopes\" 16ed. p 0\n"
   "# Z sym at_wgt(u) name\n"
-  "0 n 1.00866491578 neutron\n"
+  "0 Neutron 1.00866491578 neutron\n"
   "1 H 1.00794 hydrogen\n"
   "2 He 4.002602 helium\n"
   "3 Li 6.941 lithium\n"
@@ -39,7 +39,7 @@ class ChartTest: public UnitTest
 
 public:
 
-  ChartTest(): x(cd) {}
+  ChartTest(): x(chart_dat) {}
 
   void runTest();
 

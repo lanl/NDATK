@@ -1,0 +1,66 @@
+* Element, Isotope, and Isomer Names
+
+** Element
+*** Examples
+    1, 92, H, U, Am, 95, 1000, 92000
+*** EBNF
+    Element = Z, ['000'] | C;
+    Z = integer;
+    integer = digit, {digit};
+    digit = '0' | '1' | ... | '9'; # Decimal digits
+    C = 'H' | 'He' | ... | 'Lr'; # Chemical symbol
+    N.B.: NDI users accustomed to case insensitive symbols
+
+** Z (canonical atomic number)
+   0 < Z <= 103                 # ['H', 'Lr']
+
+** Isotope
+*** Examples
+    1001, 92235, 
+    H1, H-1,
+    235U, 235-U
+*** EBNF 
+    Isotope = ZA | 
+              C, [dash], A |
+              A, [dash], C;
+    ZA = integer;
+    A = integer;
+    dash = '-';
+
+** A (canonical mass number)
+   0 < A < 300
+
+** ZA (canonical isotope name)
+   ZA = 1,000 * Z + A
+   Z = ZA/1,000                 # integer division
+   A = ZA%1,000                 # integer remainder
+
+** Isomer
+*** Examples 
+    1001, 2095240, 
+    95240m1, 1001m0
+    Am240m2, Am-242m1, 
+    242m1Am, 242m2-Am
+    16m1O, 96Mo, 14m1N, 55Mn
+*** ENBF
+    Isomer = SZA |
+             ZA, [em, S] |
+             C, [dash], A, [em, S] |
+             A, [em, S], [dash] C;
+    SZA = integer;
+    em = 'm';
+    N.B.: integer state after 'm' disambiguates grammar  
+
+** SZA (canonical isomer name)
+   S = Nuclear state
+   Z = Atomic number
+   A = Mass number
+   N.B.: 16 bit integers too small to represent SZA!
+
+*** Examples
+    1000, 1001, 95235, 2095242
+*** Formulas
+    SZA = 1,000,000 * S + 1,000 * Z + A
+    S = SZA/1,000,000           # integer division
+    Z = (SZA%1,000,000)/1,000   # integer remainder; integer division
+    A = SZA%1,000               # integer remainder

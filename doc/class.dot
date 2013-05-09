@@ -1,0 +1,12 @@
+digraph class {
+        rankdir=BT;
+        node[shape=box];
+        Library -> Exsdir[dir=both,arrowhead=open,arrowtail=odiamond];
+        edge[arrowhead=empty];
+        Chart -> CuratedData;
+        Exsdir -> CuratedData;
+        Library -> CuratedData;
+        {rank=max; CuratedData}
+        {rank=same; Library; Chart}
+        {rank=min; Exsdir}
+}

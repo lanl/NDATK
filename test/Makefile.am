@@ -1,4 +1,5 @@
-#
+## Process this file with automake to produce Makefile.in
+
 ndatk_INCLUDE = -I$(top_srcdir)/src
 ndatk_LIB = ../src/libndatk.a
  

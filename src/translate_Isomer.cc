@@ -20,7 +20,7 @@ namespace ndatk
   {
     vector<string> x;
 
-    x.push_back("");           // Should this be "n" or "g"?
+    x.push_back("Neutron");           // Should this be "n" or "g"?
     x.push_back("H");
     x.push_back("He");
     x.push_back("Li");

@@ -45,6 +45,13 @@ namespace ndatk
     };
     std::string get(string_val_n::key, int sza) const;
 
+    struct string_val_x {
+      enum key {
+        NAME                   // Element name by symbol
+      };
+    };
+    std::string get(string_val_x::key, std::string symbol);
+
     struct float_val_n {
       enum key {
         AT_WGT,                 // Atomic weight (u) by Z or SZA
@@ -55,6 +62,16 @@ namespace ndatk
     };
     double get(float_val_n::key, int sza) const;
 
+    struct float_val_x {
+      enum key {
+        AT_WGT,                 // Atomic weight (u) by isotope name
+        AWR,                    // Atomic weight ratio by isotope name
+        ABUNDANCE,              // Atom percent abundance by isotope name
+        HALF_LIFE               // Half life (s) by isotope name
+      };
+    };
+    double get(float_val_x::key, std::string name) const;
+        
   private:
 
     void parse(std::istream& s);

@@ -2,7 +2,9 @@
 #include <sstream>
 #include <stdexcept>
 #include "Chart.hh"
+#include "translate_Isomer.hh"
 #include "utils.hh"
+#include "constants.hh"
 
 namespace ndatk
 {
@@ -126,6 +128,21 @@ namespace ndatk
     return string("");
   }
 
+  // Return string value based on key and name
+  string Chart::get(string_val_x::key k, string c)
+  {
+    int sza = translate_Isomer(c);
+    switch(k) {
+    case string_val_x::NAME:
+      return element.at(extract_Z(sza)).name;
+      break;
+    default:
+      string s = "Key ";
+      s += c + " not recognized!"; 
+      throw out_of_range(s);
+    }
+  }
+
   // Return double value based on key and index
   double Chart::get(float_val_n::key k, int sza) const
   {
@@ -136,7 +153,7 @@ namespace ndatk
         return element.at(n).at_wgt;
         break;
       case float_val_n::AWR:
-        return element.at(n).at_wgt / element.at(0).at_wgt;
+        return element.at(n).at_wgt / Mass_n;
         break;
       default:
         throw out_of_range("Key not found!");
@@ -145,7 +162,45 @@ namespace ndatk
       NuclideData d = map_at(nuclide, n);
       switch (k) {            // Nuclide data
       case  float_val_n::AT_WGT:
-        return d.awr * element.at(0).at_wgt;
+        return d.awr * Mass_n;
+        break;
+      case float_val_n::AWR:
+        return d.awr;
+        break;
+      case float_val_n::ABUNDANCE:
+        return d.abundance;
+        break;
+      case float_val_n::HALF_LIFE:
+        return d.half_life;
+        break;
+      default:
+        throw out_of_range("Key not found!");
+      }
+    }
+    return 0.0;
+  }
+
+  // Return double value based on key and name
+  double Chart::get(float_val_x::key k, string name) const
+  {
+    int sza = translate_Isomer(name);
+    if (extract_A(sza) == 0) {  // Element data
+      int z = extract_Z(sza);
+      switch(k) {
+      case float_val_n::AT_WGT:
+        return element.at(z).at_wgt;
+        break;
+      case float_val_n::AWR:
+        return element.at(z).at_wgt / Mass_n;
+        break;
+      default:
+        throw out_of_range("Key not found!");
+      }
+    } else {
+      NuclideData d = map_at(nuclide, sza);
+      switch (k) {            // Nuclide data
+      case  float_val_n::AT_WGT:
+        return d.awr * Mass_n;
         break;
       case float_val_n::AWR:
         return d.awr;

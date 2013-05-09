@@ -3,13 +3,11 @@
 #include <stdexcept>
 #include "Exsdir.hh"
 #include "utils.hh"
+#include "constants.hh"
 
 namespace ndatk
 {
   using namespace std;
-
-  // Mass of neutron (U)
-  static const double m_n = 1.00866491578; // "Nuclides and Isotopes", 16ed
 
   // Parse extended cross section directory
   void Exsdir::parse(istream &s)
@@ -126,7 +124,7 @@ namespace ndatk
     DirectoryData d = map_at(directory, name);
     switch(k) {
     case float_val_x::AT_WGT:
-      return d.awr * m_n;
+      return d.awr * Mass_n;
       break;
     case float_val_x::AWR:
       return d.awr;

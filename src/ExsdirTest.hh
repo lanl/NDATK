@@ -6,7 +6,7 @@
 using namespace std;
 using namespace ndatk;
 
-static istringstream ccd(
+static istringstream exsdir_dat(
 "atomic weight ratios\n"
 "   0001  1.000000   0001  1.000000\n"
 "   1000  0.99931697 1001   0.99916733   1002   1.99679968\n"   
@@ -40,7 +40,7 @@ class ExsdirTest: public UnitTest {
 
 public:
 
-  ExsdirTest(void): x(ccd) {}
+  ExsdirTest(void): x(exsdir_dat) {}
 
   void runTest(void);
 

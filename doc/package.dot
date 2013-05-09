@@ -1,0 +1,39 @@
+digraph Package {
+
+        compound=true;
+        edge[style=dashed,minlen=2];
+
+        subgraph cluster0 {
+                 label="ndatk";
+                 Chart[shape=box];
+                 Library[shape=box];
+                 Exsdir[shape=box];
+                 CuratedData[shape=box];
+                 constants[shape=plaintext];
+                 utils[shape=plaintext];
+                 translate_Isomer[shape=plaintext];
+                 Library -> translate_Isomer;
+                 Library -> constants;
+                 Library -> utils;
+                 Library -> CuratedData;
+                 Library -> Exsdir;
+
+                 Chart -> translate_Isomer;
+                 Chart -> constants;
+                 Chart -> utils;
+                 Chart -> CuratedData;
+
+                 Exsdir -> constants;
+                 Exsdir -> utils;
+                 Exsdir -> CuratedData;
+        
+                translate_Isomer -> utils;
+        }
+        subgraph cluster1 {
+                 label="STL";
+                 vector[shape=box];
+                 string[shape=box];
+                 map[shape=box];
+        }
+        utils -> string[ltail=cluster0,lhead=cluster1];
+}

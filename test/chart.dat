@@ -10,7 +10,7 @@ Element data: "Nuclides and Isotopes" 16ed, Nuclide Data: ENDF-B/VII
 PERIODIC_TABLE:
 # See: "Nuclides and Isotopes" 16ed. p 0
 # Z sym at_wgt(u) name
-0 n 1.00866491578 neutron
+0 Neutron 1.00866491578 neutron
 1 H 1.00794 hydrogen
 2 He 4.002602 helium
 3 Li 6.941 lithium
