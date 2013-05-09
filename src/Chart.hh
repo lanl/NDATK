@@ -31,11 +31,19 @@ namespace ndatk
     
     struct int_vec_n {
       enum key {
-        ISOTOPES,               // Vector of isotopes in element
-        ISOMERS                 // Vector of isomers in isotope
+        ISOTOPES,               // Vector of isotopes in element by Z or Z000
+        ISOMERS                 // Vector of isomers in isotope by ZA
       };
     };
     std::vector<int> get(int_vec_n::key, int sza) const;
+
+    struct int_vec_x {
+      enum key {
+        ISOTOPES,               // Vector of isotopes in element by name
+        ISOMERS                 // Vector of isomers in isotope by name
+      };
+    };
+    std::vector<int> get(int_vec_x::key, std::string name) const;
 
     struct string_val_n {
       enum key {

@@ -85,7 +85,7 @@ namespace ndatk
     return 0;
   }
 
-  // Return vector of ints based on key
+  // Return vector of ints based on key and sza
   vector<int> Chart::get(int_vec_n::key k, int sza) const
   {
     vector<int> v;
@@ -102,6 +102,32 @@ namespace ndatk
       for (Nuclide_map::const_iterator it = nuclide.begin();
            it != nuclide.end(); it++)
         if (it->first % 1000000 == n % 1000000)
+          v.push_back(it->first);
+      return v;
+      break;
+    default:
+      throw out_of_range("Key not found!");
+    }
+    return v;
+  }
+
+  // Return vector of ints based on key and name
+  vector<int> Chart::get(int_vec_x::key k, string name) const
+  {
+    vector<int> v;
+    int sza = translate_Isomer(name);
+    switch(k) {
+    case int_vec_x::ISOTOPES:
+      for (Nuclide_map::const_iterator it = nuclide.begin();
+           it != nuclide.end(); it++)
+        if (extract_Z(it->first) == extract_Z(sza))
+          v.push_back(it->first);
+      return v;
+      break;
+    case int_vec_x::ISOMERS:
+      for (Nuclide_map::const_iterator it = nuclide.begin();
+           it != nuclide.end(); it++)
+        if (it->first % 1000000 == sza % 1000000)
           v.push_back(it->first);
       return v;
       break;
