@@ -55,24 +55,5 @@ int main(int argc, char *argv[])
       " " << x.get(ndatk::Chart::float_val_n::HALF_LIFE, i) << std::endl;
   }
 
-  for (int i = 1; i < x.get(ndatk::Chart::int_val::NUM_ELEMENTS); i++) {
-    std::string symbol = x.get(ndatk::Chart::string_val_n::SYMBOL, i);
-    std::vector<int> za = x.get(ndatk::Chart::int_vec_x::ISOTOPES, symbol);
-    double abundance;
-    double sum_abundance = 0.0;
-    double avg_awr = 0.0;
-    for (int i = 0; i < za.size(); i++) {
-      abundance = x.get(ndatk::Chart::float_val_n::ABUNDANCE, za[i]);
-      if (abundance != 0.0) {
-        sum_abundance += abundance;
-        avg_awr += abundance * x.get(ndatk::Chart::float_val_n::AWR, za[i]);
-      }
-    }
-    std::cout << symbol << ": " << 
-      "At " << sum_abundance * 100.0 << " percent abundance, " <<
-      " AWR = " << avg_awr << " compared to " <<
-      x.get(ndatk::Chart::float_val_x::AWR, symbol) << std::endl;
-  }
   return 0;
-  
 }
