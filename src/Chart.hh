@@ -58,7 +58,7 @@ namespace ndatk
         NAME                   // Element name by symbol
       };
     };
-    std::string get(string_val_x::key, std::string symbol);
+    std::string get(string_val_x::key, std::string symbol) const;
 
     struct float_val_n {
       enum key {

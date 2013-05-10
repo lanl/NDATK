@@ -155,7 +155,7 @@ namespace ndatk
   }
 
   // Return string value based on key and name
-  string Chart::get(string_val_x::key k, string c)
+  string Chart::get(string_val_x::key k, string c) const
   {
     int sza = translate_Isomer(c);
     switch(k) {
@@ -179,7 +179,7 @@ namespace ndatk
         return element.at(n).at_wgt;
         break;
       case float_val_n::AWR:
-        return element.at(n).at_wgt / Mass_n;
+        return element.at(n).at_wgt / neutron_mass;
         break;
       default:
         throw out_of_range("Key not found!");
@@ -188,7 +188,7 @@ namespace ndatk
       NuclideData d = map_at(nuclide, n);
       switch (k) {            // Nuclide data
       case  float_val_n::AT_WGT:
-        return d.awr * Mass_n;
+        return d.awr * neutron_mass;
         break;
       case float_val_n::AWR:
         return d.awr;
@@ -217,7 +217,7 @@ namespace ndatk
         return element.at(z).at_wgt;
         break;
       case float_val_n::AWR:
-        return element.at(z).at_wgt / Mass_n;
+        return element.at(z).at_wgt / neutron_mass;
         break;
       default:
         throw out_of_range("Key not found!");
@@ -226,7 +226,7 @@ namespace ndatk
       NuclideData d = map_at(nuclide, sza);
       switch (k) {            // Nuclide data
       case  float_val_n::AT_WGT:
-        return d.awr * Mass_n;
+        return d.awr * neutron_mass;
         break;
       case float_val_n::AWR:
         return d.awr;

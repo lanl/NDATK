@@ -1,3 +1,35 @@
+* Requirements
+  0. Curated Data
+  1. Library
+  2. MG zaid => CE zaid
+  3. Several users
+  4. NDI like sza translation features
+  5. NDI like multi-temperature features
+
+* XSDIR deconstructed
+** DATAPATH
+   Policy on how to find data
+** ATOMIC WEIGHT RATIOS
+** DIRECTORY
+*** Association of unique identifier with file 
+*** Preferred order of tables
+
+* NDI deconstructed
+** Readers
+** FSM
+** API
+   ndi2_get_[int|float|string]_[val|vec](handle, KEY) 
+   ndi2_get_[int|float|string]_[val|vec]_n(handle, KEY, index)
+   ndi2_get_[int|float|string]_[val|vec]_x(handle, KEY, name)
+
+* EXSDIR constructed
+
+* ndatk constructed
+** API
+   ndatk::handle.get(ndatk::Class::[int|float|string]_[vec|val]::KEY)
+   ndatk::handle.get(ndatk::Class::[int|float|string]_[vec|val]_n::KEY, index)
+   ndatk::handle.get(ndatk::Class::[int|float|string]_[vec|val]_x::KEY, name)
+
 * Element, Isotope, and Isomer Names
 
 ** Element

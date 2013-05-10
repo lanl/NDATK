@@ -1,14 +1,16 @@
 ## Process this file with automake to produce Makefile.in
 
-include_INCLUDES = ndatk.hh Chart.hh Exsdir.hh translate_Isomer.hh utils.hh
+include_INCLUDES = ndatk.hh Library.hh Chart.hh Exsdir.hh \
+	translate_Isomer.hh utils.hh constants.hh
 lib_LIBRARIES = libndatk.a
 libndatk_a_SOURCES = CuratedData.cc CuratedData.hh \
-	Chart.cc Chart.hh Exsdir.cc Exsdir.hh \
+	Chart.cc Chart.hh Exsdir.cc Exsdir.hh Library.cc Library.hh \
 	translate_Isomer.cc translate_Isomer.hh \
-	utils.cc utils.hh
+	utils.cc utils.hh constants.hh
 
 check_PROGRAMS = TestRunner
 TestRunner_SOURCES = TestRunner.cc \
+	LibraryTest.cc LibraryTest.hh \
 	ChartTest.cc ChartTest.hh \
 	UnitTest.cc UnitTest.hh ExsdirTest.cc ExsdirTest.hh \
 	utilsTest.cc utilsTest.hh

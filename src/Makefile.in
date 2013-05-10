@@ -58,10 +58,12 @@ ARFLAGS = cru
 libndatk_a_AR = $(AR) $(ARFLAGS)
 libndatk_a_LIBADD =
 am_libndatk_a_OBJECTS = CuratedData.$(OBJEXT) Chart.$(OBJEXT) \
-	Exsdir.$(OBJEXT) translate_Isomer.$(OBJEXT) utils.$(OBJEXT)
+	Exsdir.$(OBJEXT) Library.$(OBJEXT) translate_Isomer.$(OBJEXT) \
+	utils.$(OBJEXT)
 libndatk_a_OBJECTS = $(am_libndatk_a_OBJECTS)
-am_TestRunner_OBJECTS = TestRunner.$(OBJEXT) ChartTest.$(OBJEXT) \
-	UnitTest.$(OBJEXT) ExsdirTest.$(OBJEXT) utilsTest.$(OBJEXT)
+am_TestRunner_OBJECTS = TestRunner.$(OBJEXT) LibraryTest.$(OBJEXT) \
+	ChartTest.$(OBJEXT) UnitTest.$(OBJEXT) ExsdirTest.$(OBJEXT) \
+	utilsTest.$(OBJEXT)
 TestRunner_OBJECTS = $(am_TestRunner_OBJECTS)
 TestRunner_DEPENDENCIES = libndatk.a
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -152,14 +154,17 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-include_INCLUDES = ndatk.hh Chart.hh Exsdir.hh translate_Isomer.hh utils.hh
+include_INCLUDES = ndatk.hh Library.hh Chart.hh Exsdir.hh \
+	translate_Isomer.hh utils.hh constants.hh
+
 lib_LIBRARIES = libndatk.a
 libndatk_a_SOURCES = CuratedData.cc CuratedData.hh \
-	Chart.cc Chart.hh Exsdir.cc Exsdir.hh \
+	Chart.cc Chart.hh Exsdir.cc Exsdir.hh Library.cc Library.hh \
 	translate_Isomer.cc translate_Isomer.hh \
-	utils.cc utils.hh
+	utils.cc utils.hh constants.hh
 
 TestRunner_SOURCES = TestRunner.cc \
+	LibraryTest.cc LibraryTest.hh \
 	ChartTest.cc ChartTest.hh \
 	UnitTest.cc UnitTest.hh ExsdirTest.cc ExsdirTest.hh \
 	utilsTest.cc utilsTest.hh
@@ -250,6 +255,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CuratedData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Exsdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExsdirTest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Library.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LibraryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestRunner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnitTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/translate_Isomer.Po@am__quote@

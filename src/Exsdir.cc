@@ -124,7 +124,7 @@ namespace ndatk
     DirectoryData d = map_at(directory, name);
     switch(k) {
     case float_val_x::AT_WGT:
-      return d.awr * Mass_n;
+      return d.awr * neutron_mass;
       break;
     case float_val_x::AWR:
       return d.awr;
