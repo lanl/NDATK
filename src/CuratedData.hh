@@ -12,20 +12,16 @@ namespace ndatk
   public:
 
     // Queries
-    struct string_val {
-      enum key {
-        NAME,                   // Library name
-        DATE,                   // Library date
-        INFO                    // Library Info
-      };
-    };
-    std::string get(string_val::key)const;
+    std::string id(void) const; // Artifact identifier
+    std::string date(void) const; // Artifact date
+    std::string info(void) const; // Artifact information
+    virtual ~CuratedData(void) = 0;
 
   protected:
 
-    std::string name;           // Library name
-    std::string date;           // Library date
-    std::string info;           // Library info
+    std::string id_;           // Artifact name
+    std::string date_;         // Artifact date
+    std::string info_;         // Artifact info
   };
 }
 #endif

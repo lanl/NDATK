@@ -1,10 +1,11 @@
 #ifndef CHART_HH
 #define CHART_HH
 
+#include <istream>
 #include <string>
 #include <vector>
 #include <map>
-#include <istream>
+
 #include "CuratedData.hh"
 
 namespace ndatk
@@ -13,73 +14,47 @@ namespace ndatk
   class Chart: public CuratedData
   {
   public:
-    Chart(std::istream& s);
-    Chart(std::string filename);
+    explicit Chart(std::istream& s);
+    explicit Chart(std::string filename);
 
-    // Queries
-    typedef CuratedData::string_val string_val;
-    std::string get(string_val::key k) const { 
-      return CuratedData::get(k); }
+    // Queries:
+    // Number of elements in Chart
+    int num_elements(void) const;
 
-    struct int_val {
-      enum key {
-        NUM_ELEMENTS,           // Number of elements in table
-        NUM_NUCLIDES            // Number of nuclides in chart
-      };
-    };
-    int get(int_val::key) const;
-    
-    struct int_vec_n {
-      enum key {
-        ISOTOPES,               // Vector of isotopes in element by Z or Z000
-        ISOMERS                 // Vector of isomers in isotope by ZA
-      };
-    };
-    std::vector<int> get(int_vec_n::key, int sza) const;
+    // Number of nuclides in Chart
+    int num_nuclides(void) const;
 
-    struct int_vec_x {
-      enum key {
-        ISOTOPES,               // Vector of isotopes in element by name
-        ISOMERS                 // Vector of isomers in isotope by name
-      };
-    };
-    std::vector<int> get(int_vec_x::key, std::string name) const;
+    // Vector of isotopes in element by:
+    std::vector<int> isotopes(int Z) const; // atomic number
+    std::vector<int> isotopes(std::string symbol) const; // chemical symbol
 
-    struct string_val_n {
-      enum key {
-        NAME,                   // Element name by Z or Z000
-        SYMBOL                  // Element symbol by Z or Z000
-      };
-    };
-    std::string get(string_val_n::key, int sza) const;
+    // Vector of isomers in isotope by:
+    std::vector<int> isomers(int ZA) const; // atomic & mass number
+    std::vector<int> isomers(std::string name) const; // isotopic name
 
-    struct string_val_x {
-      enum key {
-        NAME                   // Element name by symbol
-      };
-    };
-    std::string get(string_val_x::key, std::string symbol) const;
+    // Chemical symbol by atomic number
+    std::string symbol(int Z) const;
 
-    struct float_val_n {
-      enum key {
-        AT_WGT,                 // Atomic weight (u) by Z or SZA
-        AWR,                    // Atomic weight ratio by Z or SZA
-        ABUNDANCE,              // Atom percent abundance by SZA
-        HALF_LIFE               // Half life (s) by SZA
-      };
-    };
-    double get(float_val_n::key, int sza) const;
+    // Element name by:
+    std::string name(int Z) const; // atomic number
+    std::string name(std::string symbol) const; // chemical symbol
 
-    struct float_val_x {
-      enum key {
-        AT_WGT,                 // Atomic weight (u) by isotope name
-        AWR,                    // Atomic weight ratio by isotope name
-        ABUNDANCE,              // Atom percent abundance by isotope name
-        HALF_LIFE               // Half life (s) by isotope name
-      };
-    };
-    double get(float_val_x::key, std::string name) const;
-        
+    // Atomic weight (u) by:
+    double at_wgt(int sza) const; // state & atomic & mass number
+    double at_wgt(std::string name) const; // isomer name
+
+    // Atomic weight ratio by:
+    double awr(int sza) const;  // state & atomic & mass number
+    double awr(std::string name) const; // isomer name
+
+    // Atom percent abundances by:
+    double abundance(int sza) const; // state & atomic & mass number
+    double abundance(std::string name) const; // isomer name
+
+    // Half life (s) by:
+    double half_life(int sza) const; // state & atomic & mass number
+    double half_life(std::string name) const; // isomer name
+
   private:
 
     void parse(std::istream& s);

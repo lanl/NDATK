@@ -23,7 +23,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "ATOMIC WEIGHT RATIOS")) {
         state = AWR;
       } else if (is_date(line)) {
-        date = line;
+        date_ = line;
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
@@ -58,84 +58,82 @@ namespace ndatk
     ifstream s(filename.c_str());
     Exsdir::parse(s);
     s.close();
-    name = filename;
-    info = "Exsdir";
+    id_ = filename;
+    info_ = "Exsdir";
   }
 
-  // Return string value based on key and index
-  string Exsdir::get(string_val_n::key k, int i) const
+
+  // Number of table identifiers
+  int Exsdir::num_id(void) const
   {
-    switch(k) {
-    case string_val_n::ID:
-      return order.at(i);
-      break;
-    default:
-      throw out_of_range("Key not found");
-    }
-    return string("");          // Should never get here!
+    return order.size();
   }
 
-  // Return integer value based on key and name
-  int Exsdir::get(int_val_x::key k, string name) const
+  // Table identifier by index
+  string Exsdir::table_id(int i) const
   {
-    DirectoryData d = map_at(directory, name);
-    switch(k) {
-    case int_val_x::ADDRESS:
-      return d.address;
-      break;
-    case int_val_x::TBL_LEN:
-      return d.tbl_len;
-      break;
-    case int_val_x::RCD_LEN:
-      return d.rcd_len;
-      break;
-    case int_val_x::EPR:
-      return d.epr;
-      break;
-    default:
-      throw out_of_range("Key not found");
-    }
-    return 0;                   // Should never get here!
+    return order.at(i);
   }
 
-  // Return string value based on key and name
-  string Exsdir::get(string_val_x::key k, string name) const 
+  int Exsdir::address(string id) const
   {
-    DirectoryData d = map_at(directory, name);
-    switch(k) {
-    case string_val_x::NAME:
-      return d.name;
-      break;
-    case string_val_x::ROUTE:
-      return d.route;
-      break;
-    case string_val_x::PTABLE:
-      return d.ptable;
-      break;
-    default:
-      throw out_of_range("Key not found");
-    }
-    return string("");
+    DirectoryData d = map_at(directory, id);
+    return d.address;
   }
 
-  // Return double value based on key and name
-  double Exsdir::get(float_val_x::key k, string name) const
+  int Exsdir::tbl_len(string id) const
   {
-    DirectoryData d = map_at(directory, name);
-    switch(k) {
-    case float_val_x::AT_WGT:
-      return d.awr * neutron_mass;
-      break;
-    case float_val_x::AWR:
-      return d.awr;
-      break;
-    case float_val_x::TEMP:
-      return d.temp;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return 0.0;
+    DirectoryData d = map_at(directory, id);
+    return d.tbl_len;
   }
+
+  int Exsdir::rcd_len(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.rcd_len;
+  }
+
+  int Exsdir::epr(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.epr;
+  }
+
+  string Exsdir::name(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.name;
+  }
+
+  string Exsdir::route(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.route;
+  }
+
+  bool Exsdir::ptable(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.ptable == "ptable";
+  }
+
+  double Exsdir::at_wgt(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.awr * neutron_mass;
+  }
+
+  double Exsdir::awr(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.awr;
+  }
+
+  double Exsdir::temp(string id) const
+  {
+    DirectoryData d = map_at(directory, id);
+    return d.temp;
+  }
+
 }
       

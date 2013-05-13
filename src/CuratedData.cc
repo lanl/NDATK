@@ -5,21 +5,21 @@ namespace ndatk
 {
   using namespace std;
 
-  // Return string value based on key
-  string CuratedData::get(string_val::key k) const
+  // Required base class dtor
+  CuratedData::~CuratedData(void) {};
+
+  string CuratedData::id(void) const
   {
-    switch (k) {
-    case string_val::NAME:
-      return name;
-      break;
-    case string_val::DATE:
-      return date;
-      break;
-    case string_val::INFO:
-      return info;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
+    return id_;
+  }
+
+  string CuratedData::date(void) const
+  {
+    return date_;
+  }
+
+  string CuratedData::info(void) const
+  {
+    return info_;
   }
 }

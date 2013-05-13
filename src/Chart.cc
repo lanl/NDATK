@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
 #include "Chart.hh"
 #include "translate_Isomer.hh"
 #include "utils.hh"
@@ -32,11 +33,11 @@ namespace ndatk
 
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, name);
+        get_logical_line(s, id_);
       } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, date);
+        get_logical_line(s, date_);
       } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, info);
+        get_logical_line(s, info_);
       } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
         state = TABLE;
       } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {
@@ -69,178 +70,111 @@ namespace ndatk
     s.close();
   }
 
-  // Return int value based on key
-  int Chart::get(int_val::key k) const
+  int Chart::num_elements(void) const
   {
-    switch (k) {
-    case int_val::NUM_ELEMENTS:
-      return element.size();
-      break;
-    case int_val::NUM_NUCLIDES:
-      return nuclide.size();
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return 0;
+    return element.size();
   }
 
-  // Return vector of ints based on key and sza
-  vector<int> Chart::get(int_vec_n::key k, int sza) const
+  int Chart::num_nuclides(void) const
   {
-    vector<int> v;
-    int n = canonicalize(sza);
-    switch(k) {
-    case int_vec_n::ISOTOPES:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (it->first/1000 == n)
-          v.push_back(it->first);
-      return v;
-      break;
-    case int_vec_n::ISOMERS:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (it->first % 1000000 == n % 1000000)
-          v.push_back(it->first);
-      return v;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return v;
+    return nuclide.size();
+  }
+  
+  vector<int> Chart::isotopes(int Z) const
+  {
+    vector<int> result;
+    int n = canonicalize(Z);
+    for (Nuclide_map::const_iterator it = nuclide.begin();
+         it != nuclide.end(); it++)
+      if (it->first/1000 == n)
+        result.push_back(it->first);
+      return result;
   }
 
-  // Return vector of ints based on key and name
-  vector<int> Chart::get(int_vec_x::key k, string name) const
+  vector<int> Chart::isotopes(string name) const
   {
-    vector<int> v;
     int sza = translate_Isomer(name);
-    switch(k) {
-    case int_vec_x::ISOTOPES:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (extract_Z(it->first) == extract_Z(sza))
-          v.push_back(it->first);
-      return v;
-      break;
-    case int_vec_x::ISOMERS:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (it->first % 1000000 == sza % 1000000)
-          v.push_back(it->first);
-      return v;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return v;
-  }
-        
-  // Return string value based on key and index
-  string Chart::get(string_val_n::key k, int sza) const
-  {
-    int n = canonicalize(sza);             // Canonicalize SZA
-    switch (k) {
-    case string_val_n::SYMBOL:
-      return element.at(n).symbol;
-      break;
-    case string_val_n::NAME:
-      return element.at(n).name;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return string("");
+    return this->isotopes(sza);
   }
 
-  // Return string value based on key and name
-  string Chart::get(string_val_x::key k, string c) const
+  vector<int> Chart::isomers(int sza) const
   {
-    int sza = translate_Isomer(c);
-    switch(k) {
-    case string_val_x::NAME:
-      return element.at(extract_Z(sza)).name;
-      break;
-    default:
-      string s = "Key ";
-      s += c + " not recognized!"; 
-      throw out_of_range(s);
-    }
+    vector<int> result;
+    int n = canonicalize(sza);
+    for (Nuclide_map::const_iterator it = nuclide.begin();
+         it != nuclide.end(); it++)
+      if (it->first % 1000000 == n % 1000000)
+        result.push_back(it->first);
+    return result;
   }
 
-  // Return double value based on key and index
-  double Chart::get(float_val_n::key k, int sza) const
+  vector<int> Chart::isomers(string name) const
+  {
+    int sza = translate_Isomer(name);
+    return this->isomers(sza);
+  }
+ 
+  string Chart::symbol(int Z) const
+  {
+    int n = canonicalize(Z);
+    return element.at(n).symbol;
+  }
+  
+  string Chart::name(int Z) const
+  {
+    int n = canonicalize(Z);
+    return element.at(n).name;
+  }
+  string Chart::name(string name) const
+  {
+    int sza = translate_Isomer(name);
+    return this->name(sza);
+  }
+     
+  double Chart::at_wgt(int sza) const
   {
     unsigned int n = canonicalize(sza);
-    if (n < element.size()) {  // Element data
-      switch(k) {
-      case float_val_n::AT_WGT:
-        return element.at(n).at_wgt;
-        break;
-      case float_val_n::AWR:
-        return element.at(n).at_wgt / neutron_mass;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+    if (n < element.size()) { 
+      return element.at(n).at_wgt;
     } else {
       NuclideData d = map_at(nuclide, n);
-      switch (k) {            // Nuclide data
-      case  float_val_n::AT_WGT:
-        return d.awr * neutron_mass;
-        break;
-      case float_val_n::AWR:
-        return d.awr;
-        break;
-      case float_val_n::ABUNDANCE:
-        return d.abundance;
-        break;
-      case float_val_n::HALF_LIFE:
-        return d.half_life;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+      return d.awr * neutron_mass;
     }
-    return 0.0;
   }
 
-  // Return double value based on key and name
-  double Chart::get(float_val_x::key k, string name) const
+  double Chart::at_wgt(string name) const
   {
     int sza = translate_Isomer(name);
-    if (extract_A(sza) == 0) {  // Element data
-      int z = extract_Z(sza);
-      switch(k) {
-      case float_val_n::AT_WGT:
-        return element.at(z).at_wgt;
-        break;
-      case float_val_n::AWR:
-        return element.at(z).at_wgt / neutron_mass;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+    return this->at_wgt(sza);
+  }
+
+  double Chart::awr(int sza) const
+  {
+    unsigned int n = canonicalize(sza);
+    if (n < element.size()) {
+      return element.at(n).at_wgt / neutron_mass;
     } else {
-      NuclideData d = map_at(nuclide, sza);
-      switch (k) {            // Nuclide data
-      case  float_val_n::AT_WGT:
-        return d.awr * neutron_mass;
-        break;
-      case float_val_n::AWR:
-        return d.awr;
-        break;
-      case float_val_n::ABUNDANCE:
-        return d.abundance;
-        break;
-      case float_val_n::HALF_LIFE:
-        return d.half_life;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+      NuclideData d = map_at(nuclide, n);
+      return d.awr;
     }
-    return 0.0;
+  }
+  
+  double Chart::awr(string name) const
+  {
+    int sza = translate_Isomer(name);
+    return this->awr(sza);
+  }
+
+  double Chart::half_life(int sza) const
+  {
+    unsigned int n = canonicalize(sza);
+    NuclideData d = map_at(nuclide, n);
+    return d.half_life;
+  }
+
+  double Chart::half_life(string name) const
+  {
+    int sza = translate_Isomer(name);
+    return this->half_life(sza);
   }
 }

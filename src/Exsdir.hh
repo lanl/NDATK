@@ -14,47 +14,46 @@ namespace ndatk
   {
   public:
 
-    Exsdir(const std::string filename);
-    Exsdir(std::istream &s);
+    explicit Exsdir(const std::string filename);
+    explicit Exsdir(std::istream &s);
 
     // Queries
-    typedef CuratedData::string_val string_val;
-    std::string get(string_val::key k) const { return CuratedData::get(k); }
 
-    struct string_val_n {
-      enum key {
-        ID                      // ID by index
-      };
-    };
-    std::string get(string_val_n::key, int i) const;
+    // Number of table identifiers
+    int num_id(void) const;
 
-    struct int_val_x {
-      enum key {
-        ADDRESS,                // Line or Record number by ID
-        TBL_LEN,                // Length of data block by ID
-        RCD_LEN,                // Length of Type 2 file record by ID
-        EPR                     // Number of Type 2 entries per record by ID
-      };
-    };
-    int get(int_val_x::key, std::string id) const;
+    // Table identifier by index
+    std::string table_id(int i) const;
 
-    struct string_val_x {
-      enum key {
-        NAME,                   // File name by ID
-        ROUTE,                  // Access Route by ID
-        PTABLE                  // Probability Table Flag by ID
-      };
-    };
-    std::string get(string_val_x::key, std::string id) const;
+    // Line or record number by table identifier
+    int address(std::string id) const;
 
-    struct float_val_x {
-      enum key {
-        AT_WGT,                 // Atomic weight (u) by ID
-        AWR,                    // Atomic weight ratio by ID
-        TEMP                    // Temperature (MeV) by ID
-      };
-    };
-    double get(float_val_x::key, std::string id) const;
+    // Length of binary data block or zero by table identifier
+    int tbl_len(std::string id) const;
+
+    // Length of binary record or zero by table identifier
+    int rcd_len(std::string id) const;
+    
+    // Number of binary entries per record or zero by table identifier
+    int epr(std::string id) const;
+
+    // File name by table identifier
+    std::string name(std::string id) const;
+
+    // Directory access route or zero by table identifier
+    std::string route(std::string id) const;
+
+    // Probability table flag by table identifier
+    bool ptable(std::string id) const;
+
+    // Atomic weight (u) by table identifier
+    double at_wgt(std::string id) const;
+
+    // Atomic weight ratio by table identifier
+    double awr(std::string id) const;
+
+    // Temperature (MeV) by table identifier
+    double temp(std::string id) const;
 
   private:
 
