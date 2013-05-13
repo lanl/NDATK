@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
             << std::endl << std::endl;
 
   std::cout << "Print data file header." << std::endl;
-  std::cout << x.get(ndatk::Chart::string_val::NAME) << std::endl
-            << x.get(ndatk::Chart::string_val::DATE) << std::endl
-            << x.get(ndatk::Chart::string_val::INFO) << std::endl;
+  std::cout << x.identifier() << std::endl
+            << x.process_date() << std::endl
+            << x.information() << std::endl;
   std::cout << std::endl;
 
   if (verbose)
@@ -47,18 +47,18 @@ int main(int argc, char *argv[])
   else
     std::cout << "For elements where the relative difference in "
               << " abundance or awr exceeds " << eps << ":" << std::endl;
-  for (int i = 1; i < x.get(ndatk::Chart::int_val::NUM_ELEMENTS); i++) {
-    std::string symbol = x.get(ndatk::Chart::string_val_n::SYMBOL, i);
-    std::vector<int> za = x.get(ndatk::Chart::int_vec_x::ISOTOPES, symbol);
+  for (int i = 1; i < x.number_of_elements(); i++) {
+    std::string symbol = x.chemical_symbol(i);
+    std::vector<int> za = x.isotopes(symbol);
     double abundance;
     double sum_abundance = 0.0;
     double avg_awr = 0.0;
-    double awr = x.get(ndatk::Chart::float_val_x::AWR, symbol);
+    double awr = x.atomic_weight_ratio(symbol);
     for (int i = 0; i < za.size(); i++) {
-      abundance = x.get(ndatk::Chart::float_val_n::ABUNDANCE, za[i]);
+      abundance = x.natural_abundance(za[i]);
       if (abundance != 0.0) {
         sum_abundance += abundance;
-        avg_awr += abundance * x.get(ndatk::Chart::float_val_n::AWR, za[i]);
+        avg_awr += abundance * x.atomic_weight_ratio(za[i]);
       }
     }
     if (verbose ||

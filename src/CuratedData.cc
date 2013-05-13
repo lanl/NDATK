@@ -8,18 +8,21 @@ namespace ndatk
   // Required base class dtor
   CuratedData::~CuratedData(void) {};
 
-  string CuratedData::id(void) const
+  // Artifact identifier
+  string CuratedData::identifier(void) const
   {
-    return id_;
+    return id;
   }
 
-  string CuratedData::date(void) const
+  // Artifact process date
+  string CuratedData::process_date(void) const
   {
-    return date_;
+    return date;
   }
 
-  string CuratedData::info(void) const
+  // Artifact information
+  string CuratedData::information(void) const
   {
-    return info_;
+    return info;
   }
 }

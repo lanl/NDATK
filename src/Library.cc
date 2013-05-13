@@ -16,21 +16,21 @@ namespace ndatk
     string line;
     enum states {START, IDS};
     states state = START;
-    string id;
+    string id_;
 
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, id_);
+        get_logical_line(s, id);
       } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, date_);
+        get_logical_line(s, date);
       } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, info_);
+        get_logical_line(s, info);
       } else if (starts_with_nocase(line, "IDS:")) {
         state = IDS;
       } else if (state == IDS) {
         istringstream iline(line);
-        iline >> id;
-        ids.push_back(id);
+        iline >> id_;
+        ids.push_back(id_);
       }
     }
   }
@@ -48,7 +48,7 @@ namespace ndatk
   }
 
   // Return table identifier isomer name
-  string Library::table_id(string name) const
+  string Library::table_identifier(string name) const
   {
     int sza = translate_Isomer(name);
     ostringstream o;

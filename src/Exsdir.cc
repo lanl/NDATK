@@ -23,7 +23,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "ATOMIC WEIGHT RATIOS")) {
         state = AWR;
       } else if (is_date(line)) {
-        date_ = line;
+        date = line;
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
@@ -58,78 +58,88 @@ namespace ndatk
     ifstream s(filename.c_str());
     Exsdir::parse(s);
     s.close();
-    id_ = filename;
-    info_ = "Exsdir";
+    id = filename;
+    info = "Exsdir";
   }
 
 
-  // Number of table identifiers
-  int Exsdir::num_id(void) const
+  // Number of tables
+  int Exsdir::number_of_tables(void) const
   {
     return order.size();
   }
 
   // Table identifier by index
-  string Exsdir::table_id(int i) const
+  string Exsdir::table_identifier(int i) const
   {
     return order.at(i);
   }
 
+  // Line or record number by table identifier
   int Exsdir::address(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.address;
   }
 
-  int Exsdir::tbl_len(string id) const
+  // Length of binary data block or zero by table identifier
+  int Exsdir::table_length(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.tbl_len;
   }
 
-  int Exsdir::rcd_len(string id) const
+  // Lenght of binary record or zero by table identifier
+  int Exsdir::record_length(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.rcd_len;
   }
 
-  int Exsdir::epr(string id) const
+  // Number of binary entries per record or zero by table identifier 
+  int Exsdir::entries_per_record(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.epr;
   }
 
-  string Exsdir::name(string id) const
+  // File name by table identifier
+  string Exsdir::file_name(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.name;
   }
 
-  string Exsdir::route(string id) const
+  // Directory access route by identifier
+  string Exsdir::access_route(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.route;
   }
 
-  bool Exsdir::ptable(string id) const
+  // Probability table flag by table identifier
+  bool Exsdir::probability_table_flag(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.ptable == "ptable";
   }
 
-  double Exsdir::at_wgt(string id) const
+  // Atomic weight by table identifier
+  double Exsdir::atomic_weight(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.awr * neutron_mass;
   }
 
-  double Exsdir::awr(string id) const
+  // Atomic weight ratio by table identifier
+  double Exsdir::atomic_weight_ratio(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.awr;
   }
 
-  double Exsdir::temp(string id) const
+  // Temperature by table identifier
+  double Exsdir::temperature(string id) const
   {
     DirectoryData d = map_at(directory, id);
     return d.temp;

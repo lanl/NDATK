@@ -19,41 +19,41 @@ namespace ndatk
 
     // Queries
 
-    // Number of table identifiers
-    int num_id(void) const;
+    // Number of table
+    int number_of_tables(void) const;
 
     // Table identifier by index
-    std::string table_id(int i) const;
+    std::string table_identifier(int i) const;
 
     // Line or record number by table identifier
     int address(std::string id) const;
 
     // Length of binary data block or zero by table identifier
-    int tbl_len(std::string id) const;
+    int table_length(std::string id) const;
 
     // Length of binary record or zero by table identifier
-    int rcd_len(std::string id) const;
+    int record_length(std::string id) const;
     
     // Number of binary entries per record or zero by table identifier
-    int epr(std::string id) const;
+    int entries_per_record(std::string id) const;
 
     // File name by table identifier
-    std::string name(std::string id) const;
+    std::string file_name(std::string id) const;
 
     // Directory access route or zero by table identifier
-    std::string route(std::string id) const;
+    std::string access_route(std::string id) const;
 
     // Probability table flag by table identifier
-    bool ptable(std::string id) const;
+    bool probability_table_flag(std::string id) const;
 
     // Atomic weight (u) by table identifier
-    double at_wgt(std::string id) const;
+    double atomic_weight(std::string id) const;
 
     // Atomic weight ratio by table identifier
-    double awr(std::string id) const;
+    double atomic_weight_ratio(std::string id) const;
 
     // Temperature (MeV) by table identifier
-    double temp(std::string id) const;
+    double temperature(std::string id) const;
 
   private:
 

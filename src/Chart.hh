@@ -19,41 +19,41 @@ namespace ndatk
 
     // Queries:
     // Number of elements in Chart
-    int num_elements(void) const;
+    int number_of_elements(void) const;
 
     // Number of nuclides in Chart
-    int num_nuclides(void) const;
+    int number_of_nuclides(void) const;
 
-    // Vector of isotopes in element by:
-    std::vector<int> isotopes(int Z) const; // atomic number
-    std::vector<int> isotopes(std::string symbol) const; // chemical symbol
+    // Vector of isotopes in element by atomic number or isomer name
+    std::vector<int> isotopes(int Z) const;
+    std::vector<int> isotopes(std::string symbol) const;
 
-    // Vector of isomers in isotope by:
-    std::vector<int> isomers(int ZA) const; // atomic & mass number
-    std::vector<int> isomers(std::string name) const; // isotopic name
+    // Vector of isomers in isotope by atomic & mass number or isomer name
+    std::vector<int> isomers(int ZA) const;
+    std::vector<int> isomers(std::string name) const;
 
     // Chemical symbol by atomic number
-    std::string symbol(int Z) const;
+    std::string chemical_symbol(int Z) const;
 
-    // Element name by:
-    std::string name(int Z) const; // atomic number
-    std::string name(std::string symbol) const; // chemical symbol
+    // Element name by atomic number or isomer name
+    std::string element_name(int Z) const;
+    std::string element_name(std::string symbol) const;
 
-    // Atomic weight (u) by:
-    double at_wgt(int sza) const; // state & atomic & mass number
-    double at_wgt(std::string name) const; // isomer name
+    // Atomic weight (u) by state & atomic & mass number or isomer name
+    double atomic_weight(int sza) const;
+    double atomic_weight(std::string name) const;
 
-    // Atomic weight ratio by:
-    double awr(int sza) const;  // state & atomic & mass number
-    double awr(std::string name) const; // isomer name
+    // Atomic weight ratio by state & atomic & mass number or isomer name
+    double atomic_weight_ratio(int sza) const;
+    double atomic_weight_ratio(std::string name) const;
 
-    // Atom percent abundances by:
-    double abundance(int sza) const; // state & atomic & mass number
-    double abundance(std::string name) const; // isomer name
+    // Atom percent abundances by state & atomic & mass number or isomer name
+    double natural_abundance(int sza) const;
+    double natural_abundance(std::string name) const;
 
-    // Half life (s) by:
-    double half_life(int sza) const; // state & atomic & mass number
-    double half_life(std::string name) const; // isomer name
+    // Half life (s) by state & atomic & mass number or isomer name
+    double half_life(int sza) const;
+    double half_life(std::string name) const;
 
   private:
 

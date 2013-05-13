@@ -33,11 +33,11 @@ namespace ndatk
 
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, id_);
+        get_logical_line(s, id);
       } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, date_);
+        get_logical_line(s, date);
       } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, info_);
+        get_logical_line(s, info);
       } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
         state = TABLE;
       } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {
@@ -70,16 +70,19 @@ namespace ndatk
     s.close();
   }
 
-  int Chart::num_elements(void) const
+  // Number of elements in element
+  int Chart::number_of_elements(void) const
   {
     return element.size();
   }
 
-  int Chart::num_nuclides(void) const
+  // Number of nuclides in nuclide
+  int Chart::number_of_nuclides(void) const
   {
     return nuclide.size();
   }
   
+  // Vector of isotopes in element by atomic number
   vector<int> Chart::isotopes(int Z) const
   {
     vector<int> result;
@@ -91,12 +94,14 @@ namespace ndatk
       return result;
   }
 
+  // Vector of isotopes in element by chemical symbol
   vector<int> Chart::isotopes(string name) const
   {
     int sza = translate_Isomer(name);
     return this->isotopes(sza);
   }
 
+  // Vector of isomers in nuclide by atomic & mass number
   vector<int> Chart::isomers(int sza) const
   {
     vector<int> result;
@@ -108,30 +113,35 @@ namespace ndatk
     return result;
   }
 
+  // Vector of isomers in nuclide by isomer name 
   vector<int> Chart::isomers(string name) const
   {
     int sza = translate_Isomer(name);
     return this->isomers(sza);
   }
  
-  string Chart::symbol(int Z) const
+  // Chemical symbol by atomic number
+  string Chart::chemical_symbol(int Z) const
   {
     int n = canonicalize(Z);
     return element.at(n).symbol;
   }
-  
-  string Chart::name(int Z) const
+  // Element name by atomic number
+  string Chart::element_name(int Z) const
   {
     int n = canonicalize(Z);
     return element.at(n).name;
   }
-  string Chart::name(string name) const
+
+  // Element name by isomer name
+  string Chart::element_name(string name) const
   {
     int sza = translate_Isomer(name);
-    return this->name(sza);
+    return this->element_name(sza);
   }
      
-  double Chart::at_wgt(int sza) const
+  // Atomic weight by state, mass & atomic number
+  double Chart::atomic_weight(int sza) const
   {
     unsigned int n = canonicalize(sza);
     if (n < element.size()) { 
@@ -142,13 +152,15 @@ namespace ndatk
     }
   }
 
-  double Chart::at_wgt(string name) const
+  // Atomic weight by isomer name
+  double Chart::atomic_weight(string name) const
   {
     int sza = translate_Isomer(name);
-    return this->at_wgt(sza);
+    return this->atomic_weight(sza);
   }
 
-  double Chart::awr(int sza) const
+  // Atomic weight ratio by state, atomic & mass number
+  double Chart::atomic_weight_ratio(int sza) const
   {
     unsigned int n = canonicalize(sza);
     if (n < element.size()) {
@@ -159,12 +171,29 @@ namespace ndatk
     }
   }
   
-  double Chart::awr(string name) const
+  // Atomic weight ratio by isomer name
+  double Chart::atomic_weight_ratio(string name) const
   {
     int sza = translate_Isomer(name);
-    return this->awr(sza);
+    return this->atomic_weight_ratio(sza);
   }
 
+  // Atom percent natural abundances by state, atomic & mass number
+  double Chart::natural_abundance(int sza) const
+  {
+    int n = canonicalize(sza);
+    NuclideData d = map_at(nuclide, n);
+    return d.abundance;
+  }
+
+  // Atom percent abundances by isomer name
+  double Chart::natural_abundance(string name) const
+  {
+    int sza = translate_Isomer(name);
+    return this->natural_abundance(sza);
+  }
+
+  // Half life by state, atomic, mass number
   double Chart::half_life(int sza) const
   {
     unsigned int n = canonicalize(sza);
@@ -172,6 +201,7 @@ namespace ndatk
     return d.half_life;
   }
 
+  // Half life by isomer name
   double Chart::half_life(string name) const
   {
     int sza = translate_Isomer(name);

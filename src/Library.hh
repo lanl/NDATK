@@ -16,7 +16,7 @@ namespace ndatk
     Library(std::string filename);
 
     // Queries
-    std::string table_id(std::string name) const;
+    std::string table_identifier(std::string name) const;
 
   private:
 
