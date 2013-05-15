@@ -36,6 +36,24 @@ namespace ndatk {
     return !(iss >> t).fail();
   }
 
+  /* Convert Source to Target type through stringstream.
+
+     "Exceptional C++ Style: 40 new engineering puzzles, 
+      programming problems, and solutions" pg 18
+   */
+  template <typename Target, typename Source>
+  Target lexical_cast(Source arg)
+  {
+    std::stringstream interpreter;
+    Target result;
+
+    if (!(interpreter << arg) ||
+        !(interpreter >> result) ||
+        !(interpreter >> std::ws).eof())
+      throw std::bad_cast();
+    return result;
+  }
+
   /* Return true if c is whitespace.
    *
    * Necessary disambiguation of polymorphic isspace in cctype.
@@ -73,6 +91,11 @@ namespace ndatk {
 
   // Compare two strings; ingnore case.
   extern int cmp_nocase(const std::string &, const std::string &);
+
+  // Compare start of first string with second
+  inline bool starts_with(std::string s1, std::string s2) {
+    return 0 == s1.compare(0, s2.size(), s2);
+  }
 
   // Compare start of first string with second; ignore case.
   extern bool starts_with_nocase(const std::string &, const std::string &);

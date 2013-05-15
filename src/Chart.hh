@@ -7,6 +7,7 @@
 #include <map>
 
 #include "CuratedData.hh"
+#include "Exsdir.hh"
 
 namespace ndatk
 {
@@ -14,8 +15,11 @@ namespace ndatk
   class Chart: public CuratedData
   {
   public:
-    explicit Chart(std::istream& s);
+    Chart(void): CuratedData(), element(), nuclide() {}
     explicit Chart(std::string filename);
+    Chart(std::string id, Exsdir &e);
+
+    friend std::istream &operator>>(std::istream &s, Chart &c);
 
     // Queries:
     // Number of elements in Chart
@@ -57,8 +61,6 @@ namespace ndatk
 
   private:
 
-    void parse(std::istream& s);
-
     // Periodic Table Values
     struct ElementData
     {
@@ -67,6 +69,7 @@ namespace ndatk
       std::string name;
     };
     typedef std::vector<ElementData> Element_vector;
+    Element_vector element;     // Periodic Table
 
     // Chart of the Nuclides Values
     struct NuclideData
@@ -76,8 +79,6 @@ namespace ndatk
       double half_life;
     };
     typedef std::map<int, NuclideData> Nuclide_map;
-
-    Element_vector element;     // Periodic Table
     Nuclide_map nuclide;        // Chart of the Nuclides
 
     };

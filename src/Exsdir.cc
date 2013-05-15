@@ -9,8 +9,8 @@ namespace ndatk
 {
   using namespace std;
 
-  // Parse extended cross section directory
-  void Exsdir::parse(istream &s)
+  // Read an Extended cross section directory from a stream
+  istream &operator>>(istream &s, Exsdir &e)
   {
     string line;
     enum states {START, AWR, DIR};
@@ -23,45 +23,41 @@ namespace ndatk
       } else if (starts_with_nocase(line, "ATOMIC WEIGHT RATIOS")) {
         state = AWR;
       } else if (is_date(line)) {
-        date = line;
+        e.date = line;
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
         fields = split(line);
         ifstream f1(fields[1].c_str());
-        parse(f1);
+        f1 >> e;
         f1.close();
       } else if (state == AWR) {
         continue;               // TODO: add AWR parse here
       } else if (state == DIR) {
         string id;
-        DirectoryData d;
+        Exsdir::DirectoryData d;
         istringstream r(line);
         r >> id >> d.awr >> d.name >> d.route >> d.type
           >> d.address >> d.tbl_len >> d.rcd_len >> d.epr
           >> d.temp >> d.ptable;
-        directory.insert(Directory_map::value_type(id, d));
-        order.push_back(id);
+        e.directory.insert(Exsdir::Directory_map::value_type(id, d));
+        e.order.push_back(id);
       }
     }
-  }
-
-  // Construct Exsdir from data in stream
-  Exsdir::Exsdir(istream &s)
-  {
-    Exsdir::parse(s);
+    return s;
   }
 
   // Construct Exsdir from data on named file
   Exsdir::Exsdir(const string filename)
   {
-    ifstream s(filename.c_str());
-    Exsdir::parse(s);
+    ifstream s;
+    // s.exceptions(std::ifstream::failbit|std::ifstream::badbit);
+    s.open(filename.c_str());
+    s >> *this;
     s.close();
-    id = filename;
-    info = "Exsdir";
+    this->id = filename;
+    this->info = "Exsdir";
   }
-
 
   // Number of tables
   int Exsdir::number_of_tables(void) const
@@ -73,6 +69,16 @@ namespace ndatk
   string Exsdir::table_identifier(int i) const
   {
     return order.at(i);
+  }
+
+  // Table identifier by (partial) name
+  string Exsdir::table_identifier(string name) const
+  {
+    for (Id_vector::const_iterator p = order.begin();
+         p != order.end(); p++)
+      if (starts_with(*p, name))
+        return *p;              // Policy: return first match
+    return string("");
   }
 
   // Line or record number by table identifier
@@ -143,6 +149,18 @@ namespace ndatk
   {
     DirectoryData d = map_at(directory, id);
     return d.temp;
+  }
+
+  // Iterator to start of table identifiers in Exsdir
+  Exsdir::const_iterator Exsdir::begin(void) const
+  {
+    return order.begin();
+  }
+
+  // Iterator to end of table identifiers in Exsdir
+  Exsdir::const_iterator Exsdir::end(void) const
+  {
+    return order.end();
   }
 
 }

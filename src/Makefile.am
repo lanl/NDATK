@@ -1,5 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
+AM_CXXFLAGS = -ansi -pedantic -Wall 
 include_INCLUDES = ndatk.hh Library.hh Chart.hh Exsdir.hh \
 	translate_Isomer.hh utils.hh constants.hh
 lib_LIBRARIES = libndatk.a
@@ -14,6 +15,7 @@ TestRunner_SOURCES = TestRunner.cc \
 	ChartTest.cc ChartTest.hh \
 	UnitTest.cc UnitTest.hh ExsdirTest.cc ExsdirTest.hh \
 	utilsTest.cc utilsTest.hh
+
 
 TestRunner_LDADD = libndatk.a
 

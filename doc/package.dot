@@ -1,5 +1,8 @@
 digraph Package {
-
+        size="7.5,10";
+        center=1;
+        ratio=fill
+        node[fontsize=18];
         compound=true;
         edge[style=dashed,minlen=2];
 
@@ -22,6 +25,7 @@ digraph Package {
                  Chart -> constants;
                  Chart -> utils;
                  Chart -> CuratedData;
+                 Chart -> Exsdir;
 
                  Exsdir -> constants;
                  Exsdir -> utils;

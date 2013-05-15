@@ -39,7 +39,7 @@ class ChartTest: public UnitTest
 
 public:
 
-  ChartTest(): x(chart_dat) {}
+  ChartTest(): x() { chart_dat >> x; }
 
   void runTest();
 

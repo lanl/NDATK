@@ -42,7 +42,6 @@ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -66,7 +65,7 @@ am_TestRunner_OBJECTS = TestRunner.$(OBJEXT) LibraryTest.$(OBJEXT) \
 	utilsTest.$(OBJEXT)
 TestRunner_OBJECTS = $(am_TestRunner_OBJECTS)
 TestRunner_DEPENDENCIES = libndatk.a
-DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
+DEFAULT_INCLUDES = -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -154,6 +153,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+AM_CXXFLAGS = -ansi -pedantic -Wall 
 include_INCLUDES = ndatk.hh Library.hh Chart.hh Exsdir.hh \
 	translate_Isomer.hh utils.hh constants.hh
 

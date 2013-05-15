@@ -14,17 +14,22 @@ namespace ndatk
   {
   public:
 
+    // Default constructor
+    Exsdir(void): CuratedData(), order(), directory() {}
+
+    // Construct Exsdir from named file
     explicit Exsdir(const std::string filename);
-    explicit Exsdir(std::istream &s);
 
-    // Queries
+    // Read Exsdir from stream
+    friend std::istream &operator>>(std::istream &s, Exsdir &e);
 
-    // Number of table
+    // Number of tables 
     int number_of_tables(void) const;
 
-    // Table identifier by index
+    // Table identifier by index or (partial) name
     std::string table_identifier(int i) const;
-
+    std::string table_identifier(std::string name) const;
+    
     // Line or record number by table identifier
     int address(std::string id) const;
 
@@ -55,12 +60,20 @@ namespace ndatk
     // Temperature (MeV) by table identifier
     double temperature(std::string id) const;
 
-  private:
+    // Define const_iterator type for Library
+    typedef std::vector<std::string>::const_iterator const_iterator;
+    
+    // Const_iterator to start of table identifiers
+    const_iterator begin(void) const;
 
-    void parse(std::istream& s);
+    // Const_iterator to end of table identifiers
+    const_iterator end(void) const;
+
+  private:
 
     // Exsdir list of table Ids
     typedef std::vector<std::string> Id_vector;
+    Id_vector order;            // Identifier order
 
     // XSDIR directory data
     struct DirectoryData
@@ -77,9 +90,7 @@ namespace ndatk
       std::string ptable;       // probability table flag
     };
     typedef std::map<std::string, DirectoryData> Directory_map;
-
     Directory_map directory;    // Directory
-    Id_vector order;            // Identifier order
   };
 }
 #endif

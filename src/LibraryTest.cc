@@ -2,17 +2,17 @@
 
 void LibraryTest::runTest(void)
 {
-  // Library header info
-  UT_ASSERT(x.identifier() == "early_universe");
-  UT_ASSERT(x.process_date() == "+3hrs");
-
   // Lookup table_identifiers by isomer names 
-  UT_ASSERT(x.table_identifier("H1") == "1001.62c");
-  UT_ASSERT(x.table_identifier("H-2") == "1002.66c");
-  UT_ASSERT(x.table_identifier("3h") == "1003.69c");
-  UT_ASSERT(x.table_identifier("He3") == "2003.66c");
-  UT_ASSERT(x.table_identifier("4-He") == "2004.62c");
-  UT_ASSERT(x.table_identifier("Li6") == "3006.66c");
-  UT_ASSERT(x.table_identifier("Li-7") == "3007.66c");
-  UT_ASSERT(x.table_identifier("4007") == "4007.35c");
+  UT_ASSERT(y.table_identifier("1001") == "1001.80c");
+  UT_ASSERT(y.atomic_weight_ratio() == 0.999167);
+  UT_ASSERT(y.file_name() == "endf71x/H/1001.710nc");
+  UT_ASSERT(y.temperature() == 2.530100e-8);
+    
+  UT_ASSERT(y.table_identifier("H1") == "1001.80c");
+  UT_ASSERT(y.table_identifier("H-2") == "1002.80c");
+  UT_ASSERT(y.table_identifier("3h") == "1003.80c");
+
+  UT_ASSERT(y.table_identifier("1001.81c") == "1001.81c");
+  UT_ASSERT(y.file_name() == "endf71x/H/1001.711nc");
+  UT_ASSERT(y.temperature() == 5.170400e-8);
 }
