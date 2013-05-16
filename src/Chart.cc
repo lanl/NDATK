@@ -71,10 +71,8 @@ namespace ndatk
   // Construct Chart from id and Exsdir
   Chart::Chart(string id, Exsdir &e)
   {
-    string filename = e.table_identifier(id);
-    ifstream s;
-    // s.exceptions(ifstream::failbit);
-    s.open(filename.c_str());
+    string filename = e.file_name(id);
+    ifstream s(filename.c_str());
     s >> *this;
     s.close();
   }    

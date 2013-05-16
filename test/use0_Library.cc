@@ -17,12 +17,17 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  cout << "Use Case 0:" << endl;
+  cout << "Create Exsdir from filename on command line;" << endl;
+  cout << "create Library from name and Exsdir;" << endl;
+  cout << "retrieve file name and line number by isomer name." 
+       << endl << endl;
+
   ndatk::Exsdir x(argv[1]);     // parse filename
-
   cout << "Created Exsdir " << x.identifier() 
-       << "with " << x.number_of_tables() << " tables." << endl;
-  ndatk::Library l("lanl2006", x);
+       << " with " << x.number_of_tables() << " tables." << endl;
 
+  ndatk::Library l("lanl2006", x);
   cout << "Created Library " << l.identifier()
        << " with " << l.number_of_tables() << " tables." << endl;
 

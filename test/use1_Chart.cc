@@ -2,12 +2,14 @@
 #include <fstream>
 #include <string>
 #include <cmath>
-#include "Chart.hh"
+#include "ndatk.hh"
+
+using namespace std;
 
 void usage(char *name)
 {
-    std::cout << "Usage: " << name << 
-      " [-v] [-p eps] filename" << std::endl;
+    cout << "Usage: " << name << 
+      " [-v] [-p eps] filename" << endl;
     exit(1);
 }
 
@@ -30,26 +32,35 @@ int main(int argc, char *argv[])
       break;
     }
   }
-  ndatk::Chart x(argv[i]);     // parse filename
+  cout << "Use Case 1:" << endl;
+  cout << "Create Exsdir from filename on command line;" << endl;
+  cout << "create Chart from name and Exsdir;" << endl;
+  cout << "calculate elemental awr from isotopic abundances and awr."
+            << endl << endl;
 
-  std::cout << "Use Case 1:" << std::endl;
-  std::cout << "Calculate elemental awr from isotopic abundances and awr."
-            << std::endl << std::endl;
+  ndatk::Exsdir e(argv[1]);
+  cout << "Created Exsdir " << e.identifier() 
+       << " with " << e.number_of_tables() << " tables." << endl;
 
-  std::cout << "Print data file header." << std::endl;
-  std::cout << x.identifier() << std::endl
-            << x.process_date() << std::endl
-            << x.information() << std::endl;
-  std::cout << std::endl;
+  ndatk::Chart x("chart", e);     // parse filename
+  cout << "Created Chart " << x.identifier()
+       << " with " << x.number_of_elements() << " elements" 
+       << " and " << x.number_of_nuclides() << " nuclides." << endl;
+
+  cout << "Print data file header." << endl;
+  cout << x.identifier() << endl
+            << x.process_date() << endl
+            << x.information() << endl;
+  cout << endl;
 
   if (verbose)
-    std::cout << "For all elements:" << std::endl;
+    cout << "For all elements:" << endl;
   else
-    std::cout << "For elements where the relative difference in "
-              << " abundance or awr exceeds " << eps << ":" << std::endl;
+    cout << "For elements where the relative difference in "
+              << " abundance or awr exceeds " << eps << ":" << endl;
   for (int i = 1; i < x.number_of_elements(); i++) {
-    std::string symbol = x.chemical_symbol(i);
-    std::vector<int> za = x.isotopes(symbol);
+    string symbol = x.chemical_symbol(i);
+    vector<int> za = x.isotopes(symbol);
     double abundance;
     double sum_abundance = 0.0;
     double avg_awr = 0.0;
@@ -64,10 +75,10 @@ int main(int argc, char *argv[])
     if (verbose ||
         fabs(sum_abundance - 1.0) > eps || 
         fabs(awr - avg_awr)/awr > eps) { 
-      std::cout << symbol << ": " << 
+      cout << symbol << ": " << 
         "At " << sum_abundance * 100.0 << " percent abundance, " <<
         " AWR = " << avg_awr << " compared to " << 
-        awr << std::endl;
+        awr << endl;
     }
   }
   return 0;
