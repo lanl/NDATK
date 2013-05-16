@@ -4,7 +4,7 @@
 
 #include "Library.hh"
 #include "utils.hh"
-#include "translate_Isomer.hh"
+#include "translate_isomer.hh"
 
 namespace ndatk
 {
@@ -54,12 +54,12 @@ namespace ndatk
     string result(""); 
 
     if ((d = name.find('.')) != name.npos) { // Policy: lookup name in Exsdir
-      int sza = translate_Isomer(name.substr(0,d));
+      int sza = translate_isomer(name.substr(0,d));
       string s = lexical_cast<string, int>(sza) + name.substr(d);
       result = e.table_identifier(s);
     } else {                    // Policy: lookup name in Library
-      int sza = translate_Isomer(name);
-      string s = lexical_cast<string, int>(sza);
+      int sza = translate_isomer(name);
+      string s = lexical_cast<string, int>(sza) + ".";
       for (vector<string>::const_iterator p = ids.begin();
            p != ids.end(); p++) {
         if (starts_with(*p, s)) {

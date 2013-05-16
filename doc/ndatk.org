@@ -1,98 +1,112 @@
+                                ndatk
 * Requirements
   0. Curated Data
-  1. Library
+  1. Continuous Energy Libraries
   2. MG zaid => CE zaid
   3. Several users
-  4. NDI like sza translation features
-  5. NDI like multi-temperature features
+  4. NDI sza translation features
+  5. NDI multi-temperature features
 
-* XSDIR deconstructed
+* xsdir deconstructed
 ** DATAPATH
    Policy on how to find data
 ** ATOMIC WEIGHT RATIOS
+   Nuclide scalar physical data, specifically AWR
 ** DIRECTORY
-*** Association of unique identifier with file 
-*** Preferred order of tables
+   - Association of unique identifier with file 
+   - Preferred order of tables
 
 * NDI deconstructed
 ** Readers
-** FSM
-** API
+   Record-Jar format
+** Finite State Machine
+   
+** Application Programming Interface
    ndi2_get_[int|float|string]_[val|vec](handle, KEY) 
    ndi2_get_[int|float|string]_[val|vec]_n(handle, KEY, index)
    ndi2_get_[int|float|string]_[val|vec]_x(handle, KEY, name)
-
-* EXSDIR constructed
-
+   
 * ndatk constructed
 ** API
-   ndatk::handle.get(ndatk::Class::[int|float|string]_[vec|val]::KEY)
-   ndatk::handle.get(ndatk::Class::[int|float|string]_[vec|val]_n::KEY, index)
-   ndatk::handle.get(ndatk::Class::[int|float|string]_[vec|val]_x::KEY, name)
+   handle.key()
+   handle.key(index)
+   handle.key(name)
 
-* Element, Isotope, and Isomer Names
+** Chart constructed
+  - Element's chemical symbol, atomic weight, and chemical name
+  - Nuclide's atomic weight, natural abundance, and half life
+  
+** Exsdir constructed
+  - DIRECTORY section associating Chart and Library data with files
+  - include of standard xsdir
 
-** Element
-*** Examples
-    1, 92, H, U, Am, 95, 1000, 92000
-*** EBNF
-    Element = Z, ['000'] | C;
-    Z = integer;
-    integer = digit, {digit};
-    digit = '0' | '1' | ... | '9'; # Decimal digits
-    C = 'H' | 'He' | ... | 'Lr'; # Chemical symbol
-    N.B.: NDI users accustomed to case insensitive symbols
+** Library constructed
+  - Ordered list of table identifiers
+  - Exsdir
 
-** Z (canonical atomic number)
-   0 < Z <= 103                 # ['H', 'Lr']
+** Element, Isotope, and Isomer Names
 
-** Isotope
-*** Examples
-    1001, 92235, 
-    H1, H-1,
-    235U, 235-U
-*** EBNF 
-    Isotope = ZA | 
-              C, [dash], A |
-              A, [dash], C;
-    ZA = integer;
-    A = integer;
-    dash = '-';
+*** Element
+**** Examples
+     1, 92, H, U, Am, 95, 1000, 92000
+**** EBNF
+     Element = Z, ['000'] | C;
+     Z = integer;
+     integer = digit, {digit};
+     digit = '0' | '1' | ... | '9'; # Decimal digits
+     C = 'H' | 'He' | ... | 'Lr'; # Chemical symbol
+     N.B.: NDI users accustomed to case insensitive symbols
 
-** A (canonical mass number)
-   0 < A < 300
+**** Z (canonical atomic number)
+     0 < Z <= 103                 # ['H', 'Lr']
 
-** ZA (canonical isotope name)
-   ZA = 1,000 * Z + A
-   Z = ZA/1,000                 # integer division
-   A = ZA%1,000                 # integer remainder
+*** Isotope
+**** Examples
+     1001, 92235, 
+     H1, H-1,
+     235U, 235-U
+**** EBNF 
+     Isotope = ZA | 
+               C, [dash], A |
+               A, [dash], C;
+     ZA = integer;
+     A = integer;
+     dash = '-';
 
-** Isomer
-*** Examples 
-    1001, 2095240, 
-    95240m1, 1001m0
-    Am240m2, Am-242m1, 
-    242m1Am, 242m2-Am
-    16m1O, 96Mo, 14m1N, 55Mn
-*** ENBF
-    Isomer = SZA |
-             ZA, [em, S] |
-             C, [dash], A, [em, S] |
-             A, [em, S], [dash] C;
-    SZA = integer;
-    em = 'm';
-    N.B.: integer state after 'm' disambiguates grammar  
+**** A (canonical mass number)
+     0 < A < 300
 
-** SZA (canonical isomer name)
-   S = Nuclear state
-   Z = Atomic number
-   A = Mass number
-   N.B.: 16 bit integers too small to represent SZA!
+**** ZA (canonical isotope name)
+     ZA = 1,000 * Z + A
+     Z = ZA/1,000                 # integer division
+     A = ZA%1,000                 # integer remainder
 
-*** Examples
-    1000, 1001, 95235, 2095242
-*** Formulas
-    SZA = 1,000,000 * S + 1,000 * Z + A
-    S = SZA/1,000,000           # integer division
-    Z = (SZA%1,000,000)/1,000   # integer remainder; integer division
-    A = SZA%1,000               # integer remainder
+*** Isomer
+**** Examples 
+     1001, 2095240, 
+     95240m1, 1001m0
+     Am240m2, Am-242m1, 
+     242m1Am, 242m2-Am
+     16m1O, 96Mo, 14m1N, 55Mn
+**** ENBF
+     Isomer = SZA |
+              ZA, [em, S] |
+              C, [dash], A, [em, S] |
+              A, [em, S], [dash] C;
+     SZA = integer;
+     em = 'm';
+     N.B.: integer state after 'm' disambiguates grammar  
+
+**** SZA (canonical isomer name)
+     S = Nuclear state
+     Z = Atomic number
+     A = Mass number
+     N.B.: 16 bit integers too small to represent SZA!
+
+***** Examples
+      1000, 1001, 95235, 2095242
+***** Formulas
+      SZA = 1,000,000 * S + 1,000 * Z + A
+      S = SZA/1,000,000           # integer division
+      Z = (SZA%1,000,000)/1,000   # integer remainder; integer division
+      A = SZA%1,000               # integer remainder

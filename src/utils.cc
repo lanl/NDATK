@@ -54,7 +54,6 @@ namespace ndatk {
     return true;
   }
             
-    
   /* Split string into vector of words.
    *
    * See "Accelerated C++" p. 103

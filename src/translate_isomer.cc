@@ -1,4 +1,4 @@
-#include "translate_Isomer.hh"
+#include "translate_isomer.hh"
 #include "utils.hh"
 
 /* Recursive descent parser for isomer string.
@@ -148,10 +148,7 @@ namespace ndatk
   // N = [0-9],{0-9};
   static int translate_N(string s)
   {
-    int i;
-    if (!from_string(i, s))
-      throw invalid_argument("Cannot convert string to int!");
-    return i;
+    return lexical_cast<int, string>(s);
   }
 
   // Nm = N, 'm', N | N;
@@ -167,7 +164,7 @@ namespace ndatk
       l = s.substr(0, m);
       if (++m < e)
         r = s.substr(m);
-      else
+      else                      // interpret trailing m as first excited state
         r = "1";
       im = 1000000 * translate_N(r) + translate_N(l);
     } else {
@@ -213,15 +210,15 @@ namespace ndatk
       else
         r = "0";
     } else {                    // Split input before final letters
-      for (d = e-1; 0 < d && isalpha(s[d]); d--);
-      l = s.substr(0, d+1);
-      r = s.substr(d+1);
+      for (d = 0; d < e && isalpha(s[e-d-1]); d++);
+      l = s.substr(0, e-d);
+      r = s.substr(e-d);
     }
     return translate_Nm(l) + translate_C(r);
   }
 
   // Isomer = C | N | C_Nm | Nm_C | Nm
-  extern int translate_Isomer(string s)
+  extern int translate_isomer(string s)
   {
     if (is_all_alphas(s)) {
       return translate_C(s);

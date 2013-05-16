@@ -5,7 +5,7 @@
 
 #include "Chart.hh"
 #include "Exsdir.hh"
-#include "translate_Isomer.hh"
+#include "translate_isomer.hh"
 #include "utils.hh"
 #include "constants.hh"
 

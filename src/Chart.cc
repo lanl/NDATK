@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "Chart.hh"
-#include "translate_Isomer.hh"
+#include "translate_isomer.hh"
 #include "utils.hh"
 #include "constants.hh"
 
@@ -106,7 +106,7 @@ namespace ndatk
   // Vector of isotopes in element by chemical symbol
   vector<int> Chart::isotopes(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->isotopes(sza);
   }
 
@@ -125,7 +125,7 @@ namespace ndatk
   // Vector of isomers in nuclide by isomer name 
   vector<int> Chart::isomers(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->isomers(sza);
   }
  
@@ -145,7 +145,7 @@ namespace ndatk
   // Element name by isomer name
   string Chart::element_name(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->element_name(sza);
   }
      
@@ -164,7 +164,7 @@ namespace ndatk
   // Atomic weight by isomer name
   double Chart::atomic_weight(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->atomic_weight(sza);
   }
 
@@ -183,7 +183,7 @@ namespace ndatk
   // Atomic weight ratio by isomer name
   double Chart::atomic_weight_ratio(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->atomic_weight_ratio(sza);
   }
 
@@ -198,7 +198,7 @@ namespace ndatk
   // Atom percent abundances by isomer name
   double Chart::natural_abundance(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->natural_abundance(sza);
   }
 
@@ -213,7 +213,7 @@ namespace ndatk
   // Half life by isomer name
   double Chart::half_life(string name) const
   {
-    int sza = translate_Isomer(name);
+    int sza = translate_isomer(name);
     return this->half_life(sza);
   }
 }

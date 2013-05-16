@@ -109,6 +109,7 @@ namespace ndatk {
   // Get Logical line from stream.
   extern std::istream &get_logical_line(std::istream &s, std::string &line);
 
+  // Get quoted string from stream.
   extern std::istream &quoted_str(std::istream &is, std::string &s);
 
   // Capitalize first character, lowercase others

@@ -57,12 +57,13 @@ ARFLAGS = cru
 libndatk_a_AR = $(AR) $(ARFLAGS)
 libndatk_a_LIBADD =
 am_libndatk_a_OBJECTS = CuratedData.$(OBJEXT) Chart.$(OBJEXT) \
-	Exsdir.$(OBJEXT) Library.$(OBJEXT) translate_Isomer.$(OBJEXT) \
+	Exsdir.$(OBJEXT) Library.$(OBJEXT) translate_isomer.$(OBJEXT) \
 	utils.$(OBJEXT)
 libndatk_a_OBJECTS = $(am_libndatk_a_OBJECTS)
 am_TestRunner_OBJECTS = TestRunner.$(OBJEXT) LibraryTest.$(OBJEXT) \
-	ChartTest.$(OBJEXT) UnitTest.$(OBJEXT) ExsdirTest.$(OBJEXT) \
-	utilsTest.$(OBJEXT)
+	ChartTest.$(OBJEXT) ExsdirTest.$(OBJEXT) \
+	translate_isomerTest.$(OBJEXT) utilsTest.$(OBJEXT) \
+	UnitTest.$(OBJEXT)
 TestRunner_OBJECTS = $(am_TestRunner_OBJECTS)
 TestRunner_DEPENDENCIES = libndatk.a
 DEFAULT_INCLUDES = -I. -I$(srcdir)
@@ -155,19 +156,21 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CXXFLAGS = -ansi -pedantic -Wall 
 include_INCLUDES = ndatk.hh Library.hh Chart.hh Exsdir.hh \
-	translate_Isomer.hh utils.hh constants.hh
+	translate_isomer.hh utils.hh constants.hh
 
 lib_LIBRARIES = libndatk.a
 libndatk_a_SOURCES = CuratedData.cc CuratedData.hh \
 	Chart.cc Chart.hh Exsdir.cc Exsdir.hh Library.cc Library.hh \
-	translate_Isomer.cc translate_Isomer.hh \
+	translate_isomer.cc translate_isomer.hh \
 	utils.cc utils.hh constants.hh
 
 TestRunner_SOURCES = TestRunner.cc \
 	LibraryTest.cc LibraryTest.hh \
 	ChartTest.cc ChartTest.hh \
-	UnitTest.cc UnitTest.hh ExsdirTest.cc ExsdirTest.hh \
-	utilsTest.cc utilsTest.hh
+	ExsdirTest.cc ExsdirTest.hh \
+	translate_isomerTest.cc translate_isomer.hh \
+	utilsTest.cc utilsTest.hh \
+	UnitTest.cc UnitTest.hh 
 
 TestRunner_LDADD = libndatk.a
 TESTS = TestRunner
@@ -259,7 +262,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LibraryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestRunner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnitTest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/translate_Isomer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/translate_isomer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/translate_isomerTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utilsTest.Po@am__quote@
 
