@@ -20,6 +20,9 @@ namespace ndatk
     // Construct Library from vector of table identifiers and Exsdir
     Library(const std::vector<std::string>  &ids_, const Exsdir &e);
 
+    // Number of tables 
+    int number_of_tables(void) const;
+
     // Return and rememeber table identifier for name
     std::string table_identifier(std::string name);
 

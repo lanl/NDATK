@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "translate_Isomer.hh"
+#include "translate_isomer.hh"
 
 using namespace std;
 using namespace ndatk;
@@ -15,7 +15,7 @@ int main()
   for (int i = 0; i < n; i++) {
     string s = zaids[i];
     cout << s << ": ";
-    cout << translate_Isomer(s) << endl;
+    cout << translate_isomer(s) << endl;
   }
   return 0;
 }

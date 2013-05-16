@@ -35,8 +35,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 noinst_PROGRAMS = test_Chart$(EXEEXT) use1_Chart$(EXEEXT) \
-	test_Exsdir$(EXEEXT) test_translate_Isomer$(EXEEXT) \
-	test_utils$(EXEEXT)
+	test_Exsdir$(EXEEXT) use0_Library$(EXEEXT) \
+	test_translate_isomer$(EXEEXT) test_utils$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -53,13 +53,16 @@ test_Chart_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_Exsdir_OBJECTS = test_Exsdir-test_Exsdir.$(OBJEXT)
 test_Exsdir_OBJECTS = $(am_test_Exsdir_OBJECTS)
 test_Exsdir_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am_test_translate_Isomer_OBJECTS =  \
-	test_translate_Isomer-test_translate_Isomer.$(OBJEXT)
-test_translate_Isomer_OBJECTS = $(am_test_translate_Isomer_OBJECTS)
-test_translate_Isomer_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_test_translate_isomer_OBJECTS =  \
+	test_translate_isomer-test_translate_isomer.$(OBJEXT)
+test_translate_isomer_OBJECTS = $(am_test_translate_isomer_OBJECTS)
+test_translate_isomer_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_utils_OBJECTS = test_utils-test_utils.$(OBJEXT)
 test_utils_OBJECTS = $(am_test_utils_OBJECTS)
 test_utils_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_use0_Library_OBJECTS = use0_Library-use0_Library.$(OBJEXT)
+use0_Library_OBJECTS = $(am_use0_Library_OBJECTS)
+use0_Library_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_use1_Chart_OBJECTS = use1_Chart-use1_Chart.$(OBJEXT)
 use1_Chart_OBJECTS = $(am_use1_Chart_OBJECTS)
 use1_Chart_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -72,11 +75,11 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
-	$(test_translate_Isomer_SOURCES) $(test_utils_SOURCES) \
-	$(use1_Chart_SOURCES)
+	$(test_translate_isomer_SOURCES) $(test_utils_SOURCES) \
+	$(use0_Library_SOURCES) $(use1_Chart_SOURCES)
 DIST_SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
-	$(test_translate_Isomer_SOURCES) $(test_utils_SOURCES) \
-	$(use1_Chart_SOURCES)
+	$(test_translate_isomer_SOURCES) $(test_utils_SOURCES) \
+	$(use0_Library_SOURCES) $(use1_Chart_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -156,15 +159,18 @@ ndatk_LIB = ../src/libndatk.a
 test_Chart_SOURCES = test_Chart.cc
 test_Chart_LDADD = $(ndatk_LIB)
 test_Chart_CXXFLAGS = $(ndatk_INCLUDE)
+use0_Library_SOURCES = use0_Library.cc
+use0_Library_LDADD = $(ndatk_LIB)
+use0_Library_CXXFLAGS = $(ndatk_INCLUDE)
 use1_Chart_SOURCES = use1_Chart.cc
 use1_Chart_LDADD = $(ndatk_LIB)
 use1_Chart_CXXFLAGS = $(ndatk_INCLUDE)
 test_Exsdir_SOURCES = test_Exsdir.cc
 test_Exsdir_LDADD = $(ndatk_LIB)
 test_Exsdir_CXXFLAGS = $(ndatk_INCLUDE)
-test_translate_Isomer_SOURCES = test_translate_Isomer.cc
-test_translate_Isomer_LDADD = $(ndatk_LIB)
-test_translate_Isomer_CXXFLAGS = $(ndatk_INCLUDE)
+test_translate_isomer_SOURCES = test_translate_isomer.cc
+test_translate_isomer_LDADD = $(ndatk_LIB)
+test_translate_isomer_CXXFLAGS = $(ndatk_INCLUDE)
 test_utils_SOURCES = test_utils.cc
 test_utils_LDADD = $(ndatk_LIB)
 test_utils_CXXFLAGS = $(ndatk_INCLUDE)
@@ -210,12 +216,15 @@ test_Chart$(EXEEXT): $(test_Chart_OBJECTS) $(test_Chart_DEPENDENCIES)
 test_Exsdir$(EXEEXT): $(test_Exsdir_OBJECTS) $(test_Exsdir_DEPENDENCIES) 
 	@rm -f test_Exsdir$(EXEEXT)
 	$(CXXLINK) $(test_Exsdir_LDFLAGS) $(test_Exsdir_OBJECTS) $(test_Exsdir_LDADD) $(LIBS)
-test_translate_Isomer$(EXEEXT): $(test_translate_Isomer_OBJECTS) $(test_translate_Isomer_DEPENDENCIES) 
-	@rm -f test_translate_Isomer$(EXEEXT)
-	$(CXXLINK) $(test_translate_Isomer_LDFLAGS) $(test_translate_Isomer_OBJECTS) $(test_translate_Isomer_LDADD) $(LIBS)
+test_translate_isomer$(EXEEXT): $(test_translate_isomer_OBJECTS) $(test_translate_isomer_DEPENDENCIES) 
+	@rm -f test_translate_isomer$(EXEEXT)
+	$(CXXLINK) $(test_translate_isomer_LDFLAGS) $(test_translate_isomer_OBJECTS) $(test_translate_isomer_LDADD) $(LIBS)
 test_utils$(EXEEXT): $(test_utils_OBJECTS) $(test_utils_DEPENDENCIES) 
 	@rm -f test_utils$(EXEEXT)
 	$(CXXLINK) $(test_utils_LDFLAGS) $(test_utils_OBJECTS) $(test_utils_LDADD) $(LIBS)
+use0_Library$(EXEEXT): $(use0_Library_OBJECTS) $(use0_Library_DEPENDENCIES) 
+	@rm -f use0_Library$(EXEEXT)
+	$(CXXLINK) $(use0_Library_LDFLAGS) $(use0_Library_OBJECTS) $(use0_Library_LDADD) $(LIBS)
 use1_Chart$(EXEEXT): $(use1_Chart_OBJECTS) $(use1_Chart_DEPENDENCIES) 
 	@rm -f use1_Chart$(EXEEXT)
 	$(CXXLINK) $(use1_Chart_LDFLAGS) $(use1_Chart_OBJECTS) $(use1_Chart_LDADD) $(LIBS)
@@ -228,8 +237,9 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Chart-test_Chart.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Exsdir-test_Exsdir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_translate_isomer-test_translate_isomer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_utils-test_utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use0_Library-use0_Library.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use1_Chart-use1_Chart.Po@am__quote@
 
 .cc.o:
@@ -274,19 +284,19 @@ test_Exsdir-test_Exsdir.obj: test_Exsdir.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_Exsdir_CXXFLAGS) $(CXXFLAGS) -c -o test_Exsdir-test_Exsdir.obj `if test -f 'test_Exsdir.cc'; then $(CYGPATH_W) 'test_Exsdir.cc'; else $(CYGPATH_W) '$(srcdir)/test_Exsdir.cc'; fi`
 
-test_translate_Isomer-test_translate_Isomer.o: test_translate_Isomer.cc
-@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_Isomer_CXXFLAGS) $(CXXFLAGS) -MT test_translate_Isomer-test_translate_Isomer.o -MD -MP -MF "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Tpo" -c -o test_translate_Isomer-test_translate_Isomer.o `test -f 'test_translate_Isomer.cc' || echo '$(srcdir)/'`test_translate_Isomer.cc; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Tpo" "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Po"; else rm -f "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_translate_Isomer.cc' object='test_translate_Isomer-test_translate_Isomer.o' libtool=no @AMDEPBACKSLASH@
+test_translate_isomer-test_translate_isomer.o: test_translate_isomer.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_isomer_CXXFLAGS) $(CXXFLAGS) -MT test_translate_isomer-test_translate_isomer.o -MD -MP -MF "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo" -c -o test_translate_isomer-test_translate_isomer.o `test -f 'test_translate_isomer.cc' || echo '$(srcdir)/'`test_translate_isomer.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo" "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Po"; else rm -f "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_translate_isomer.cc' object='test_translate_isomer-test_translate_isomer.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_Isomer_CXXFLAGS) $(CXXFLAGS) -c -o test_translate_Isomer-test_translate_Isomer.o `test -f 'test_translate_Isomer.cc' || echo '$(srcdir)/'`test_translate_Isomer.cc
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_isomer_CXXFLAGS) $(CXXFLAGS) -c -o test_translate_isomer-test_translate_isomer.o `test -f 'test_translate_isomer.cc' || echo '$(srcdir)/'`test_translate_isomer.cc
 
-test_translate_Isomer-test_translate_Isomer.obj: test_translate_Isomer.cc
-@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_Isomer_CXXFLAGS) $(CXXFLAGS) -MT test_translate_Isomer-test_translate_Isomer.obj -MD -MP -MF "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Tpo" -c -o test_translate_Isomer-test_translate_Isomer.obj `if test -f 'test_translate_Isomer.cc'; then $(CYGPATH_W) 'test_translate_Isomer.cc'; else $(CYGPATH_W) '$(srcdir)/test_translate_Isomer.cc'; fi`; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Tpo" "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Po"; else rm -f "$(DEPDIR)/test_translate_Isomer-test_translate_Isomer.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_translate_Isomer.cc' object='test_translate_Isomer-test_translate_Isomer.obj' libtool=no @AMDEPBACKSLASH@
+test_translate_isomer-test_translate_isomer.obj: test_translate_isomer.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_isomer_CXXFLAGS) $(CXXFLAGS) -MT test_translate_isomer-test_translate_isomer.obj -MD -MP -MF "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo" -c -o test_translate_isomer-test_translate_isomer.obj `if test -f 'test_translate_isomer.cc'; then $(CYGPATH_W) 'test_translate_isomer.cc'; else $(CYGPATH_W) '$(srcdir)/test_translate_isomer.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo" "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Po"; else rm -f "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_translate_isomer.cc' object='test_translate_isomer-test_translate_isomer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_Isomer_CXXFLAGS) $(CXXFLAGS) -c -o test_translate_Isomer-test_translate_Isomer.obj `if test -f 'test_translate_Isomer.cc'; then $(CYGPATH_W) 'test_translate_Isomer.cc'; else $(CYGPATH_W) '$(srcdir)/test_translate_Isomer.cc'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_isomer_CXXFLAGS) $(CXXFLAGS) -c -o test_translate_isomer-test_translate_isomer.obj `if test -f 'test_translate_isomer.cc'; then $(CYGPATH_W) 'test_translate_isomer.cc'; else $(CYGPATH_W) '$(srcdir)/test_translate_isomer.cc'; fi`
 
 test_utils-test_utils.o: test_utils.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_utils_CXXFLAGS) $(CXXFLAGS) -MT test_utils-test_utils.o -MD -MP -MF "$(DEPDIR)/test_utils-test_utils.Tpo" -c -o test_utils-test_utils.o `test -f 'test_utils.cc' || echo '$(srcdir)/'`test_utils.cc; \
@@ -301,6 +311,20 @@ test_utils-test_utils.obj: test_utils.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_utils.cc' object='test_utils-test_utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_utils_CXXFLAGS) $(CXXFLAGS) -c -o test_utils-test_utils.obj `if test -f 'test_utils.cc'; then $(CYGPATH_W) 'test_utils.cc'; else $(CYGPATH_W) '$(srcdir)/test_utils.cc'; fi`
+
+use0_Library-use0_Library.o: use0_Library.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use0_Library_CXXFLAGS) $(CXXFLAGS) -MT use0_Library-use0_Library.o -MD -MP -MF "$(DEPDIR)/use0_Library-use0_Library.Tpo" -c -o use0_Library-use0_Library.o `test -f 'use0_Library.cc' || echo '$(srcdir)/'`use0_Library.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/use0_Library-use0_Library.Tpo" "$(DEPDIR)/use0_Library-use0_Library.Po"; else rm -f "$(DEPDIR)/use0_Library-use0_Library.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='use0_Library.cc' object='use0_Library-use0_Library.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use0_Library_CXXFLAGS) $(CXXFLAGS) -c -o use0_Library-use0_Library.o `test -f 'use0_Library.cc' || echo '$(srcdir)/'`use0_Library.cc
+
+use0_Library-use0_Library.obj: use0_Library.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use0_Library_CXXFLAGS) $(CXXFLAGS) -MT use0_Library-use0_Library.obj -MD -MP -MF "$(DEPDIR)/use0_Library-use0_Library.Tpo" -c -o use0_Library-use0_Library.obj `if test -f 'use0_Library.cc'; then $(CYGPATH_W) 'use0_Library.cc'; else $(CYGPATH_W) '$(srcdir)/use0_Library.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/use0_Library-use0_Library.Tpo" "$(DEPDIR)/use0_Library-use0_Library.Po"; else rm -f "$(DEPDIR)/use0_Library-use0_Library.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='use0_Library.cc' object='use0_Library-use0_Library.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use0_Library_CXXFLAGS) $(CXXFLAGS) -c -o use0_Library-use0_Library.obj `if test -f 'use0_Library.cc'; then $(CYGPATH_W) 'use0_Library.cc'; else $(CYGPATH_W) '$(srcdir)/use0_Library.cc'; fi`
 
 use1_Chart-use1_Chart.o: use1_Chart.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use1_Chart_CXXFLAGS) $(CXXFLAGS) -MT use1_Chart-use1_Chart.o -MD -MP -MF "$(DEPDIR)/use1_Chart-use1_Chart.Tpo" -c -o use1_Chart-use1_Chart.o `test -f 'use1_Chart.cc' || echo '$(srcdir)/'`use1_Chart.cc; \

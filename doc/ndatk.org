@@ -3,7 +3,7 @@
   0. Curated Data
   1. Continuous Energy Libraries
   2. MG zaid => CE zaid
-  3. Several users
+  3. Several users => polyvalent program pattern
   4. NDI sza translation features
   5. NDI multi-temperature features
 

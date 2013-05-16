@@ -1,6 +1,7 @@
 #include <fstream>
 #include <algorithm>
 #include <functional>
+#include <iostream>
 
 #include "Library.hh"
 #include "utils.hh"
@@ -36,6 +37,7 @@ namespace ndatk
   Library::Library(string id, const Exsdir &x): CuratedData(), ids(), e(x) 
   {
     string filename = e.file_name(id);
+    cout << id << ": " << filename << endl;
     ifstream s(filename.c_str());
     Library::parse(s);
     s.close();
@@ -45,6 +47,12 @@ namespace ndatk
   Library::Library(const vector<string> &ids_, const Exsdir &x):
     CuratedData(), ids(ids_), e(x)
   {
+  }
+
+  // Number of tables
+  int Library::number_of_tables(void) const
+  {
+    return ids.size();
   }
 
   // Return table identifier isomer name
