@@ -7,6 +7,11 @@
   4. NDI sza translation features
   5. NDI multi-temperature features
 
+** Quotes
+   - "If you dont' think too good, don't think too much" -- Ted Williams
+   - "Je n'ai fait celle-ci plus longue que parce que je n'ai pas eu loisir
+      del la faire plus courte" (I made this very long because I did not
+      have the leasure to make it shorter) -- Blaise Pascal
 * xsdir deconstructed
 ** DATAPATH
    Policy on how to find data
@@ -19,18 +24,25 @@
 * NDI deconstructed
 ** Readers
    Record-Jar format
+
 ** Finite State Machine
    
 ** Application Programming Interface
-   ndi2_get_[int|float|string]_[val|vec](handle, KEY) 
-   ndi2_get_[int|float|string]_[val|vec]_n(handle, KEY, index)
-   ndi2_get_[int|float|string]_[val|vec]_x(handle, KEY, name)
+   ndi2_get_[int|float|string]_[val|vec](gendir, KEY) 
+   ndi2_get_[int|float|string]_[val|vec]_n(gendir, KEY, index)
+   ndi2_get_[int|float|string]_[val|vec]_x(gendir, KEY, name)
    
 * ndatk constructed
 ** API
-   handle.key()
-   handle.key(index)
-   handle.key(name)
+   exsdir.key()
+   exsdir.key(index)
+   exsdir.key(name)
+   
+** Readers
+   Record-Jar format
+   "Some people, when confronted with a problem think: 'I know, I'll
+   use regular expressions.'  Now they have *two* problems" -- Jamie
+   Zawinski 
 
 ** Chart constructed
   - Element's chemical symbol, atomic weight, and chemical name
