@@ -66,6 +66,19 @@ namespace ndatk
     this->info = "Exsdir";
   }
 
+  // Is object in valid state?
+  bool Exsdir::is_valid(void) const
+  {
+    
+    // Every identifier in vector of table ids must be in directory
+    for (vector<string>::const_iterator p = order.begin(); 
+         p != order.end(); p++)
+      if (directory.find(*p) == directory.end())
+        return false;
+    return true;
+  }
+
+  vector<string>::const_iterator p;
   // Number of tables
   int Exsdir::number_of_tables(void) const
   {

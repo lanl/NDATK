@@ -58,6 +58,16 @@ namespace ndatk
     return ids.size();
   }
 
+  // Is object in valid state?
+  bool Library::is_valid(void) const
+  {
+    for (vector<string>::const_iterator p = ids.begin(); 
+         p != ids.end(); p++)
+      if (e.table_identifier(*p) != *p)
+        return false;
+    return true;
+  }
+  
   // Return table identifier isomer name
   string Library::table_identifier(string name)
   {

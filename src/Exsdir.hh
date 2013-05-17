@@ -23,6 +23,9 @@ namespace ndatk
     // Read Exsdir from stream
     friend std::istream &operator>>(std::istream &s, Exsdir &e);
 
+    // Is object in valid state?
+    bool is_valid(void) const;
+
     // Number of tables 
     int number_of_tables(void) const;
 

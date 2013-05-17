@@ -3,6 +3,7 @@
 
 void ExsdirTest::runTest(void)
 {
+  UT_ASSERT(x.is_valid());
   // Exsdir header info
   UT_ASSERT(x.process_date() == "09/03/2008");
 
