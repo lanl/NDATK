@@ -1,4 +1,4 @@
-#include <ios>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -61,8 +61,11 @@ namespace ndatk
   // Construct Chart from data on filename
   Chart::Chart(string filename)
   {
-    ifstream s;
-    // s.exceptions(ifstream::failbit);
+    ifstream s(filename.c_str());
+    if (!s) {
+      cerr << "Cannot open file " << filename << endl;
+      exit(1);
+    }
     s.open(filename.c_str());
     s >> *this;
     s.close();
@@ -73,6 +76,10 @@ namespace ndatk
   {
     string filename = e.file_name(id);
     ifstream s(filename.c_str());
+    if (!s) {
+      cerr << "Cannot open file " << filename << endl;
+      exit(1);
+    }
     s >> *this;
     s.close();
   }    

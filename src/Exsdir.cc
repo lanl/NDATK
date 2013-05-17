@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -29,6 +30,10 @@ namespace ndatk
       } else if (starts_with_nocase(line, "INCLUDE")) {
         fields = split(line);
         ifstream f1(fields[1].c_str());
+        if (!f1) {
+          cerr << "Cannot open file " << fields[1] << endl;
+          exit(1);
+        }
         f1 >> e;
         f1.close();
       } else if (state == AWR) {
@@ -50,9 +55,11 @@ namespace ndatk
   // Construct Exsdir from data on named file
   Exsdir::Exsdir(const string filename)
   {
-    ifstream s;
-    // s.exceptions(std::ifstream::failbit|std::ifstream::badbit);
-    s.open(filename.c_str());
+    ifstream s(filename.c_str());
+    if (!s) {
+      cerr << "Cannot open file " << filename << endl;
+      exit(1);
+    }
     s >> *this;
     s.close();
     this->id = filename;

@@ -8,8 +8,78 @@
 #include <vector>
 #include <istream>
 #include <sstream>
+#include <map>
 
 namespace ndatk {
+
+  /* Return true if c is whitespace.
+   *
+   * Necessary disambiguation of polymorphic isspace in cctype.
+   * See "Accelerated C++", pg 103  
+   */
+  inline bool is_space(char c) {
+    return isspace(c);
+  }
+
+  /* Return true if c isn't whitespace.
+   *
+   * Necessary disambiguation of polymorphic isspace in cctype.
+   * See "Accelerated C++", pg 103  
+   */
+  inline bool not_space(char c) {
+    return !isspace(c);
+  }
+
+  // Is string all alphas?
+  extern bool is_all_alphas(const std::string &s);
+
+  // Is string all digits?
+  extern bool is_all_digits(const std::string &s);
+
+  // Compare string to date pattern
+  extern bool is_date(const std::string &);
+
+  // Compare start of first string with second
+  inline bool starts_with(std::string s1, std::string s2) {
+    return 0 == s1.compare(0, s2.size(), s2);
+  }
+
+  // Compare two strings; ingnore case.
+  extern int cmp_nocase(const std::string &, const std::string &);
+
+  // Compare start of first string with second; ignore case.
+  extern bool starts_with_nocase(const std::string &, const std::string &);
+
+  // Erase initial whitespace from string.
+  inline std::string ltrim(const std::string &x) {
+    std::string s(x);
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), not_space)); 
+    return s;
+  }
+
+  // Erase trailing whitespace from string.
+  inline std::string rtrim(const std::string &x) {
+    std::string s(x);
+    s.erase(std::find_if(s.rbegin(), s.rend(), not_space).base(), s.end());
+    return s;
+  }
+
+  // Erase whitespace surrounding string.
+  inline std::string trim(const std::string &s) {
+    return ltrim(rtrim(s));
+  }
+
+  // Capitalize first character, lowercase others
+  extern std::string title(const std::string s);
+ 
+  // Split string into vector of words.
+  extern std::vector<std::string> split(const std::string &s);
+
+  // Get Logical line from stream.
+  extern std::istream &get_logical_line(std::istream &s, std::string &line);
+
+  // Get quoted string from stream.
+  extern std::istream &quoted_str(std::istream &is, std::string &s);
 
   /* Const accessor to map.
    *
@@ -24,16 +94,6 @@ namespace ndatk {
       throw std::out_of_range("Key not found in map!");
     }
     return it -> second;
-  }
-
-  /* Convert string to T
-   *
-   */
-  template <typename T>
-  bool from_string(T &t, const std::string &s)
-  {
-    std::istringstream iss(s);
-    return !(iss >> t).fail();
   }
 
   /* Convert Source to Target type through stringstream.
@@ -54,71 +114,5 @@ namespace ndatk {
     return result;
   }
 
-  /* Return true if c is whitespace.
-   *
-   * Necessary disambiguation of polymorphic isspace in cctype.
-   * See "Accelerated C++", pg 103  
-   */
-  inline bool is_space(char c) {
-    return isspace(c);
-  }
-
-  /* Return true if c isn't whitespace.
-   *
-   * Necessary disambiguation of polymorphic isspace in cctype.
-   * See "Accelerated C++", pg 103  
-   */
-  inline bool not_space(char c) {
-    return !isspace(c);
-  }
-
-  // Erase initial whitespace from string.
-  inline std::string &ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), not_space)); 
-    return s;
-  }
-
-  // Erase trailing whitespace from string.
-  inline std::string &rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), not_space).base(), s.end());
-    return s;
-  }
-
-  // Erase whitespace surrounding string.
-  inline std::string &trim(std::string &s) {
-    return ltrim(rtrim(s));
-  }
-
-  // Compare two strings; ingnore case.
-  extern int cmp_nocase(const std::string &, const std::string &);
-
-  // Compare start of first string with second
-  inline bool starts_with(std::string s1, std::string s2) {
-    return 0 == s1.compare(0, s2.size(), s2);
-  }
-
-  // Compare start of first string with second; ignore case.
-  extern bool starts_with_nocase(const std::string &, const std::string &);
-
-  // Compare string to date pattern
-  extern bool is_date(const std::string &);
-
-  // Split string into vector of words.
-  extern std::vector<std::string> split(const std::string &s);
-
-  // Get Logical line from stream.
-  extern std::istream &get_logical_line(std::istream &s, std::string &line);
-
-  // Get quoted string from stream.
-  extern std::istream &quoted_str(std::istream &is, std::string &s);
-
-  // Capitalize first character, lowercase others
-  extern std::string title(const std::string s);
- 
-  // Is string all alphas?
-  extern bool is_all_alphas(const std::string &s);
-
-  // Is string all digits?
-  extern bool is_all_digits(const std::string &s);
 }
 #endif

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <functional>
@@ -37,6 +38,10 @@ namespace ndatk
   {
     string filename = e.file_name(id);
     ifstream s(filename.c_str());
+    if (!s) {
+      cerr << "Cannot open file " << filename << endl;
+      exit(1);
+    }
     Library::parse(s);
     s.close();
   }

@@ -22,8 +22,13 @@ void translate_isomerTest::runTest()
       UT_ASSERT(calculate_SZA(Z, A) == ZA);
       UT_ASSERT(extract_Z(ZA) == Z);
       UT_ASSERT(extract_A(ZA) == A);
-      string C_N = C + lexical_cast<string, int>(A);
-      string N_C = lexical_cast<string, int>(A) + C;
+      string N = lexical_cast<string, int>(A);
+      string C_N = C + N;
+      string N_C = N + C;
+      UT_ASSERT(translate_isomer(C_N) == ZA);
+      UT_ASSERT(translate_isomer(N_C) == ZA);
+      C_N = C + "-" + N;
+      N_C = N + "-" + C;
       UT_ASSERT(translate_isomer(C_N) == ZA);
       UT_ASSERT(translate_isomer(N_C) == ZA);
       for (int S = 0; S < 3; S++) {
@@ -35,6 +40,10 @@ void translate_isomerTest::runTest()
           + lexical_cast<string, int>(S);
         string C_Nm = C + "-" + Nm;
         string Nm_C = Nm + "-" + C;
+        UT_ASSERT(translate_isomer(C_Nm) == SZA);
+        UT_ASSERT(translate_isomer(Nm_C) == SZA);
+        C_Nm = C + Nm;
+        Nm_C = Nm + C;
         UT_ASSERT(translate_isomer(C_Nm) == SZA);
         UT_ASSERT(translate_isomer(Nm_C) == SZA);
       }
