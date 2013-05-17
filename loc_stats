@@ -1,0 +1,29 @@
+#! /bin/bash
+# Gather lines of code statistics from src, test directories
+
+LIB="Library.cc Library.hh \
+Chart.cc Chart.hh \
+Exsdir.cc Exsdir.hh \
+CuratedData.cc CuratedData.hh \
+translate_isomer.cc translate_isomer.hh \
+utils.cc utils.hh"
+
+UNIT="LibraryTest.cc LibraryTest.hh \
+ChartTest.cc ChartTest.hh \
+ExsdirTest.cc ExsdirTest.hh \
+translate_isomerTest.cc translate_isomerTest.hh \
+utilsTest.cc utilsTest.hh \
+UnitTest.cc UnitTest.hh"
+
+USE="use0_Library.cc use1_Chart.cc \
+test_Chart.cc test_Exsdir.cc \
+test_utils.cc test_translate_isomer.cc"
+
+echo "Library source:"
+(cd src; kloc $LIB)
+
+echo "Unit tests:"
+(cd src; kloc $UNIT)
+
+echo "Use cases:"
+(cd test; kloc $USE)  
