@@ -13,10 +13,10 @@
    C      = 'H'|'He'|...|'Lw';
    N      = D,{D};
    D      = '0'|'1'|...|'9';
-   Y_Nm   = Y, '-', Nm
-          | Y, Nm;
-   Nm_Y   = Nm, '-', Y
-          | Nm, Y;
+   C_Nm   = C, '-', Nm
+          | C, Nm;
+   Nm_C   = Nm, '-', C
+          | Nm, C;
    Nm     = N
           | N, 'm', N;
 */
@@ -30,7 +30,7 @@ namespace ndatk
   extern const std::map<std::string, int> symbol_to_Z;
 
   // Translate isomer string to canonial SZA.
-  extern int translate_Isomer(std::string isomer);
+  extern int translate_isomer(std::string isomer);
 
   // Extract S from canonical SZA.
   inline int extract_S(int sza) { return sza/1000000; }
@@ -40,6 +40,11 @@ namespace ndatk
 
   // Extract A from canonical SZA.
   inline int extract_A(int sza) { return sza%1000; }
+
+  // Calculate canonical SZA from state, atomic, mass numbers
+  inline int calculate_SZA(int Z, int A=0, int S=0) {
+    return S*1000000+Z*1000+A;
+  }
 
 }
 #endif

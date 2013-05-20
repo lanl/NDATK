@@ -1,8 +1,10 @@
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
 #include "Chart.hh"
-#include "translate_Isomer.hh"
+#include "translate_isomer.hh"
 #include "utils.hh"
 #include "constants.hh"
 
@@ -19,24 +21,22 @@ namespace ndatk
       return sza;
   }
 
-  // Construct Chart of the Nuclides from input stream
-  void Chart::parse(istream &s)
+  // Read a Chart of the Nuclides from a stream
+  istream &operator>>(istream &s, Chart &c)
   {
     string line;
     enum states {START, TABLE, CHART}; // Parser states
     states state = START;
 
     int sza;
-    ElementData e;
-    NuclideData n;
-
+    
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, name);
+        get_logical_line(s, c.id);
       } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, date);
+        get_logical_line(s, c.date);
       } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, info);
+        get_logical_line(s, c.info);
       } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
         state = TABLE;
       } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {
@@ -44,203 +44,181 @@ namespace ndatk
       } else if (state == TABLE) {
         // function split: tokenize line into words
         istringstream iline(line);
+        Chart::ElementData e;
         iline >> sza >> e.symbol >> e.at_wgt >> e.name;
-        element.push_back(e);
+        c.element.push_back(e);
       } else if (state == CHART) {
         // function split: tokenize line into words
         istringstream iline(line);
+        Chart::NuclideData n;
         iline >> sza >> n.awr >> n.abundance >> n.half_life;
-        nuclide.insert(Nuclide_map::value_type(sza, n));
+        c.nuclide.insert(Chart::Nuclide_map::value_type(sza, n));
       }
     }
-  }
-
-  // Construct Chart from data in stream
-  Chart::Chart(std::istream& s)
-  {
-    Chart::parse(s);
+    return s;
   }
 
   // Construct Chart from data on filename
-  Chart::Chart(std::string filename)
+  Chart::Chart(string filename)
   {
-    std::ifstream s(filename.c_str());
-    Chart::parse(s);
+    ifstream s(filename.c_str());
+    if (!s) {
+      cerr << "Cannot open file " << filename << endl;
+      exit(1);
+    }
+    s.open(filename.c_str());
+    s >> *this;
     s.close();
   }
 
-  // Return int value based on key
-  int Chart::get(int_val::key k) const
+  // Construct Chart from id and Exsdir
+  Chart::Chart(string id, Exsdir &e)
   {
-    switch (k) {
-    case int_val::NUM_ELEMENTS:
-      return element.size();
-      break;
-    case int_val::NUM_NUCLIDES:
-      return nuclide.size();
-      break;
-    default:
-      throw out_of_range("Key not found!");
+    string filename = e.file_name(id);
+    ifstream s(filename.c_str());
+    if (!s) {
+      cerr << "Cannot open file " << filename << endl;
+      exit(1);
     }
-    return 0;
+    s >> *this;
+    s.close();
+  }    
+
+  // Number of elements in element
+  int Chart::number_of_elements(void) const
+  {
+    return element.size();
   }
 
-  // Return vector of ints based on key and sza
-  vector<int> Chart::get(int_vec_n::key k, int sza) const
+  // Number of nuclides in nuclide
+  int Chart::number_of_nuclides(void) const
   {
-    vector<int> v;
+    return nuclide.size();
+  }
+  
+  // Vector of isotopes in element by atomic number
+  vector<int> Chart::isotopes(int Z) const
+  {
+    vector<int> result;
+    int n = canonicalize(Z);
+    for (Nuclide_map::const_iterator it = nuclide.begin();
+         it != nuclide.end(); it++)
+      if (it->first/1000 == n)
+        result.push_back(it->first);
+      return result;
+  }
+
+  // Vector of isotopes in element by chemical symbol
+  vector<int> Chart::isotopes(string name) const
+  {
+    int sza = translate_isomer(name);
+    return this->isotopes(sza);
+  }
+
+  // Vector of isomers in nuclide by atomic & mass number
+  vector<int> Chart::isomers(int sza) const
+  {
+    vector<int> result;
     int n = canonicalize(sza);
-    switch(k) {
-    case int_vec_n::ISOTOPES:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (it->first/1000 == n)
-          v.push_back(it->first);
-      return v;
-      break;
-    case int_vec_n::ISOMERS:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (it->first % 1000000 == n % 1000000)
-          v.push_back(it->first);
-      return v;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return v;
+    for (Nuclide_map::const_iterator it = nuclide.begin();
+         it != nuclide.end(); it++)
+      if (it->first % 1000000 == n % 1000000)
+        result.push_back(it->first);
+    return result;
   }
 
-  // Return vector of ints based on key and name
-  vector<int> Chart::get(int_vec_x::key k, string name) const
+  // Vector of isomers in nuclide by isomer name 
+  vector<int> Chart::isomers(string name) const
   {
-    vector<int> v;
-    int sza = translate_Isomer(name);
-    switch(k) {
-    case int_vec_x::ISOTOPES:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (extract_Z(it->first) == extract_Z(sza))
-          v.push_back(it->first);
-      return v;
-      break;
-    case int_vec_x::ISOMERS:
-      for (Nuclide_map::const_iterator it = nuclide.begin();
-           it != nuclide.end(); it++)
-        if (it->first % 1000000 == sza % 1000000)
-          v.push_back(it->first);
-      return v;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return v;
+    int sza = translate_isomer(name);
+    return this->isomers(sza);
   }
-        
-  // Return string value based on key and index
-  string Chart::get(string_val_n::key k, int sza) const
+ 
+  // Chemical symbol by atomic number
+  string Chart::chemical_symbol(int Z) const
   {
-    int n = canonicalize(sza);             // Canonicalize SZA
-    switch (k) {
-    case string_val_n::SYMBOL:
-      return element.at(n).symbol;
-      break;
-    case string_val_n::NAME:
-      return element.at(n).name;
-      break;
-    default:
-      throw out_of_range("Key not found!");
-    }
-    return string("");
+    int n = canonicalize(Z);
+    return element.at(n).symbol;
+  }
+  // Element name by atomic number
+  string Chart::element_name(int Z) const
+  {
+    int n = canonicalize(Z);
+    return element.at(n).name;
   }
 
-  // Return string value based on key and name
-  string Chart::get(string_val_x::key k, string c) const
+  // Element name by isomer name
+  string Chart::element_name(string name) const
   {
-    int sza = translate_Isomer(c);
-    switch(k) {
-    case string_val_x::NAME:
-      return element.at(extract_Z(sza)).name;
-      break;
-    default:
-      string s = "Key ";
-      s += c + " not recognized!"; 
-      throw out_of_range(s);
-    }
+    int sza = translate_isomer(name);
+    return this->element_name(sza);
   }
-
-  // Return double value based on key and index
-  double Chart::get(float_val_n::key k, int sza) const
+     
+  // Atomic weight by state, mass & atomic number
+  double Chart::atomic_weight(int sza) const
   {
     unsigned int n = canonicalize(sza);
-    if (n < element.size()) {  // Element data
-      switch(k) {
-      case float_val_n::AT_WGT:
-        return element.at(n).at_wgt;
-        break;
-      case float_val_n::AWR:
-        return element.at(n).at_wgt / neutron_mass;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+    if (n < element.size()) { 
+      return element.at(n).at_wgt;
     } else {
       NuclideData d = map_at(nuclide, n);
-      switch (k) {            // Nuclide data
-      case  float_val_n::AT_WGT:
-        return d.awr * neutron_mass;
-        break;
-      case float_val_n::AWR:
-        return d.awr;
-        break;
-      case float_val_n::ABUNDANCE:
-        return d.abundance;
-        break;
-      case float_val_n::HALF_LIFE:
-        return d.half_life;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+      return d.awr * neutron_mass;
     }
-    return 0.0;
   }
 
-  // Return double value based on key and name
-  double Chart::get(float_val_x::key k, string name) const
+  // Atomic weight by isomer name
+  double Chart::atomic_weight(string name) const
   {
-    int sza = translate_Isomer(name);
-    if (extract_A(sza) == 0) {  // Element data
-      int z = extract_Z(sza);
-      switch(k) {
-      case float_val_n::AT_WGT:
-        return element.at(z).at_wgt;
-        break;
-      case float_val_n::AWR:
-        return element.at(z).at_wgt / neutron_mass;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+    int sza = translate_isomer(name);
+    return this->atomic_weight(sza);
+  }
+
+  // Atomic weight ratio by state, atomic & mass number
+  double Chart::atomic_weight_ratio(int sza) const
+  {
+    unsigned int n = canonicalize(sza);
+    if (n < element.size()) {
+      return element.at(n).at_wgt / neutron_mass;
     } else {
-      NuclideData d = map_at(nuclide, sza);
-      switch (k) {            // Nuclide data
-      case  float_val_n::AT_WGT:
-        return d.awr * neutron_mass;
-        break;
-      case float_val_n::AWR:
-        return d.awr;
-        break;
-      case float_val_n::ABUNDANCE:
-        return d.abundance;
-        break;
-      case float_val_n::HALF_LIFE:
-        return d.half_life;
-        break;
-      default:
-        throw out_of_range("Key not found!");
-      }
+      NuclideData d = map_at(nuclide, n);
+      return d.awr;
     }
-    return 0.0;
+  }
+  
+  // Atomic weight ratio by isomer name
+  double Chart::atomic_weight_ratio(string name) const
+  {
+    int sza = translate_isomer(name);
+    return this->atomic_weight_ratio(sza);
+  }
+
+  // Atom percent natural abundances by state, atomic & mass number
+  double Chart::natural_abundance(int sza) const
+  {
+    int n = canonicalize(sza);
+    NuclideData d = map_at(nuclide, n);
+    return d.abundance;
+  }
+
+  // Atom percent abundances by isomer name
+  double Chart::natural_abundance(string name) const
+  {
+    int sza = translate_isomer(name);
+    return this->natural_abundance(sza);
+  }
+
+  // Half life by state, atomic, mass number
+  double Chart::half_life(int sza) const
+  {
+    unsigned int n = canonicalize(sza);
+    NuclideData d = map_at(nuclide, n);
+    return d.half_life;
+  }
+
+  // Half life by isomer name
+  double Chart::half_life(string name) const
+  {
+    int sza = translate_isomer(name);
+    return this->half_life(sza);
   }
 }

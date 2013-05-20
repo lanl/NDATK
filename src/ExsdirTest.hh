@@ -40,7 +40,7 @@ class ExsdirTest: public UnitTest {
 
 public:
 
-  ExsdirTest(void): x(exsdir_dat) {}
+  ExsdirTest(void): x() { exsdir_dat >> x; }
 
   void runTest(void);
 

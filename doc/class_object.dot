@@ -1,0 +1,32 @@
+digraph class {
+        size="7.5,10";
+        center=1;
+        ratio=fill
+        subgraph cluster1 {
+                 rankdir=BT;
+                 node[shape=box, fontsize=24];
+                 Library -> Exsdir[dir=both,arrowhead=open,arrowtail=odiamond];
+                 Chart -> Exsdir[arrowhead=open];
+                 edge[arrowhead=empty];
+                 Chart -> CuratedData;
+                 Exsdir -> CuratedData;
+                 Library -> CuratedData;
+                 {rank=min; CuratedData}
+                 {rank=same; Library; Chart}
+                 {rank=max; Exsdir}
+        }
+        subgraph cluster2 {
+                 center=1;
+                 ratio=fill
+                 node[shape=box];
+                 chart[label="endf71x:Chart"];
+                 lanl2006[label="lanl2006:Library"];
+                 endf71x[label="endf71x:Library"];
+                 xsdir[label="xsdir:Exsdir"];
+                 edge[arrowhead=none];
+                 lanl2006 -> xsdir;
+                 endf71x -> xsdir;
+                 chart -> xsdir;
+        }
+        Exsdir -> lanl2006[style=invis,ltail=cluster0,lhead=cluster1];
+}

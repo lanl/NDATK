@@ -14,54 +14,69 @@ namespace ndatk
   {
   public:
 
-    Exsdir(const std::string filename);
-    Exsdir(std::istream &s);
+    // Default constructor
+    Exsdir(void): CuratedData(), order(), directory() {}
 
-    // Queries
-    typedef CuratedData::string_val string_val;
-    std::string get(string_val::key k) const { return CuratedData::get(k); }
+    // Construct Exsdir from named file
+    explicit Exsdir(const std::string filename);
 
-    struct string_val_n {
-      enum key {
-        ID                      // ID by index
-      };
-    };
-    std::string get(string_val_n::key, int i) const;
+    // Read Exsdir from stream
+    friend std::istream &operator>>(std::istream &s, Exsdir &e);
 
-    struct int_val_x {
-      enum key {
-        ADDRESS,                // Line or Record number by ID
-        TBL_LEN,                // Length of data block by ID
-        RCD_LEN,                // Length of Type 2 file record by ID
-        EPR                     // Number of Type 2 entries per record by ID
-      };
-    };
-    int get(int_val_x::key, std::string id) const;
+    // Is object in valid state?
+    bool is_valid(void) const;
 
-    struct string_val_x {
-      enum key {
-        NAME,                   // File name by ID
-        ROUTE,                  // Access Route by ID
-        PTABLE                  // Probability Table Flag by ID
-      };
-    };
-    std::string get(string_val_x::key, std::string id) const;
+    // Number of tables 
+    int number_of_tables(void) const;
 
-    struct float_val_x {
-      enum key {
-        AT_WGT,                 // Atomic weight (u) by ID
-        AWR,                    // Atomic weight ratio by ID
-        TEMP                    // Temperature (MeV) by ID
-      };
-    };
-    double get(float_val_x::key, std::string id) const;
+    // Table identifier by index or (partial) name
+    std::string table_identifier(int i) const;
+    std::string table_identifier(std::string name) const;
+    
+    // Line or record number by table identifier
+    int address(std::string id) const;
+
+    // Length of binary data block or zero by table identifier
+    int table_length(std::string id) const;
+
+    // Length of binary record or zero by table identifier
+    int record_length(std::string id) const;
+    
+    // Number of binary entries per record or zero by table identifier
+    int entries_per_record(std::string id) const;
+
+    // File name by table identifier
+    std::string file_name(std::string id) const;
+
+    // Directory access route or zero by table identifier
+    std::string access_route(std::string id) const;
+
+    // Probability table flag by table identifier
+    bool probability_table_flag(std::string id) const;
+
+    // Atomic weight (u) by table identifier
+    double atomic_weight(std::string id) const;
+
+    // Atomic weight ratio by table identifier
+    double atomic_weight_ratio(std::string id) const;
+
+    // Temperature (MeV) by table identifier
+    double temperature(std::string id) const;
+
+    // Define const_iterator type for Library
+    typedef std::vector<std::string>::const_iterator const_iterator;
+    
+    // Const_iterator to start of table identifiers
+    const_iterator begin(void) const;
+
+    // Const_iterator to end of table identifiers
+    const_iterator end(void) const;
 
   private:
 
-    void parse(std::istream& s);
-
     // Exsdir list of table Ids
     typedef std::vector<std::string> Id_vector;
+    Id_vector order;            // Identifier order
 
     // XSDIR directory data
     struct DirectoryData
@@ -78,9 +93,7 @@ namespace ndatk
       std::string ptable;       // probability table flag
     };
     typedef std::map<std::string, DirectoryData> Directory_map;
-
     Directory_map directory;    // Directory
-    Id_vector order;            // Identifier order
   };
 }
 #endif

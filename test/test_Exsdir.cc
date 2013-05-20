@@ -13,19 +13,19 @@ int main(int argc, char *argv[])
   ndatk::Exsdir x(argv[1]);     // parse filename
 
   // Print file header
-  std::cout << x.get(ndatk::Exsdir::string_val::NAME) << std::endl
-            << x.get(ndatk::Exsdir::string_val::DATE) << std::endl
-            << x.get(ndatk::Exsdir::string_val::INFO) << std::endl;
+  std::cout << x.identifier() << std::endl
+            << x.process_date() << std::endl
+            << x.information() << std::endl;
 
   //Print first 10 entries
 
   for (int i = 0; i != 10; i++) {
-    std::string id = x.get(ndatk::Exsdir::string_val_n::ID, i);
+    std::string id = x.table_identifier(i);
     std::cout << id << ":"
-              << " " << x.get(ndatk::Exsdir::string_val_x::NAME, id)
-              << " " << x.get(ndatk::Exsdir::int_val_x::ADDRESS, id)
-              << " " << x.get(ndatk::Exsdir::float_val_x::AT_WGT, id)
-              << " " << x.get(ndatk::Exsdir::float_val_x::TEMP, id)
+              << " " << x.file_name(id)
+              << " " << x.address(id)
+              << " " << x.atomic_weight(id)
+              << " " << x.temperature(id)
               << std::endl;
   }
   return 0;

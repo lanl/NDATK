@@ -2,12 +2,14 @@
 #include <fstream>
 #include <string>
 #include <cmath>
-#include "Chart.hh"
+#include "ndatk.hh"
+
+using namespace std;
 
 void usage(char *name)
 {
-    std::cout << "Usage: " << name << 
-      " [-v] [-p eps] filename" << std::endl;
+    cout << "Usage: " << name << 
+      " [-v] [-p eps] filename" << endl;
     exit(1);
 }
 
@@ -30,44 +32,53 @@ int main(int argc, char *argv[])
       break;
     }
   }
-  ndatk::Chart x(argv[i]);     // parse filename
+  cout << "Use Case 1:" << endl;
+  cout << "Create Exsdir from filename on command line;" << endl;
+  cout << "create Chart from name and Exsdir;" << endl;
+  cout << "calculate elemental awr from isotopic abundances and awr."
+            << endl << endl;
 
-  std::cout << "Use Case 1:" << std::endl;
-  std::cout << "Calculate elemental awr from isotopic abundances and awr."
-            << std::endl << std::endl;
+  ndatk::Exsdir e(argv[1]);
+  cout << "Created Exsdir " << e.identifier() 
+       << " with " << e.number_of_tables() << " tables." << endl;
 
-  std::cout << "Print data file header." << std::endl;
-  std::cout << x.get(ndatk::Chart::string_val::NAME) << std::endl
-            << x.get(ndatk::Chart::string_val::DATE) << std::endl
-            << x.get(ndatk::Chart::string_val::INFO) << std::endl;
-  std::cout << std::endl;
+  ndatk::Chart x("chart", e);     // parse filename
+  cout << "Created Chart " << x.identifier()
+       << " with " << x.number_of_elements() << " elements" 
+       << " and " << x.number_of_nuclides() << " nuclides." << endl;
+
+  cout << "Print data file header." << endl;
+  cout << x.identifier() << endl
+            << x.process_date() << endl
+            << x.information() << endl;
+  cout << endl;
 
   if (verbose)
-    std::cout << "For all elements:" << std::endl;
+    cout << "For all elements:" << endl;
   else
-    std::cout << "For elements where the relative difference in "
-              << " abundance or awr exceeds " << eps << ":" << std::endl;
-  for (int i = 1; i < x.get(ndatk::Chart::int_val::NUM_ELEMENTS); i++) {
-    std::string symbol = x.get(ndatk::Chart::string_val_n::SYMBOL, i);
-    std::vector<int> za = x.get(ndatk::Chart::int_vec_x::ISOTOPES, symbol);
+    cout << "For elements where the relative difference in "
+              << " abundance or awr exceeds " << eps << ":" << endl;
+  for (int i = 1; i < x.number_of_elements(); i++) {
+    string symbol = x.chemical_symbol(i);
+    vector<int> za = x.isotopes(symbol);
     double abundance;
     double sum_abundance = 0.0;
     double avg_awr = 0.0;
-    double awr = x.get(ndatk::Chart::float_val_x::AWR, symbol);
+    double awr = x.atomic_weight_ratio(symbol);
     for (int i = 0; i < za.size(); i++) {
-      abundance = x.get(ndatk::Chart::float_val_n::ABUNDANCE, za[i]);
+      abundance = x.natural_abundance(za[i]);
       if (abundance != 0.0) {
         sum_abundance += abundance;
-        avg_awr += abundance * x.get(ndatk::Chart::float_val_n::AWR, za[i]);
+        avg_awr += abundance * x.atomic_weight_ratio(za[i]);
       }
     }
     if (verbose ||
         fabs(sum_abundance - 1.0) > eps || 
         fabs(awr - avg_awr)/awr > eps) { 
-      std::cout << symbol << ": " << 
+      cout << symbol << ": " << 
         "At " << sum_abundance * 100.0 << " percent abundance, " <<
         " AWR = " << avg_awr << " compared to " << 
-        awr << std::endl;
+        awr << endl;
     }
   }
   return 0;

@@ -1,0 +1,41 @@
+$ ./loc_stats
+Library source:
+    0.046 Library.cc
+    0.025 Library.hh
+    0.080 Chart.cc
+    0.033 Chart.hh
+    0.063 Exsdir.cc
+    0.035 Exsdir.hh
+    0.005 CuratedData.cc
+    0.008 CuratedData.hh
+    0.159 translate_isomer.cc
+    0.014 translate_isomer.hh
+    0.065 utils.cc
+    0.028 utils.hh
+    0.561 total
+Unit tests:
+    0.026 LibraryTest.cc
+    0.021 LibraryTest.hh
+    0.025 ChartTest.cc
+    0.007 ChartTest.hh
+    0.030 ExsdirTest.cc
+    0.007 ExsdirTest.hh
+    0.039 translate_isomerTest.cc
+    0.002 translate_isomerTest.hh
+    0.065 utilsTest.cc
+    0.002 utilsTest.hh
+    0.005 UnitTest.cc
+    0.005 UnitTest.hh
+    0.234 total
+Use cases:
+    0.018 use0_Library.cc
+    0.038 use1_Chart.cc
+    0.018 test_Chart.cc
+    0.008 test_Exsdir.cc
+    0.006 test_utils.cc
+    0.009 test_translate_isomer.cc
+    0.097 total
+
+$ ./TestRunner
+SUCCESS!
+275272 tests completed.

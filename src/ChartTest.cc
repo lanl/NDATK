@@ -1,24 +1,46 @@
 #include <string>
 #include "ChartTest.hh"
+#include "utils.hh"
 
 void ChartTest::runTest(void)
 {
   // Chart header info
-  UT_ASSERT(x.get(Chart::string_val::NAME) == string("early_universe"));
-  UT_ASSERT(x.get(Chart::string_val::DATE) == string("+3hrs"));
+  UT_ASSERT(x.identifier() == "early_universe");
+  UT_ASSERT(x.process_date() == "+3hrs");
+  UT_ASSERT(starts_with(x.information(), "Element data:"));
 
   // Chart element info
-  UT_ASSERT(x.get(Chart::int_val::NUM_ELEMENTS) == 5);
-  UT_ASSERT(x.get(Chart::string_val_n::SYMBOL, 1) == string("H"));
-  UT_ASSERT(x.get(Chart::string_val_n::NAME, 1) == string("hydrogen"));
+  UT_ASSERT(x.number_of_elements() == 5);
+  UT_ASSERT(x.chemical_symbol(1) == "H");
+  UT_ASSERT(x.element_name(1) == "hydrogen");
 
-  UT_ASSERT(x.get(Chart::string_val_n::SYMBOL, 2) == string("He"));
-  UT_ASSERT(x.get(Chart::string_val_n::NAME, 2) == string("helium"));
+  UT_ASSERT(x.chemical_symbol(2) == "He");
+  UT_ASSERT(x.element_name(2) == "helium");
 
-
-  for (int z = 0; z < x.get(Chart::int_val::NUM_ELEMENTS); z++) {
-    string symbol = x.get(Chart::string_val_n::SYMBOL, z);
-    UT_ASSERT(x.get(Chart::string_val_x::NAME, symbol) ==
-              x.get(Chart::string_val_n::NAME, z));
+  // Chart symbol translation 
+  for (int z = 0; z < x.number_of_elements(); z++) {
+    string symbol = x.chemical_symbol(z);
+    UT_ASSERT(x.element_name(symbol) == x.element_name(z));
   }
+
+  // Chart nuclide info
+  UT_ASSERT(x.number_of_nuclides() == 9);
+  UT_ASSERT(x.atomic_weight_ratio(1001) == 0.999167);
+  UT_ASSERT(x.natural_abundance(1001) == 0.999850);
+  UT_ASSERT(x.half_life(1001) == 4.336200e+17);
+
+  // Chart nuclide name translation
+  UT_ASSERT(x.atomic_weight("1001") == x.atomic_weight(1001));
+  UT_ASSERT(x.atomic_weight("H-1") == x.atomic_weight(1001));
+  UT_ASSERT(x.atomic_weight("h1") == x.atomic_weight(1001));
+  UT_ASSERT(x.atomic_weight("1H") == x.atomic_weight(1001));
+  UT_ASSERT(x.atomic_weight("1-H") == x.atomic_weight(1001));
+
+  UT_ASSERT(x.atomic_weight("2003") == x.atomic_weight(2003));
+  UT_ASSERT(x.atomic_weight("he-3") == x.atomic_weight(2003));
+  UT_ASSERT(x.atomic_weight("He3") == x.atomic_weight(2003));
+  UT_ASSERT(x.atomic_weight("3he") == x.atomic_weight(2003));
+  UT_ASSERT(x.atomic_weight("3-He") == x.atomic_weight(2003));
+
+            
 }
