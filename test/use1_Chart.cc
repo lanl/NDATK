@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   cout << "calculate elemental awr from isotopic abundances and awr."
             << endl << endl;
 
-  ndatk::Exsdir e(argv[1]);
+  ndatk::Exsdir e(argv[i]);
   cout << "Created Exsdir " << e.identifier() 
        << " with " << e.number_of_tables() << " tables." << endl;
 

@@ -154,7 +154,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-AM_CXXFLAGS = -ansi -pedantic -Wall 
+AM_CXXFLAGS = -ansi -pedantic -Wall -fPIC
 include_INCLUDES = ndatk.hh Library.hh Chart.hh Exsdir.hh \
 	translate_isomer.hh utils.hh constants.hh
 
