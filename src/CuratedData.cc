@@ -6,7 +6,7 @@ namespace ndatk
   using namespace std;
 
   // Required base class dtor
-  CuratedData::~CuratedData(void) {};
+  CuratedData::~CuratedData(void) {}
 
   // Artifact identifier
   string CuratedData::identifier(void) const
