@@ -2,7 +2,7 @@
 
 AM_CXXFLAGS = -ansi -pedantic -Wall -fPIC
 include_HEADERS = ndatk.hh Library.hh Chart.hh Exsdir.hh \
-	translate_isomer.hh utils.hh constants.hh
+	CuratedData.hh translate_isomer.hh utils.hh constants.hh
 
 lib_LIBRARIES = libndatk.a
 libndatk_a_SOURCES = CuratedData.cc CuratedData.hh \

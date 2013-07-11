@@ -5,24 +5,54 @@ namespace ndatk
 {
   using namespace std;
 
-  // Required base class dtor
-  CuratedData::~CuratedData(void) {}
-
   // Artifact identifier
   string CuratedData::identifier(void) const
   {
     return id;
   }
 
-  // Artifact process date
-  string CuratedData::process_date(void) const
+  // Artifact processing
+  string CuratedData::how(void) const
+  {
+    return action;
+  }
+
+  // Artifact information
+  string CuratedData::what(void) const
+  {
+    return description;
+  }
+
+  // Artifact source, process, release date(s)
+  string CuratedData::when(void) const
   {
     return date;
   }
 
-  // Artifact information
-  string CuratedData::information(void) const
+  // Artifact file location
+  string CuratedData::where(void) const
   {
-    return info;
+    return location;
   }
+
+  // Artifact creation/processing code(s)
+  string CuratedData::which(void) const
+  {
+    return instrument;
+  }
+
+  // Artifact author(s)
+  string CuratedData::who(void) const
+  {
+    return agent;
+  }
+
+  // Artifact purpose
+  string CuratedData::why(void) const
+  {
+    return reason;
+  }
+
+  // Required base class dtor
+  CuratedData::~CuratedData(void) {}
 }
