@@ -1,12 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CXXFLAGS = -ansi -pedantic -Wall -fPIC
-include_HEADERS = ndatk.hh Library.hh Chart.hh Exsdir.hh \
+include_HEADERS = ndatk.hh Library.hh Chart.hh Exsdir.hh FileStat.hh \
 	CuratedData.hh translate_isomer.hh utils.hh constants.hh
 
 lib_LIBRARIES = libndatk.a
 libndatk_a_SOURCES = CuratedData.cc CuratedData.hh \
 	Chart.cc Chart.hh Exsdir.cc Exsdir.hh Library.cc Library.hh \
+	FileStat.cc FileStat.hh \
 	translate_isomer.cc translate_isomer.hh \
 	utils.cc utils.hh constants.hh
 

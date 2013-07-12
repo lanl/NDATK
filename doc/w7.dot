@@ -1,0 +1,40 @@
+digraph w7 {
+        size="10,7.5"; /* US letter size minus 1" postscript margins" */
+        rotate=90;        
+        center=1;
+        ratio=fill;
+
+        node[shape=diamond, fontsize=24];
+        edge[fontsize=18];
+        /* Seven W questions */
+        Why[label="Why?"];
+        Who[label="Who?"];
+        Where[label="Where?"];
+        What[label="What?"];
+        Which[label="Which?"];
+        When[label="When?"];
+        How[label="How?"];
+        node[shape=box];
+        Agent -> Who[dir=back,label="+"];
+        Who -> Event[dir=back,label="*"];
+        Description -> What[dir=back,label="+"];
+        What -> Event[dir=back,label="*"];
+        Action -> How[label="1"];
+        How -> Event[label="1"]; 
+        Event -> Why[label="*"];
+        Why -> Reason[label="+"];
+        Event -> Where[label="*"];
+        Where -> Location[label="+"];
+        Event -> When[label="*"];
+        When -> Time[label="1"];
+        Event -> Which[label="*"];
+        Which -> Instrument[label="*"];
+
+
+        {rank=min; Agent; Description}
+        {rank=same; Who; What}
+        {rank=same; How; Action; Event; Reason; Why}
+        {rank=same; Where; When; Which}
+        {rank=max; Location; Time; Instrument}
+
+}

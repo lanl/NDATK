@@ -63,7 +63,7 @@ namespace ndatk
     s >> *this;
     s.close();
     this->id = filename;
-    this->info = "Exsdir";
+    this->description = "Extended cross section directory";
   }
 
   // Is object in valid state?

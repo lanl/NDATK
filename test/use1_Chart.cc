@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
 
   cout << "Print data file header." << endl;
   cout << x.identifier() << endl
-            << x.process_date() << endl
-            << x.information() << endl;
+            << x.when() << endl
+            << x.what() << endl;
   cout << endl;
 
   if (verbose)

@@ -7,6 +7,7 @@
 #include "Chart.hh"
 #include "Exsdir.hh"
 #include "CuratedData.hh"
+#include "FileStat.hh"
 #include "translate_isomer.hh"
 #include "utils.hh"
 #include "constants.hh"

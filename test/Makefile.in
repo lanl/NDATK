@@ -35,8 +35,9 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 noinst_PROGRAMS = test_Chart$(EXEEXT) use1_Chart$(EXEEXT) \
-	test_Exsdir$(EXEEXT) use0_Library$(EXEEXT) \
-	test_translate_isomer$(EXEEXT) test_utils$(EXEEXT)
+	test_Exsdir$(EXEEXT) test_FileStat$(EXEEXT) \
+	use0_Library$(EXEEXT) test_translate_isomer$(EXEEXT) \
+	test_utils$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -53,6 +54,9 @@ test_Chart_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_Exsdir_OBJECTS = test_Exsdir-test_Exsdir.$(OBJEXT)
 test_Exsdir_OBJECTS = $(am_test_Exsdir_OBJECTS)
 test_Exsdir_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_test_FileStat_OBJECTS = test_FileStat-test_FileStat.$(OBJEXT)
+test_FileStat_OBJECTS = $(am_test_FileStat_OBJECTS)
+test_FileStat_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_translate_isomer_OBJECTS =  \
 	test_translate_isomer-test_translate_isomer.$(OBJEXT)
 test_translate_isomer_OBJECTS = $(am_test_translate_isomer_OBJECTS)
@@ -75,11 +79,13 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
-	$(test_translate_isomer_SOURCES) $(test_utils_SOURCES) \
-	$(use0_Library_SOURCES) $(use1_Chart_SOURCES)
+	$(test_FileStat_SOURCES) $(test_translate_isomer_SOURCES) \
+	$(test_utils_SOURCES) $(use0_Library_SOURCES) \
+	$(use1_Chart_SOURCES)
 DIST_SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
-	$(test_translate_isomer_SOURCES) $(test_utils_SOURCES) \
-	$(use0_Library_SOURCES) $(use1_Chart_SOURCES)
+	$(test_FileStat_SOURCES) $(test_translate_isomer_SOURCES) \
+	$(test_utils_SOURCES) $(use0_Library_SOURCES) \
+	$(use1_Chart_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -168,6 +174,9 @@ use1_Chart_CXXFLAGS = $(ndatk_INCLUDE)
 test_Exsdir_SOURCES = test_Exsdir.cc
 test_Exsdir_LDADD = $(ndatk_LIB)
 test_Exsdir_CXXFLAGS = $(ndatk_INCLUDE)
+test_FileStat_SOURCES = test_FileStat.cc
+test_FileStat_LDADD = $(ndatk_LIB)
+test_FileStat_CXXFLAGS = $(ndatk_INCLUDE)
 test_translate_isomer_SOURCES = test_translate_isomer.cc
 test_translate_isomer_LDADD = $(ndatk_LIB)
 test_translate_isomer_CXXFLAGS = $(ndatk_INCLUDE)
@@ -216,6 +225,9 @@ test_Chart$(EXEEXT): $(test_Chart_OBJECTS) $(test_Chart_DEPENDENCIES)
 test_Exsdir$(EXEEXT): $(test_Exsdir_OBJECTS) $(test_Exsdir_DEPENDENCIES) 
 	@rm -f test_Exsdir$(EXEEXT)
 	$(CXXLINK) $(test_Exsdir_LDFLAGS) $(test_Exsdir_OBJECTS) $(test_Exsdir_LDADD) $(LIBS)
+test_FileStat$(EXEEXT): $(test_FileStat_OBJECTS) $(test_FileStat_DEPENDENCIES) 
+	@rm -f test_FileStat$(EXEEXT)
+	$(CXXLINK) $(test_FileStat_LDFLAGS) $(test_FileStat_OBJECTS) $(test_FileStat_LDADD) $(LIBS)
 test_translate_isomer$(EXEEXT): $(test_translate_isomer_OBJECTS) $(test_translate_isomer_DEPENDENCIES) 
 	@rm -f test_translate_isomer$(EXEEXT)
 	$(CXXLINK) $(test_translate_isomer_LDFLAGS) $(test_translate_isomer_OBJECTS) $(test_translate_isomer_LDADD) $(LIBS)
@@ -237,6 +249,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Chart-test_Chart.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Exsdir-test_Exsdir.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_FileStat-test_FileStat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_translate_isomer-test_translate_isomer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_utils-test_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use0_Library-use0_Library.Po@am__quote@
@@ -283,6 +296,20 @@ test_Exsdir-test_Exsdir.obj: test_Exsdir.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_Exsdir.cc' object='test_Exsdir-test_Exsdir.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_Exsdir_CXXFLAGS) $(CXXFLAGS) -c -o test_Exsdir-test_Exsdir.obj `if test -f 'test_Exsdir.cc'; then $(CYGPATH_W) 'test_Exsdir.cc'; else $(CYGPATH_W) '$(srcdir)/test_Exsdir.cc'; fi`
+
+test_FileStat-test_FileStat.o: test_FileStat.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_FileStat_CXXFLAGS) $(CXXFLAGS) -MT test_FileStat-test_FileStat.o -MD -MP -MF "$(DEPDIR)/test_FileStat-test_FileStat.Tpo" -c -o test_FileStat-test_FileStat.o `test -f 'test_FileStat.cc' || echo '$(srcdir)/'`test_FileStat.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/test_FileStat-test_FileStat.Tpo" "$(DEPDIR)/test_FileStat-test_FileStat.Po"; else rm -f "$(DEPDIR)/test_FileStat-test_FileStat.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_FileStat.cc' object='test_FileStat-test_FileStat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_FileStat_CXXFLAGS) $(CXXFLAGS) -c -o test_FileStat-test_FileStat.o `test -f 'test_FileStat.cc' || echo '$(srcdir)/'`test_FileStat.cc
+
+test_FileStat-test_FileStat.obj: test_FileStat.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_FileStat_CXXFLAGS) $(CXXFLAGS) -MT test_FileStat-test_FileStat.obj -MD -MP -MF "$(DEPDIR)/test_FileStat-test_FileStat.Tpo" -c -o test_FileStat-test_FileStat.obj `if test -f 'test_FileStat.cc'; then $(CYGPATH_W) 'test_FileStat.cc'; else $(CYGPATH_W) '$(srcdir)/test_FileStat.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/test_FileStat-test_FileStat.Tpo" "$(DEPDIR)/test_FileStat-test_FileStat.Po"; else rm -f "$(DEPDIR)/test_FileStat-test_FileStat.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_FileStat.cc' object='test_FileStat-test_FileStat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_FileStat_CXXFLAGS) $(CXXFLAGS) -c -o test_FileStat-test_FileStat.obj `if test -f 'test_FileStat.cc'; then $(CYGPATH_W) 'test_FileStat.cc'; else $(CYGPATH_W) '$(srcdir)/test_FileStat.cc'; fi`
 
 test_translate_isomer-test_translate_isomer.o: test_translate_isomer.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_translate_isomer_CXXFLAGS) $(CXXFLAGS) -MT test_translate_isomer-test_translate_isomer.o -MD -MP -MF "$(DEPDIR)/test_translate_isomer-test_translate_isomer.Tpo" -c -o test_translate_isomer-test_translate_isomer.o `test -f 'test_translate_isomer.cc' || echo '$(srcdir)/'`test_translate_isomer.cc; \

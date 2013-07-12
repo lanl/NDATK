@@ -24,7 +24,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "DATE:")) {
         get_logical_line(s, date);
       } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, info);
+        get_logical_line(s, description);
       } else if (starts_with_nocase(line, "IDS:")) {
         state = IDS;
       } else if (state == IDS) {

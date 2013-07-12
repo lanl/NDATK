@@ -5,7 +5,7 @@ void ExsdirTest::runTest(void)
 {
   UT_ASSERT(x.is_valid());
   // Exsdir header info
-  UT_ASSERT(x.process_date() == "09/03/2008");
+  UT_ASSERT(x.when() == "09/03/2008");
 
   // Exsdir table info
   UT_ASSERT(x.number_of_tables() == 21);

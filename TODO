@@ -2,6 +2,8 @@ ndatk   -*-Org-*-
 
 * Tasks
 ** TODO Refactor error handling
+   - throw exception for unopened files
+
 ** TODO Add more edge case tests
 ** TODO Add identifier search policy to Library
 ** TODO Add path search policy to Exsdir

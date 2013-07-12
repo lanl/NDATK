@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
 
   // Print file header
   std::cout << x.identifier() << std::endl
-            << x.process_date() << std::endl
-            << x.information() << std::endl;
+            << x.when() << std::endl
+            << x.what() << std::endl;
 
   //Print first 10 entries
 

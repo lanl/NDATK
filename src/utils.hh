@@ -72,8 +72,11 @@ namespace ndatk {
   // Capitalize first character, lowercase others
   extern std::string title(const std::string s);
  
-  // Split string into vector of words.
+  // Split space delimited string into vector of words.
   extern std::vector<std::string> split(const std::string &s);
+
+  // Split character delimited string into vector of words.
+  extern std::vector<std::string> split(const std::string &s, char c);
 
   // Get Logical line from stream.
   extern std::istream &get_logical_line(std::istream &s, std::string &line);
@@ -113,6 +116,12 @@ namespace ndatk {
       throw std::bad_cast();
     return result;
   }
+
+  // Wrap C get environment string with C++ interface
+  extern std::string get_env(const std::string name);
+
+  // Wrap C get current working directory with C++ interface
+  extern std::string get_cwd(void);
 
 }
 #endif

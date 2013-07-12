@@ -36,7 +36,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "DATE:")) {
         get_logical_line(s, c.date);
       } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, c.info);
+        get_logical_line(s, c.description);
       } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
         state = TABLE;
       } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {

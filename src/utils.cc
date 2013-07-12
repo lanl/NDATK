@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <cstdio>
+#include <unistd.h>
 #include "utils.hh"
 
 namespace ndatk {
@@ -86,7 +89,7 @@ namespace ndatk {
     return t;
   }
 
-  // Split string into vector of words.
+  // Split space delimited string into vector of words.
   vector<string> split(const string &s)
   {
     typedef string::const_iterator iter;
@@ -99,6 +102,18 @@ namespace ndatk {
       if (i != k)
         ret.push_back(string(i, j));
     }
+    return ret;
+  }
+
+  // Split character delimited string into vector of words.
+  vector<string> split(const string &s, char c)
+  {
+    string::size_type i, j;
+    vector<string> ret;
+    
+    for (i=0, j=s.find(c); j != string::npos; i=j+1, j=s.find(i,c)) 
+      ret.push_back(s.substr(i, j-i));
+    ret.push_back(s.substr(i, j-i));
     return ret;
   }
 
@@ -159,4 +174,21 @@ namespace ndatk {
     }
     return is;
   }
+
+  // Wrap C getenv to get environment string with C++ interface
+  std::string get_env(const std::string name)
+  {
+    std::string s(getenv(name.c_str()));
+    return s;
+  }
+
+  // Wrap C getcwd to get current working directory with C++ interface
+  std::string get_cwd(void)
+  {
+    char buf[FILENAME_MAX];
+    getcwd(buf, FILENAME_MAX);
+    std::string s(buf);
+    return s;
+  }
+
 }
