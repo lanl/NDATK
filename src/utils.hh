@@ -123,5 +123,6 @@ namespace ndatk {
   // Wrap C get current working directory with C++ interface
   extern std::string get_cwd(void);
 
+  extern std::string get_hostname(void);
 }
 #endif

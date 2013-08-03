@@ -1,7 +1,10 @@
 #ifndef CURATEDDATA_HH
 #define CURATEDDATA_HH
 
+#include <iostream>
 #include <string>
+#include <vector>
+#include <map>
 
 // Copyright Los Alamos National Laboratory 2013.  All Rights Reserved.
 
@@ -19,33 +22,37 @@ namespace ndatk
   // Data release provenance
   class CuratedData
   {
+    friend std::ostream& operator<<(std::ostream &out, const CuratedData &x);
   public:
 
     // Queries
-    std::string identifier(void) const; // identifier
-    std::string how(void) const;        // did it come to be?
-    std::string what(void) const;       // is it?
-    std::string when(void) const;       // did it come to be?
-    std::string where(void) const;      // is its file?
-    std::string which(void) const;      // tool(s) did it come from?
-    std::string who(void) const;        // made it?
-    std::string why(void) const;        // was it made?
+    std::string identifier(void) const;          // identifier
+    std::vector<std::string> events(void) const; // Provenance events
+    std::string action_of(std::string event) const;
+    std::string time_of(std::string event) const;
+    std::string location_of(std::string event) const;
+    std::string instrument_of(std::string event) const;
+    std::string agent_of(std::string event) const;
+    std::string reason_for(std::string event) const;
 
-    // Required dtor
+    // Required virtual dtor
     virtual ~CuratedData(void) = 0;
 
   protected:
 
+    struct W7
+    {
+      std::string action;       // How did event occur?
+      std::string time;         // When did event occur?
+      std::string location;     // Where did event occur?
+      std::string instrument;   // Which tools were used in event?
+      std::string agent;        // Who caused event?
+      std::string reason;       // Why was event?
+    };
+    typedef std::map<std::string, W7> Provenance_map;
+    
     std::string id;             // (unique) name 
-    // W7 Model
-    std::string action;         // workflow description
-    std::string description;    // information
-    std::string date;           // source, process, release date(s)
-    std::string location;       // data file location
-    std::string instrument;     // code/process list
-    std::string agent;          // author(s)
-    std::string reason;         // purpose
-
+    Provenance_map m;           // map of events to their descriptors
   };
 }
 #endif

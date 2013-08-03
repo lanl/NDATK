@@ -191,4 +191,12 @@ namespace ndatk {
     return s;
   }
 
+  // Wrap C gethostname
+  std::string get_hostname(void)
+  {
+    char buf[HOST_NAME_MAX];
+    gethostname(buf, HOST_NAME_MAX);
+    std::string s(buf);
+    return s;
+  }
 }

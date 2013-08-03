@@ -4,37 +4,46 @@ digraph w7 {
         center=1;
         ratio=fill;
 
-        node[shape=diamond, fontsize=24];
+        node[shape=diamond];
         edge[fontsize=18];
         /* Seven W questions */
-        Why[label="Why?"];
         Who[label="Who?"];
+        How[label="How?"];
+        Why[label="Why?"];
         Where[label="Where?"];
-        What[label="What?"];
         Which[label="Which?"];
         When[label="When?"];
-        How[label="How?"];
-        node[shape=box];
+        node[shape=box, fontsize=24];
+        Agent; Action; Location; Instrument; Time; Reason;
+        node[shape=oval];
+        Event0[color=blue, fontcolor=blue];
+        Event1[label="Event1\n<What?>"]; 
+
         Agent -> Who[dir=back,label="+"];
-        Who -> Event[dir=back,label="*"];
-        Description -> What[dir=back,label="+"];
-        What -> Event[dir=back,label="*"];
+        Who -> Event1[dir=back,label="*"];
         Action -> How[label="1"];
-        How -> Event[label="1"]; 
-        Event -> Why[label="*"];
+        How -> Event1[label="1"]; 
+        Event1 -> Why[label="*"];
         Why -> Reason[label="+"];
-        Event -> Where[label="*"];
+        Event1 -> Where[label="*"];
         Where -> Location[label="+"];
-        Event -> When[label="*"];
+        Event1 -> When[label="*"];
         When -> Time[label="1"];
-        Event -> Which[label="*"];
+        Event1 -> Which[label="*"];
         Which -> Instrument[label="*"];
+        node[shape=plaintext];
+        Event2[label="..."];
+        Event1 -> data1;
+        node[fontcolor=blue];
+        edge[color=blue];
+        Event0 -> data0 -> Event1;
+        data1 -> Event2;
 
 
-        {rank=min; Agent; Description}
-        {rank=same; Who; What}
-        {rank=same; How; Action; Event; Reason; Why}
-        {rank=same; Where; When; Which}
-        {rank=max; Location; Time; Instrument}
+        {rank=min; Agent; Action; Location}
+        {rank=same; Who; How; Where}
+        {rank=same; Event0; data0; Event1; data1; Event2}
+        {rank=same; When; Which; Why}
+        {rank=max; Time; Instrument; Reason}
 
 }
