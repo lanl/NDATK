@@ -8,17 +8,11 @@
 int main()
 {
 
-  utilsTest test1;
-  ChartTest test2;
-  ExsdirTest test3;
-  LibraryTest test4;
-  translate_isomerTest test5;
-
-  test1.runTest();
-  test2.runTest();
-  test3.runTest();
-  test4.runTest();
-  test5.runTest();
+  utilsTest test1; test1.runTest();
+  translate_isomerTest test5; test5.runTest();
+  ChartTest test2; test2.runTest();
+  ExsdirTest test3; test3.runTest();
+  LibraryTest test4; test4.runTest();
 
   std::cout << "SUCCESS!" << std::endl;
   std::cout << UnitTest::getNumSuccess() << " tests completed." << std::endl;

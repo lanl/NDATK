@@ -74,6 +74,9 @@ namespace ndatk
 
   private:
 
+    static std::string type;
+    std::istream& get_xsdir(std::istream &s);
+
     // Exsdir list of table Ids
     typedef std::vector<std::string> Id_vector;
     Id_vector order;            // Identifier order

@@ -73,6 +73,7 @@ namespace ndatk
 
   private:
 
+    static std::string type;
     void parse(std::istream &s);
 
     typedef std::vector<std::string> TableIdentifiers;

@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
   ndatk::Exsdir x(argv[1]);     // parse filename
 
   // Print file header
-  std::cout << x.identifier() << std::endl
-            << x.when() << std::endl
-            << x.what() << std::endl;
+  std::cout << x.name() << std::endl;
+  for (int i = 0; i < x.number_of_events(); i++)
+    std::cout << x.event(i) << std::endl;
 
   //Print first 10 entries
 

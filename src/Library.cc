@@ -11,24 +11,23 @@ namespace ndatk
 {
   using namespace std;
 
+  string Library::type = "ndatk_library_1.0";
+
   // Construct Library of tables from input stream
   void Library::parse(istream &s)
   {
     string line;
-    enum states {START, IDS};
-    states state = START;
 
+    this->get_header(s, Library::type); 
     while (get_logical_line(s, line)) {
-      if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, id);
-      } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, date);
-      } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, description);
-      } else if (starts_with_nocase(line, "IDS:")) {
-        state = IDS;
-      } else if (state == IDS) {
-        ids.push_back(line);
+      if (starts_with_nocase(line, "IDS:")) {
+        while (get_logical_line(s, line)) {
+          if (starts_with_nocase(line, "%%")) {
+            break;
+          } else {
+            ids.push_back(line);
+          }
+        }
       }
     }
   }
@@ -39,8 +38,9 @@ namespace ndatk
     string filename = e.file_name(id);
     ifstream s(filename.c_str());
     if (!s) {
-      cerr << "Cannot open file " << filename << endl;
-      exit(1);
+      string e("Cannot open file ");
+      e += filename + "!";
+      ifstream::failure(e.c_str());
     }
     Library::parse(s);
     s.close();

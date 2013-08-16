@@ -10,8 +10,9 @@ namespace ndatk
 {
   using namespace std;
 
-  // Read an Extended cross section directory from a stream
-  istream &operator>>(istream &s, Exsdir &e)
+  string Exsdir::type = "ndatk_exsdir_1.0";
+
+  istream& Exsdir::get_xsdir(istream& s)
   {
     string line;
     enum states {START, AWR, DIR};
@@ -24,7 +25,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "ATOMIC WEIGHT RATIOS")) {
         state = AWR;
       } else if (is_date(line)) {
-        e.date = line;
+        continue;
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
@@ -34,7 +35,7 @@ namespace ndatk
           cerr << "Cannot open file " << fields[1] << endl;
           exit(1);
         }
-        f1 >> e;
+        get_xsdir(f1);
         f1.close();
       } else if (state == AWR) {
         continue;               // TODO: add AWR parse here
@@ -45,10 +46,18 @@ namespace ndatk
         r >> id >> d.awr >> d.name >> d.route >> d.type
           >> d.address >> d.tbl_len >> d.rcd_len >> d.epr
           >> d.temp >> d.ptable;
-        e.directory.insert(Exsdir::Directory_map::value_type(id, d));
-        e.order.push_back(id);
+        directory.insert(Exsdir::Directory_map::value_type(id, d));
+        order.push_back(id);
       }
     }
+    return s;
+  }
+
+  // Read an Extended cross section directory from a stream
+  istream &operator>>(istream &s, Exsdir &e)
+  {
+    e.get_header(s, Exsdir::type);
+    e.get_xsdir(s);
     return s;
   }
 
@@ -57,13 +66,12 @@ namespace ndatk
   {
     ifstream s(filename.c_str());
     if (!s) {
-      cerr << "Cannot open file " << filename << endl;
-      exit(1);
+      string e("Cannot open file ");
+      e += filename + "!";
+      ifstream::failure(e.c_str());
     }
     s >> *this;
     s.close();
-    this->id = filename;
-    this->description = "Extended cross section directory";
   }
 
   // Is object in valid state?

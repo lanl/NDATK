@@ -69,6 +69,12 @@ namespace ndatk {
     return ltrim(rtrim(s));
   }
 
+  // Return value from "name: value" string
+  inline std::string value(const std::string &s)
+  {
+    return trim(s.substr(s.find(':')+1));
+  }
+
   // Capitalize first character, lowercase others
   extern std::string title(const std::string s);
  

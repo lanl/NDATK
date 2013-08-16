@@ -7,6 +7,8 @@ using namespace std;
 using namespace ndatk;
 
 static istringstream exsdir_dat(
+"type: ndatk_exsdir_1.0\n"
+"name: test_exsdir\n"
 "atomic weight ratios\n"
 "   0001  1.000000   0001  1.000000\n"
 "   1000  0.99931697 1001   0.99916733   1002   1.99679968\n"   

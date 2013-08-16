@@ -1,94 +1,117 @@
-#include <stdexcept>
 #include "CuratedData.hh"
 #include "utils.hh"
+
+// Copyright Los Alamos National Laboratory 2013.  All Rights Reserved.
+
+// File Description:
+// Curated Data - Provide provenance for subclasses.
+// See: Jon Bentley, "More Programming Pearls", Addison-Wesley 1988, pg. 40
+//      Sudha Ram and Jun Liu, "A New Perspective on Semantics of
+//                              Data Provenance", Univ. of Az.
+
+// Authors: Mark G. Gray <gray@lanl.gov>
 
 namespace ndatk
 {
   using namespace std;
 
-  // Send CuratedData to stream
-  ostream & operator<<(ostream &out, const CuratedData &x)
+  // Put header to ostream out
+  ostream& CuratedData::put_header(ostream& out, const string type) const
   {
-    CuratedData::Provenance_map::const_iterator i;
+    out << "type: " << type << endl; // First logical line
+    out << "name: " << name_ << endl;   // second logical line
+    return out;
+  }
 
-    out << "name: " << x.id << endl;
-    out << "%%" << endl;
-    for(i = x.m.begin(); i != x.m.end(); i++) {
-      out << "event: " << i->first << endl;
-      const CuratedData::W7 *y = &(i->second);
-      if (y->action != "") 
-        out << "action: " << y->action << endl;
-      if (y->time != "") 
-        out << "time: " << y->time << endl;
-      if (y->location != "") 
-        out << "location: " << y->location << endl;
-      if (y->instrument != "") 
-        out << "instrument: " << y->instrument << endl;
-      if (y->agent != "") 
-        out << "agent: " << y->agent << endl;
-      if (y->reason != "") 
-        out << "reason: " << y->reason << endl;
-      out << "%%" << endl;
+  // Get header from ostream out
+  istream& CuratedData::get_header(istream& in, const string type)
+  {
+    string line;
+
+    // Check first logical line for type: value;
+    // match value against type parameter
+    if (get_logical_line(in, line)) {
+      if (!starts_with_nocase(line, "type:")) {
+        string e("Bad file format: missing 'type: value'!");
+        throw istream::failure(e.c_str());
+      } else if (type != value(line)) {
+          string e("Wrong file type: found '");
+          e += value(line) + "' expected '" + type + "'!";
+          throw istream::failure(e.c_str());
+      }
+    } else {
+      string e("Cannot read first logical line!");
+      throw istream::failure(e.c_str());
+    }
+    
+    // Check second logical line for name: value;
+    // store value in name
+    if (get_logical_line(in, line)) {
+      if (!starts_with_nocase(line, "name:")) {
+        string e("Bad file format: found '");
+        e += line + "' expected 'name: value'!";
+        throw istream::failure(e.c_str());
+      } else {
+        name_ = value(line);
+      }
+    } else {
+      string e("Cannot read second logical line!");
+      throw istream::failure(e.c_str());
+    }
+    return in;
+  }
+
+  // Delimiters for input file provenance section
+  string CuratedData::begin_provenance = "provenance:";
+  string CuratedData::end_provenance = "%%";
+
+  // Put ProvenanceVector to ostream out
+  ostream& CuratedData::put_ProvenanceVector(ostream& out) const
+  {
+    ProvenanceVector::const_iterator i;
+
+    for(i = provenance.begin(); i != provenance.end(); i++) {
+      out << begin_provenance << endl 
+          << *i << endl 
+          << end_provenance << endl;
     }
     return out;
   }
 
-  // Artifact identifier
-  string CuratedData::identifier(void) const
+  // Append to ProvenanceVector from istream in
+  istream& CuratedData::append_ProvenanceVector(istream &in)
   {
-    return id;
+    string line;
+    string paragraph;
+    
+    while (get_logical_line(in, line)) {
+      if (starts_with_nocase(line, begin_provenance)) {
+        continue;
+      } else if (starts_with_nocase(line, end_provenance)) {
+        provenance.push_back(paragraph);
+        break;
+      } else {
+        paragraph += line + "\n";
+      }
+    }
+  return in;
+  }
+
+  // Artifact identifier
+  string CuratedData::name(void) const
+  {
+    return name_;
+  }
+
+  CuratedData::size_type CuratedData::number_of_events(void) const
+  {
+    return provenance.size();
   }
 
   // Provenance events list
-  vector<string> CuratedData::events(void) const
+  string CuratedData::event(CuratedData::size_type i) const
   {
-    vector<string> ret;
-    CuratedData::Provenance_map::const_iterator i;
-    for(i = m.begin(); i != m.end(); i++)
-      ret.push_back(i->first);
-    return ret;
-  }
-
-  // Artifact processing
-  string CuratedData::action_of(string event) const
-  {
-    W7 s = map_at(m, event);
-    return s.action;
-  }
-
-  // Artifact source, process, release date(s)
-  string CuratedData::time_of(string event) const
-  {
-    W7 s = map_at(m, event);
-    return s.time;
-  }
-
-  // Artifact file location
-  string CuratedData::location_of(string event) const
-  {
-    W7 s = map_at(m, event);
-    return s.location;
-  }
-
-  // Artifact creation/processing code(s)
-  string CuratedData::instrument_of(string event) const
-  {
-    W7 s = map_at(m, event);
-    return s.instrument;
-  }
-
-  // Artifact author(s)
-  string CuratedData::agent_of(string event) const
-  {
-    W7 s = map_at(m, event);
-    return s.agent;
-  }
-
-  // Artifact purpose
-  string CuratedData::reason_for(string event) const
-  {
-    W7 s = map_at(m, event);
-    return s.reason;
+    return provenance.at(i);
   }
 
   // Required base class dtor

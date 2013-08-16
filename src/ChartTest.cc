@@ -5,9 +5,8 @@
 void ChartTest::runTest(void)
 {
   // Chart header info
-  UT_ASSERT(x.identifier() == "early_universe");
-  UT_ASSERT(x.when() == "+3hrs");
-  UT_ASSERT(starts_with(x.what(), "Element data:"));
+  UT_ASSERT(x.name() == "early_universe");
+  UT_ASSERT(starts_with(x.event(0), "+3hrs"));
 
   // Chart element info
   UT_ASSERT(x.number_of_elements() == 5);

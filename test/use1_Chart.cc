@@ -1,4 +1,4 @@
-#include <iostream>
+ #include <iostream>
 #include <fstream>
 #include <string>
 #include <cmath>
@@ -39,19 +39,21 @@ int main(int argc, char *argv[])
             << endl << endl;
 
   ndatk::Exsdir e(argv[i]);
-  cout << "Created Exsdir " << e.identifier() 
+  cout << "Created Exsdir " << e.name() 
        << " with " << e.number_of_tables() << " tables." << endl;
 
-  ndatk::Chart x("chart", e);     // parse filename
-  cout << "Created Chart " << x.identifier()
+  cout << "Print Exsdir file provenance:" << endl;
+  for (int i = 0; i < e.number_of_events(); i++)
+    std::cout << e.event(i) << std::endl;
+
+  ndatk::Chart x("chart2", e);     // parse filename
+  cout << "Created Chart " << x.name()
        << " with " << x.number_of_elements() << " elements" 
        << " and " << x.number_of_nuclides() << " nuclides." << endl;
 
-  cout << "Print data file header." << endl;
-  cout << x.identifier() << endl
-            << x.when() << endl
-            << x.what() << endl;
-  cout << endl;
+  cout << "Print Chart file provenance:" << endl;
+  for (int i = 0; i < x.number_of_events(); i++)
+    std::cout << x.event(i) << std::endl;
 
   if (verbose)
     cout << "For all elements:" << endl;

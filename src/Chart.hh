@@ -9,13 +9,21 @@
 #include "CuratedData.hh"
 #include "Exsdir.hh"
 
+// Copyright Los Alamos National Laboratory 2013.  All Rights Reserved.
+
+// File Description:
+// Chart - Provide periodic table and chart of the nuclides data
+// See: "Nuclides and Isotopes", 16ed
+
+// Authors: Mark G. Gray <gray@lanl.gov>
+
 namespace ndatk
 {
   // Chart of the nuclides
   class Chart: public CuratedData
   {
   public:
-    Chart(void): CuratedData(), element(), nuclide() {}
+    Chart(void): CuratedData(), elements(), nuclides() {}
     explicit Chart(std::string filename);
     Chart(std::string id, Exsdir &e);
 
@@ -60,6 +68,7 @@ namespace ndatk
     double half_life(std::string name) const;
 
   private:
+    static std::string type;
 
     // Periodic Table Values
     struct ElementData
@@ -68,8 +77,8 @@ namespace ndatk
       double at_wgt;
       std::string name;
     };
-    typedef std::vector<ElementData> Element_vector;
-    Element_vector element;     // Periodic Table
+    typedef std::vector<ElementData> ElementVector;
+    ElementVector elements;     // Periodic Table
 
     // Chart of the Nuclides Values
     struct NuclideData
@@ -78,8 +87,8 @@ namespace ndatk
       double abundance;
       double half_life;
     };
-    typedef std::map<int, NuclideData> Nuclide_map;
-    Nuclide_map nuclide;        // Chart of the Nuclides
+    typedef std::map<int, NuclideData> NuclideMap;
+    NuclideMap nuclides;        // Chart of the Nuclides
 
     };
 }
