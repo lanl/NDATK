@@ -5,6 +5,7 @@ void ExsdirTest::runTest(void)
 {
   UT_ASSERT(x.is_valid());
 
+  UT_ASSERT(x.type() == "ndatk_exsdir_1.0");
   UT_ASSERT(x.name() == "test_exsdir");
 
   // Exsdir table info

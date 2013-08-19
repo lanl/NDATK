@@ -26,6 +26,9 @@ namespace ndatk
     // Is object in valid state?
     bool is_valid(void) const;
 
+    // Data file type
+    std::string type(void) const;
+
     // Number of tables 
     int number_of_tables(void) const;
 
@@ -74,7 +77,8 @@ namespace ndatk
 
   private:
 
-    static std::string type;
+    static std::string type_;
+
     std::istream& get_xsdir(std::istream &s);
 
     // Exsdir list of table Ids

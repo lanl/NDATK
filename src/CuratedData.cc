@@ -16,28 +16,25 @@ namespace ndatk
   using namespace std;
 
   // Put header to ostream out
-  ostream& CuratedData::put_header(ostream& out, const string type) const
+  ostream& CuratedData::put_header(ostream& out) const
   {
-    out << "type: " << type << endl; // First logical line
+    out << "type: " << type() << endl; // First logical line
     out << "name: " << name_ << endl;   // second logical line
     return out;
   }
 
   // Get header from ostream out
-  istream& CuratedData::get_header(istream& in, const string type)
+  istream& CuratedData::get_header(istream& in)
   {
     string line;
 
     // Check first logical line for type: value;
     // match value against type parameter
     if (get_logical_line(in, line)) {
-      if (!starts_with_nocase(line, "type:")) {
-        string e("Bad file format: missing 'type: value'!");
+      if (!starts_with_nocase(line, "type:") || type() != value(line)) {
+        string e("Bad file format: expected 'type: ");
+        e += type() + "' found '" + line + "' in first logical line!";
         throw istream::failure(e.c_str());
-      } else if (type != value(line)) {
-          string e("Wrong file type: found '");
-          e += value(line) + "' expected '" + type + "'!";
-          throw istream::failure(e.c_str());
       }
     } else {
       string e("Cannot read first logical line!");
@@ -48,8 +45,8 @@ namespace ndatk
     // store value in name
     if (get_logical_line(in, line)) {
       if (!starts_with_nocase(line, "name:")) {
-        string e("Bad file format: found '");
-        e += line + "' expected 'name: value'!";
+        string e("Bad file format: expected 'name: value' found '");
+        e += line + "' in second logical line!";
         throw istream::failure(e.c_str());
       } else {
         name_ = value(line);
@@ -91,7 +88,7 @@ namespace ndatk
         provenance.push_back(paragraph);
         break;
       } else {
-        paragraph += line + "\n";
+        paragraph += line + "\n"; // Accumulate lines separated by newlines
       }
     }
   return in;

@@ -24,11 +24,11 @@ int main(int argc, char *argv[])
        << endl << endl;
 
   ndatk::Exsdir x(argv[1]);     // parse filename
-  cout << "Created Exsdir " << x.identifier() 
+  cout << "Created Exsdir " << x.name() 
        << " with " << x.number_of_tables() << " tables." << endl;
 
   ndatk::Library l("lanl2006", x);
-  cout << "Created Library " << l.identifier()
+  cout << "Created Library " << l.name()
        << " with " << l.number_of_tables() << " tables." << endl;
 
   for (int i = 0; i < n; i++) {

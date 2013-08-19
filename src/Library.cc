@@ -11,14 +11,14 @@ namespace ndatk
 {
   using namespace std;
 
-  string Library::type = "ndatk_library_1.0";
+  string Library::type_ = "ndatk_library_1.0";
 
   // Construct Library of tables from input stream
   void Library::parse(istream &s)
   {
     string line;
 
-    this->get_header(s, Library::type); 
+    this->get_header(s);
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "IDS:")) {
         while (get_logical_line(s, line)) {
@@ -40,7 +40,7 @@ namespace ndatk
     if (!s) {
       string e("Cannot open file ");
       e += filename + "!";
-      ifstream::failure(e.c_str());
+      throw ifstream::failure(e.c_str());
     }
     Library::parse(s);
     s.close();
@@ -50,6 +50,12 @@ namespace ndatk
   Library::Library(const vector<string> &ids_, const Exsdir &x):
     CuratedData(), ids(ids_), e(x)
   {
+  }
+
+  // Data file type
+  string Library::type(void) const
+  {
+    return Library::type_;
   }
 
   // Number of tables

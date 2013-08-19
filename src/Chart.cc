@@ -20,7 +20,7 @@ namespace ndatk
 {
   using namespace std;
 
-  string Chart::type = "ndatk_chart_1.0";
+  string Chart::type_ = "ndatk_chart_1.0";
 
   // Canonicalize: convert z000 to z; pass other sza unchanged
   int canonicalize(int sza)
@@ -36,7 +36,7 @@ namespace ndatk
   {
     string line;
 
-    c.get_header(s, Chart::type);
+    c.get_header(s);
 
     // Read rest of file
     while (get_logical_line(s, line)) {
@@ -82,7 +82,7 @@ namespace ndatk
     if (!s) {
       string e("Cannot open file ");
       e += filename + "!";
-      ifstream::failure(e.c_str());
+      throw ifstream::failure(e.c_str());
     }
     s >> *this;
     s.close();
@@ -96,11 +96,17 @@ namespace ndatk
     if (!s) {
       string e("Cannot open file ");
       e += filename + "!";
-      ifstream::failure(e.c_str());
+      throw ifstream::failure(e.c_str());
     }
     s >> *this;
     s.close();
   }    
+
+  // Data file type
+  string Chart::type(void) const 
+  {
+    return Chart::type_;
+  }
 
   // Number of elements in element
   int Chart::number_of_elements(void) const

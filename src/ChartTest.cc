@@ -5,6 +5,7 @@
 void ChartTest::runTest(void)
 {
   // Chart header info
+  UT_ASSERT(x.type() == "ndatk_chart_1.0");
   UT_ASSERT(x.name() == "early_universe");
   UT_ASSERT(starts_with(x.event(0), "+3hrs"));
 

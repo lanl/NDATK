@@ -27,6 +27,7 @@ namespace ndatk
 
     // Queries
     std::string name(void) const;          // identifier
+    virtual std::string type(void) const = 0; // Data file type
     size_type number_of_events(void) const;
     std::string event(size_type) const; // event description
 
@@ -36,14 +37,14 @@ namespace ndatk
   protected:
 
     // I/O for CuratedData: to be used by derived classes only
-    std::ostream& put_header(std::ostream& out, const std::string t) const;
-    std::istream& get_header(std::istream& in, const std::string t);
+    std::ostream& put_header(std::ostream& out) const;
+    std::istream& get_header(std::istream& in);
     static std::string begin_provenance;
     static std::string end_provenance;
     std::ostream& put_ProvenanceVector(std::ostream &out) const;
     std::istream& append_ProvenanceVector(std::istream &in);
 
-    std::string name_;             // (unique) name
+    std::string name_;             // unique name
     ProvenanceVector provenance; // provenance paragraphs 
 
   };

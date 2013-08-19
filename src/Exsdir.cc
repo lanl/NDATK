@@ -10,7 +10,7 @@ namespace ndatk
 {
   using namespace std;
 
-  string Exsdir::type = "ndatk_exsdir_1.0";
+  string Exsdir::type_ = "ndatk_exsdir_1.0";
 
   istream& Exsdir::get_xsdir(istream& s)
   {
@@ -56,7 +56,7 @@ namespace ndatk
   // Read an Extended cross section directory from a stream
   istream &operator>>(istream &s, Exsdir &e)
   {
-    e.get_header(s, Exsdir::type);
+    e.get_header(s);
     e.get_xsdir(s);
     return s;
   }
@@ -68,7 +68,7 @@ namespace ndatk
     if (!s) {
       string e("Cannot open file ");
       e += filename + "!";
-      ifstream::failure(e.c_str());
+      throw ifstream::failure(e.c_str());
     }
     s >> *this;
     s.close();
@@ -86,7 +86,11 @@ namespace ndatk
     return true;
   }
 
-  vector<string>::const_iterator p;
+  string Exsdir::type(void) const
+  {
+    return Exsdir::type_;
+  }
+  
   // Number of tables
   int Exsdir::number_of_tables(void) const
   {

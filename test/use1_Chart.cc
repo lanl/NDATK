@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   for (int i = 0; i < e.number_of_events(); i++)
     std::cout << e.event(i) << std::endl;
 
-  ndatk::Chart x("chart2", e);     // parse filename
+  ndatk::Chart x("chart", e);     // parse filename
   cout << "Created Chart " << x.name()
        << " with " << x.number_of_elements() << " elements" 
        << " and " << x.number_of_nuclides() << " nuclides." << endl;

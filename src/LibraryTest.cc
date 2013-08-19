@@ -3,6 +3,8 @@
 void LibraryTest::runTest(void)
 {
 
+  UT_ASSERT(y.type() == "ndatk_library_1.0");
+
   //UT_ASSERT(y.is_valid());
   UT_ASSERT(y.table_identifier("H1") == "1001.80c");
   UT_ASSERT(y.atomic_weight_ratio() == 0.999167);

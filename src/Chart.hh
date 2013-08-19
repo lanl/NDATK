@@ -30,6 +30,9 @@ namespace ndatk
     friend std::istream &operator>>(std::istream &s, Chart &c);
 
     // Queries:
+    // Data file type
+    std::string type(void) const;
+
     // Number of elements in Chart
     int number_of_elements(void) const;
 
@@ -68,7 +71,7 @@ namespace ndatk
     double half_life(std::string name) const;
 
   private:
-    static std::string type;
+    static std::string type_;
 
     // Periodic Table Values
     struct ElementData
