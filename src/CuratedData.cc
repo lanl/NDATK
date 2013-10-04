@@ -16,6 +16,10 @@ namespace ndatk
   using namespace std;
 
   // Put header to ostream out
+
+  // All CuratedData files begin with:
+  // type: type_value
+  // name: name_value
   ostream& CuratedData::put_header(ostream& out) const
   {
     out << "type: " << type() << endl; // First logical line
@@ -63,6 +67,11 @@ namespace ndatk
   string CuratedData::end_provenance = "%%";
 
   // Put ProvenanceVector to ostream out
+
+  // CuratedData files may contain sections of:
+  // provenance:
+  // lines of text
+  // %%
   ostream& CuratedData::put_ProvenanceVector(ostream& out) const
   {
     ProvenanceVector::const_iterator i;
@@ -109,6 +118,16 @@ namespace ndatk
   string CuratedData::event(CuratedData::size_type i) const
   {
     return provenance.at(i);
+  }
+
+  // Provenance history
+  string CuratedData::events(void) const
+  {
+    string e;
+    for (ProvenanceVector::const_iterator i = provenance.begin();
+         i != provenance.end(); i++)
+      e += *i + "\n";
+    return e;
   }
 
   // Required base class dtor

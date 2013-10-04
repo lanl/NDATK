@@ -1,13 +1,70 @@
 ndatk   -*-Org-*-
 
-* Tasks
-** TODO Refactor error handling
-   - throw exception for unopened files
+* CuratedData
+** Class
+*** DONE Add header I/O member functions
+*** DONE Add provenance section I/O member functions
+*** DONE Add provenence paragraph instead of structure
+
+* Chart 
+** Data
+*** DONE Update CuratedData entries
+*** DONE Add magic string
+    type: ndatk_chart_1.0
+*** DONE Fix file format
+    record-jar format
+** Class
+*** DONE Add exceptions for I/O failures
+    - throw exception for unopened files
+    - throw exception if magic string, name missing
+*** TODO Speed up line parsing  
+*** DONE Check magic string
+    Add inline type member function
+*** DONE Parse CuratedData
+
+* Library
+** Data
+*** DONE Update CuratedData entries
+*** DONE Add magic string
+    type: ndatk_library_1.0
+*** DONE Fix file format
+    record-jar format
+*** TODO sza temp szaid format
+** Class
+*** DONE Add exceptions for I/O failures
+    - throw exception for unopened files
+    - throw exception if magic string, name missing
+*** TODO Speed up line parsing
+*** DONE Check magic string
+    Add inline type member function
+*** TODO Search policies for sza, temp
+*** TODO Add identifier search policy
+*** TODO Add output stream capability
+
+* Exsdir
+** Data
+*** DONE Update CuratedData entries
+*** DONE Add magic string
+    type: ndatk_exsdir_1.0
+*** Fix file format
+    record-jar + xsdir format
+** Class
+*** Add exceptions for I/O failures
+    - throw exception for unopened files
+    - throw exception if magic string, name missing
+*** TODO Speed up line parsing
+*** DONE Check magic string
+*** DONE Parse CuratedData
+*** TODO Add search path policies
+    - Exsdir
+    - xsdir
+    - data files
+*** TODO Add file readability check
+*** TODO Return fully qualified file path
+*** TODO Add DATAPATH
+*** TODO Add atomic weigh ratios
+*** TODO Add directory heirarchy with Exsdir as child
 
 ** TODO Add more edge case tests
-** TODO Add identifier search policy to Library
-** TODO Add path search policy to Exsdir
-** TODO Add file readability check to Exsdir
-** TODO Add directory heirarchy with Exsdir as child
-** TODO Implement multi-temperature as identifier search policy
-** TODO Add output stream capability to Library
+
+

@@ -1,7 +1,18 @@
 #ifndef LIBRARY_HH
 #define LIBRARY_HH
 
+/**
+   \file Library.hh
+
+   Library of isomer tables.
+
+   \author Mark G. Gray <gray@lanl.gov>
+
+   Copyright Los Alamos National Laboratory 2013.  All Rights Reserved.
+*/
+
 #include <string>
+#include <map>
 #include <vector>
 #include <istream>
 #include "CuratedData.hh"
@@ -9,80 +20,108 @@
 
 namespace ndatk
 {
-  // Library of tables
+  /**
+     \class Library
+
+     Library of isomer tables.
+
+     Table identifiers by canonical SZA (10^6 * nuclear state + 10^3 * 
+     atomic number + mass number).
+
+  */
   class Library: public CuratedData
   {
   public:
 
-    // Construct Library from table identifier and Exsdir
+    /**
+       Initialize Library by name and Exsdir.
+
+       Search Exsdir for library name, open and read associated
+       library file, and provide table meta-data for specified SZAs in
+       library.
+
+       \param[in] id std::string
+       \param[in] e Exsdir
+    */
     Library(std::string id, const Exsdir &e);
 
-    // Construct Library from vector of table identifiers and Exsdir
-    Library(const std::vector<std::string>  &ids_, const Exsdir &e);
+    /**
+       Initialize Library by input stream and Exsdir.
 
-    // Is object in valid state?
-    bool is_valid(void) const;
+       read input stream for library data, and provide table meta-data 
+       for specified SZAs in library using Exsdir.
 
-    // Data file type
-    std::string type(void) const;
+       \param[in] s std::istream
+       \param[in] e Exsdir
+    */
+    Library(std::istream &s, const Exsdir &e);
 
-    // Number of tables 
+    /**
+       Data file type.
+
+       \return type std::string
+    */
+    std::string type(void) const { return std::string("ndatk_library_1.0"); }
+
+    /**
+       Number of tables in Library.
+
+       \return number of tables int
+    */
     int number_of_tables(void) const;
 
-    // Return and rememeber table identifier for name
+    /// Return and rememeber table identifier for name
     std::string table_identifier(std::string name);
 
-    // Return current table identifier
+    /// Return current table identifier
     std::string table_identifier(void) const;
 
-    // Line or record number of current table identifier
+    /// Line or record number of current table identifier
     int address(void) const;
 
-    // Length of binary data block or zero of current table identifier
+    /// Length of binary data block or zero of current table identifier
     int table_length(void) const;
 
-    // Length of binary record or zero of current table identifier
+    /// Length of binary record or zero of current table identifier
     int record_length(void) const;
     
-    // Number of binary entries per record or zero of current table identifier
+    /// Number of binary entries per record or zero of current table identifier
     int entries_per_record(void) const;
 
-    // File name of current table identifier
+    /// File name of current table identifier
     std::string file_name(void) const;
 
-    // Directory access route or zero of current table identifier
+    /// Directory access route or zero of current table identifier
     std::string access_route(void) const;
 
-    // Probability table flag of current table identifier
+    /// Probability table flag of current table identifier
     bool probability_table_flag(void) const;
 
-    // Atomic weight (u) of current table identifier
+    /// Atomic weight (u) of current table identifier
     double atomic_weight(void) const;
 
-    // Atomic weight ratio of current table identifier
+    /// Atomic weight ratio of current table identifier
     double atomic_weight_ratio(void) const;
 
-    // Temperature (MeV) of current table identifier
+    /// Temperature (MeV) of current table identifier
     double temperature(void) const;
-
-    // Define const_iterator type for Library
-    typedef std::vector<std::string>::const_iterator const_iterator;
-
-    // Const_iterator to start of table identifiers
-    const_iterator begin(void) const;
-
-    // Const_iterator to end of table identifiers
-    const_iterator end(void) const;
 
   private:
 
     static std::string type_;
     void parse(std::istream &s);
 
-    typedef std::vector<std::string> TableIdentifiers;
+    typedef std::multimap<int, std::string> TableIdentifiers;
     TableIdentifiers ids;                // table identifiers
     const Exsdir &e;
+    typedef std::vector<std::string> isomers;
+    isomers szaids;
     std::string current_isomer;
   };
 }
+/**
+   \example use0_Library.cc
+
+   Use case for Library class.
+*/
 #endif

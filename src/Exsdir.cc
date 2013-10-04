@@ -10,8 +10,6 @@ namespace ndatk
 {
   using namespace std;
 
-  string Exsdir::type_ = "ndatk_exsdir_1.0";
-
   istream& Exsdir::get_xsdir(istream& s)
   {
     string line;
@@ -86,11 +84,6 @@ namespace ndatk
     return true;
   }
 
-  string Exsdir::type(void) const
-  {
-    return Exsdir::type_;
-  }
-  
   // Number of tables
   int Exsdir::number_of_tables(void) const
   {

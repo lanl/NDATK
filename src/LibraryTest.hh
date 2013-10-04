@@ -47,31 +47,26 @@ static istringstream exsdir_dat(
   return result;
 }
 
-static std::vector<std::string> library_data(void)
-{
-  std::vector<std::string> result;
-
-  result.push_back("type: ndatk_library_1.0");
-  result.push_back("name: test_library");
-  result.push_back("ids:");
-  result.push_back("1001.80c");
-  result.push_back("1002.80c");
-  result.push_back("1003.80c");
-  result.push_back("1001.81c");
-  result.push_back("1002.81c");
-  result.push_back("1002.81c");
-  result.push_back("1003.80c");
-  result.push_back("1003.81c");
-  result.push_back("1003.82c");
-  result.push_back("%%");
-  return result;
-}
+static istringstream library_data(
+"type: ndatk_library_1.0\n"
+"name: test_library\n"
+"ids:\n"
+"1001 1001.80c\n"
+"1002 1002.80c\n"
+"1003 1003.80c\n"
+"1001 1001.81c\n"
+"1002 1002.81c\n"
+"1002 1002.81c\n"
+"1003 1003.80c\n"
+"1003 1003.81c\n"
+"1003 1003.82c\n"
+"%%\n");
 
 
 class LibraryTest: public UnitTest
 {
 public:
-  LibraryTest(): x(exsdir_data()), y(library_data(), x) {} 
+  LibraryTest(): x(exsdir_data()), y(library_data, x) {} 
   void runTest();
 
 private:

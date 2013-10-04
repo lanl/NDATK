@@ -20,8 +20,6 @@ namespace ndatk
 {
   using namespace std;
 
-  string Chart::type_ = "ndatk_chart_1.0";
-
   // Canonicalize: convert z000 to z; pass other sza unchanged
   int canonicalize(int sza)
   {
@@ -101,12 +99,6 @@ namespace ndatk
     s >> *this;
     s.close();
   }    
-
-  // Data file type
-  string Chart::type(void) const 
-  {
-    return Chart::type_;
-  }
 
   // Number of elements in element
   int Chart::number_of_elements(void) const

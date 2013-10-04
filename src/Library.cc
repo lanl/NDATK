@@ -11,12 +11,12 @@ namespace ndatk
 {
   using namespace std;
 
-  string Library::type_ = "ndatk_library_1.0";
-
   // Construct Library of tables from input stream
   void Library::parse(istream &s)
   {
     string line;
+    int sza;
+    string id;
 
     this->get_header(s);
     while (get_logical_line(s, line)) {
@@ -25,11 +25,19 @@ namespace ndatk
           if (starts_with_nocase(line, "%%")) {
             break;
           } else {
-            ids.push_back(line);
+            istringstream r(line);
+            r >> sza >> id;
+            ids.insert(Library::TableIdentifiers::value_type(sza, id));
           }
         }
       }
     }
+  }
+
+  // Construct library from stream and Exsdir
+  Library::Library(istream &s, const Exsdir &x): CuratedData(), ids(), e(x)
+  {
+    Library::parse(s);
   }
 
   // Construct library from id and Exsdir
@@ -46,34 +54,12 @@ namespace ndatk
     s.close();
   }
 
-  // Construct library from vector<string> and Exsdir
-  Library::Library(const vector<string> &ids_, const Exsdir &x):
-    CuratedData(), ids(ids_), e(x)
-  {
-  }
-
-  // Data file type
-  string Library::type(void) const
-  {
-    return Library::type_;
-  }
-
   // Number of tables
   int Library::number_of_tables(void) const
   {
     return ids.size();
   }
 
-  // Is object in valid state?
-  bool Library::is_valid(void) const
-  {
-    for (vector<string>::const_iterator p = ids.begin(); 
-         p != ids.end(); p++)
-      if (e.table_identifier(*p) != *p)
-        return false;
-    return true;
-  }
-  
   // Return table identifier isomer name
   string Library::table_identifier(string name)
   {
@@ -86,14 +72,15 @@ namespace ndatk
       result = e.table_identifier(s);
     } else {                    // Policy: lookup name in Library
       int sza = translate_isomer(name);
-      string s = lexical_cast<string, int>(sza) + ".";
-      for (vector<string>::const_iterator p = ids.begin();
-           p != ids.end(); p++) {
-        if (starts_with(*p, s)) {
-          result = *p;
-          break;                // Policy: return first match
-        }
-      }
+      typedef pair<Library::TableIdentifiers::const_iterator, 
+                   Library::TableIdentifiers::const_iterator> ip_type;
+      ip_type ip = ids.equal_range(sza);
+      szaids.clear();
+      for (Library::TableIdentifiers::const_iterator it = ip.first; 
+           it != ip.second; ++it) 
+        szaids.push_back(it->second);
+      if (!szaids.empty())
+        result = szaids[0];
     }
     if (result != "")               // Change only if valid
       current_isomer = result;
@@ -164,15 +151,4 @@ namespace ndatk
     return e.temperature(current_isomer);
   }
 
-  // Iterator to start of table identifiers in Library
-  Library::const_iterator Library::begin(void) const
-  {
-    return ids.begin();
-  }
-
-  // Iterator to end of table identifiers in Library
-  Library::const_iterator Library::end(void) const
-  {
-    return ids.end();
-  }
 }

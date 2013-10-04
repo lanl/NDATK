@@ -175,14 +175,14 @@ namespace ndatk {
     return is;
   }
 
-  // Wrap C getenv to get environment string with C++ interface
+  // Wrap POSIX getenv to get environment string with C++ interface
   std::string get_env(const std::string name)
   {
     std::string s(getenv(name.c_str()));
     return s;
   }
 
-  // Wrap C getcwd to get current working directory with C++ interface
+  // Wrap POSIX getcwd to get current working directory with C++ interface
   std::string get_cwd(void)
   {
     char buf[FILENAME_MAX];
@@ -191,7 +191,7 @@ namespace ndatk {
     return s;
   }
 
-  // Wrap C gethostname
+  // Wrap POSIX gethostname
   std::string get_hostname(void)
   {
     char buf[HOST_NAME_MAX];
