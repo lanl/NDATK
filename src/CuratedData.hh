@@ -27,12 +27,65 @@ namespace ndatk
   
      The ndatk::CuratedData abstract base class provides derived
      classes which represent curated data files with type, name, and
-     history.   Type is a string that adorns curated data files
-     which specifies the type of data they contain.  Name is a string
-     that adorns curated data files which specifies an identifier.
-     History is a list of free form texts which answer what, why,
-     where, when, who, which, and how for each major event affecting
-     the data's evolution.
+     history.  Type is a string that adorns curated data files and
+     specifies the type of data they contain.  Name is a string that
+     adorns curated data files that specifies its unique identifier.
+     Event is a paragraph documents events in the data's history.
+
+     \dot
+     digraph w7 {
+     label="W-7 model of event description.";
+     center=1;
+     ratio=fill;
+     node[shape=diamond, fontsize=10];
+     edge[fontsize=10];
+     Who[label="Who?"];
+     How[label="How?"];
+     Why[label="Why?"];
+     Where[label="Where?"];
+     Which[label="Which?"];
+     When[label="When?"];
+     node[shape=box, fontsize=10];
+     Agent; Action; Location; Instrument; Time; Reason;
+     node[shape=oval];
+     Event0[color=blue, fontcolor=blue];
+     Event1[label="Event1\n<What?>"]; 
+
+     Agent -> Who[dir=back,label="+"];
+     Who -> Event1[dir=back,label="*"];
+     Action -> How[label="1"];
+     How -> Event1[label="1"]; 
+     Event1 -> Why[label="*"];
+     Why -> Reason[label="+"];
+     Event1 -> Where[label="*"];
+     Where -> Location[label="+"];
+     Event1 -> When[label="*"];
+     When -> Time[label="1"];
+     Event1 -> Which[label="*"];
+     Which -> Instrument[label="*"];
+     node[shape=plaintext];
+     Event2[label="..."];
+     Event1 -> data1;
+     node[fontcolor=blue];
+     edge[color=blue];
+     Event0 -> data0 -> Event1;
+     data1 -> Event2;
+
+     {rank=min; Agent; Action; Location}
+     {rank=same; Who; How; Where}
+     {rank=same; Event0; data0; Event1; data1; Event2}
+     {rank=same; When; Which; Why}
+     {rank=max; Time; Instrument; Reason}
+     }
+     \enddot
+     
+     According to the W-7 model of curated data, data creation,
+     transformation, and validation occurs as a series of events that
+     may take data as input and produce data as output.  Each of these
+     events can be characterized by answers to what, why, where, when,
+     who, which, and how questions; the set of characterizations
+     constitutes the data's provenance.
+
   */
   class CuratedData
   {

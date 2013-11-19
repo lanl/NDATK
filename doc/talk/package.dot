@@ -1,8 +1,8 @@
 digraph Package {
-        size="7.5,10";
+        /* size="7.5,10";*/
         center=1;
         ratio=fill
-        node[fontsize=18];
+        node[fontsize=8];
         compound=true;
         edge[style=dashed,minlen=2];
 
@@ -35,9 +35,10 @@ digraph Package {
         }
         subgraph cluster1 {
                  label="STL";
+                 algorithm[label="...",shape=box];
                  vector[shape=box];
                  string[shape=box];
                  map[shape=box];
         }
-        utils -> string[ltail=cluster0,lhead=cluster1];
+        constants -> string[ltail=cluster0,lhead=cluster1];
 }

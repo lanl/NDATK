@@ -1,6 +1,6 @@
 digraph w7 {
-        size="10,7.5"; /* US letter size minus 1" postscript margins" */
-        rotate=90;        
+        /* size="10,7.5"; /* US letter size minus 1" postscript margins" */
+        /* rotate=90; */       
         center=1;
         ratio=fill;
 

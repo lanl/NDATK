@@ -30,11 +30,72 @@
 
    Nuclear Data Access Tool Kit.
 
-   The Nuclear Data Access Tool Kit provides an API to identify
+   The Nuclear Data Access Tool Kit provides an API that identifies
    continuous energy neutron transport tables consistent with a
    multigroup library name and state, atomic, and mass number
-   designation.
+   designation, and provides physical data about elements, isotopes,
+   and isomers.
 
+   \dot
+   digraph Package {
+   label="ndatk Package Diagram";
+   center=1;
+   ratio=fill
+   node[fontsize=10];
+   compound=true;
+   edge[style=dashed,minlen=2];
+
+   subgraph cluster0 {
+   label="ndatk";
+   Chart[shape=box];
+   Library[shape=box];
+   Exsdir[shape=box];
+   CuratedData[shape=box];
+   constants[shape=plaintext];
+   utils[shape=plaintext];
+   translate_isomer[shape=plaintext];
+   Library -> translate_isomer;
+   Library -> constants;
+   Library -> utils;
+   Library -> CuratedData;
+   Library -> Exsdir;
+
+   Chart -> translate_isomer;
+   Chart -> constants;
+   Chart -> utils;
+   Chart -> CuratedData;
+   Chart -> Exsdir;
+   
+   Exsdir -> constants;
+   Exsdir -> utils;
+   Exsdir -> CuratedData;
+        
+   translate_isomer -> utils;
+   }
+   subgraph cluster1 {
+   label="STL";
+   algorithm[label="...",shape=box];
+   map[shape=box];
+   string[shape=box];
+   vector[shape=box];
+
+   }
+   constants -> string[ltail=cluster0,lhead=cluster1];
+   }
+   \enddot
+
+   At its top level the ndatk package provides the ndatk::Library
+   class, which groups nuclear cross section data tables into
+   libraries, and the ndatk::Chart class, which provides basic "Chart
+   of the Nuclides" data.  These classes depend on the ndatk::Exsdir
+   class, which provides a directory of table identifiers and their
+   meta-data, and the translate_isomer.hh functions, which
+   provide translation from element, isotope, and isomer specifiers to
+   the standard SZA integer.  At its lowest level, the ndatk package
+   provides general utility functions in utils.hh, physical
+   constants in constants.hh, and an abstract base class for
+   all of its curated data in ndatk::CuratedData.  The ndatk package
+   depends solely on code in C++'s Standard Template Library
 */
 namespace ndatk {
 

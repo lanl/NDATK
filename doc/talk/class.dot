@@ -1,0 +1,36 @@
+digraph ndatk {
+        center=1;
+        ratio=fill
+        fontsize=8
+        node[fontsize=8,shape="record"];
+        edge[fontsize=8]
+
+        CuratedData[label="{CuratedData||+name():string\l"+
+                          "+type():string\l"+
+                          "+provenance():string\l}"];
+        Chart[label="{Chart||+chemical_symbol(integer):string\l"+
+                    "+element_name(integer):string\l"+
+                    "+atomic_weight_ratio(integer):string\l"+
+                    "+natural_abundance(integer):double\l}"];
+        Library[label="{Library|-identifier:string\l-temperature:double\l|"+
+                      "+table_itentifier(integer):string\l"+
+                      "+table_identifier(string):string\l"+
+                      "+temperature(double):double\l"+
+                      "+address():integer\l"+
+                      "+file_name():string\l"+
+                      "+access_route():string\l}"];
+        Exsdir[label="{Exsdir||+address(string):integer\l"+
+                     "+file_name(string):string\l"+
+                     "+access_route(string):string\l"+
+                     "+temperature(string):double\l}"];
+        Library -> Exsdir[dir=both, arrowhead=open, arrowtail=odiamond];
+        Chart -> Exsdir[arrowhead=open];
+        edge[arrowhead=empty];
+        Chart -> CuratedData;
+        Exsdir -> CuratedData;
+        Library -> CuratedData;
+
+        {rank=min; CuratedData}
+        {rank=same; Library; Chart}
+        {rank=max; Exsdir}
+}

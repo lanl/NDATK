@@ -1,0 +1,411 @@
+\documentclass[clock]{slides}
+
+%\onlyslides{1-100}
+
+\ifx\pdftexversion\undefined
+\usepackage[dvips]{graphicx}
+\else
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+\DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+\usepackage{color}
+\usepackage[normalem]{ulem}
+                                                                               
+\setlength{\topskip}{0cm}
+\newenvironment{xslide}[1][logo.jpg]{\begin{slide} \tiny
+\textcolor{blue}{\underline{ndatk}} \hfill
+\includegraphics[height=36pt]{#1}
+\normalsize}{\vfill\tiny
+\textcolor{blue}{\hrulefill \\LANL XCP--5}
+\end{slide}}
+                                                                               
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                                                               
+\begin{document}
+
+\begin{xslide}
+
+\begin{center}\Large
+Nuclear Data Access Tool Kit\\
+\today\\
+\vspace{2in}
+Mark G. Gray\\ 
+\end{center}
+
+\end{xslide}
+
+\addtime{60}
+\begin{note}\small
+The Nuclear Data Access Tool Kit (ndatk) is a C++ code library that
+provides access to continuous energy neutron cross section table
+meta-data traditionally found in the cross section directory file
+(xsdir), grouping nuclide tables into data libraries consistent with
+the multi-group neutron cross section data provided by the Nuclear
+Data Interface (NDI).
+
+This talk, which was originally presented in part at a MCATK demo,
+1300 Monday 20 May 2013, overviews the design and interface of ndatk
+and updates its status.\footnote{Thanks to Terry Adams for review and
+  comments 10/15/13}
+\end{note}
+
+\begin{xslide}
+\begin{center}\large
+NDATK Requirements
+\end{center}
+
+\begin{enumerate}
+\item MG szaid $\Leftrightarrow$ CE szaid
+\item Several user access through polyvalent program pattern
+\item NDI multi-temperature features
+\item NDI sza translation features
+\item Curated Data
+\item Continuous Energy Libraries
+\end{enumerate}
+\end{xslide}
+
+\addtime{120}
+\begin{note}\small
+On Monday 10 December 2012 various potential stakeholders of ndatk met
+to discuss requirements.  They suggested the following set:  
+\begin{enumerate}
+\item Original requirement from scf, rcl
+\item Original target C++ library for MCATK; flat C/FORTRAN library;
+  scripting interface likely needed for others
+\item NDI multi-temperature features; how does this work with reqt. 1?
+\item NDI sza translation features; how does this work with reqt. 1?
+\item Curated Data
+  \begin{itemize}
+    \item Documented sources
+    \item Documented transformations
+    \item Public release history
+  \end{itemize}
+\end{enumerate}
+On Wednesday 23 January 2013 the data team met with management for
+authorization to proceed.  One requirement, which resolved conflicts
+among previous requirements was added:
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item Continuous Energy Libraries
+\end{enumerate}
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+NDATK Constraints
+\end{center}
+\begin{quote}
+Things are the way they are because they got that way.
+\flushright -- Kenneth Boulding
+\end{quote}
+\begin{quote}
+If you don't think too good, don't think too much.
+\flushright -- Ted Williams
+\end{quote}
+\begin{quote}
+I made this very long because I did not have the leisure to make it
+shorter.
+\flushright -- Blaise Pascal
+\end{quote}
+\end{xslide}
+
+\addtime{120}
+\begin{note}\small
+In addition to the explicit stakeholder requirements, additional
+requirements come implicitly from stakeholder expectations, my
+abilities, and resource constraints, namely:
+\begin{description}
+\item[Boulding's backward basis: ] The xsdir and NDI work the way they
+  currently do because they address certain requirements for their
+  users.  Any solution I create here is constrained by their user's
+  expectations. 
+\item[William's limit: ] Since I don't ``code too good'', I
+  intentionally want to design the smallest number of lines of code
+  that will do the job.
+\item[Pascal's paradox: ] Unfortunately I probably don't have the
+  leisure to achieve my William's limit.
+\end{description}
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+XSDIR Deconstructed
+\end{center}
+The Data Directory File (XSDIR) has three sections:
+\begin{enumerate}
+\item DATAPATH\\
+  ``The directory where the data libraries (sic) are stored...''
+\item ATOMIC WEIGHT RATIOS\\
+  ``... free format pairs of ZAID (sic) AWR...''
+\item DIRECTORY\\
+``...listing of available data tables.''
+\end{enumerate}
+\end{xslide}
+
+\addtime{120}
+\begin{note}\small
+Applying Boulding's backward basis to the xsdir:
+\begin{enumerate}
+\item The DATAPATH section in XSDIR is a small part of the policy that
+  MCNP uses to find its data.  The ndatk should implement a full file
+  search policy, including default, API, and environment specified
+  input paths.
+\item The AWR section in the XSDIR is simultaneously redundant with
+  the awr provided in the DIRECTORY section and on the tables, and
+  insufficient for nuclide scalar data needed.  The ndatk needs to
+  include it and natural abundances from a identified, standard
+  source, to calculate isotopic loadings from elemental input
+  specifications.
+\item The DIRECTORY section in the XSDIR provides mapping from unique
+  table identifiers (SZAIDs) to file meta-data, and a preferred order
+  for identifiers which begin with the same SZA.  The ndatk needs to
+  provide the same data, but grouped by library subsets.
+\end{enumerate}
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+NDI Deconstructed: API
+\end{center}
+\begin{itemize}
+\item \verb+ndi2_get_TYPE_DIM(handle, KEY)+
+\item \verb+ndi2_get_TYPE_DIM_n(handle, KEY, index)+
+\item \verb+ndi2_get_TYPE_DIM_x(handle, KEY, name)+
+\end{itemize}
+where
+\begin{itemize}
+\item \verb+TYPE = int|float|string+
+\item \verb+DIM = val|vec+
+\end{itemize}
+\end{xslide}
+
+\addtime{60}
+\begin{note}\small
+Applying Boulding's backward basis to the NDI:
+\begin{description}
+\item[ndi2: ] namespace
+\item[get: ] data query
+\item[TYPE: ] return data type  
+\item[DIM: ] return data extent
+\item[n or x: ] additional argument indicator
+\item[KEY: ] keyword data selector
+\end{description}
+
+3 types * 2 extents *3 argument indicator * number of keys =
+18 functions * number of keys
+\end{note}
+ 
+\begin{xslide}
+\begin{center}\Large
+NDATK Class Diagram
+\end{center}
+\begin{center}
+\includegraphics{class.pdf}
+\end{center}
+\end{xslide}
+
+\addtime{180}
+\begin{note}\small
+The xsdir features in ndatk divide its functionality into the Chart
+(ATOMIC WEIGHT RATIOS) and Exsdir (DIRECTORY) classes; add a Library
+class to encapsulate the grouping SZAIDs into libraries, and
+CuratedData class to encapsulate data provenance.
+
+This class diagram shows only the important public assessor methods
+and internal state for the use cases to come.
+
+Talk about how these classes work to meet requirements.
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+NDATK API
+\end{center}
+
+\begin{itemize}
+\item \verb+object.KEY()+
+\item \verb+object.KEY(index)+
+\item \verb+object.KEY(name)+
+\end{itemize}
+\end{xslide}
+
+\addtime{60}
+\begin{note}\small
+The NDI feature in ndatk are:
+\begin{description}
+\item[ndatk: ] namespace implied by construction
+\item[const: ] data query implied by signature
+\item[TYPE: ] return type implied by signature
+\item[DIM: ] return extent implied by signature
+\item[additional arguments: ] implied by signature
+\item[KEY: ] data selector inherent in function name
+\end{description}
+C++'s strong static type checking enforces correct use at compile time. 
+\end{note}    
+
+\begin{xslide}
+\begin{center}\Large
+NDATK Problem Frame
+\end{center}
+
+\begin{center}
+\includegraphics[height=5in, width=6in]{ndatk.10}
+\end{center}
+
+\end{xslide}
+
+\addtime{240}
+\begin{note}\small
+A Commanded Information Problem Frame.  LHS (dashed lines) of the
+diagram labels requirements on user code requests (R), user data
+formats (UD), nuclear data formats (ND), and the primary requirement:
+In response to a request R make the user's data (UD) correspond to the
+nuclear data (ND) and return a status indicator of the action.
+
+The RHS (solid lines) of the diagram labels specifications of user
+calls (UC!R), data reads (ndatk!ND), and API return data (ndatk!UD).
+
+The ndatk package is a levelized logical design, consisting of an
+application programming interface (API), a finite state machine (FSM),
+data file readers, and utility code.
+\begin{itemize}
+\item The API layer insulates users from changes in the data; new data
+  types can be added without requiring interface rewrites
+\item The FSM and utilities layers add value; through them the interface
+  can transform file data or calculate missing data.
+\end{itemize}
+It is this design that successfully insulates NDI code users from NDI
+data changes.
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+NDATK Package Diagram
+\end{center}
+\begin{center}
+\includegraphics[height=5in]{package.pdf}
+\end{center}
+\end{xslide}
+
+\addtime{180}
+\begin{note}\small
+The ndatk package is a three level physical design:
+\begin{enumerate}
+\setcounter{enumi}{-1}
+\item \texttt{constants} and \texttt{utils} modules and the
+  \texttt{CuratedData} class.
+\item \texttt{translate\_isomer} module and \texttt{Exsdir} class
+\item \texttt{Library} and \texttt{Chart} classes
+\end{enumerate}
+
+The ndatk namespace contains: 
+\begin{itemize}
+\item Three support modules:
+\begin{description}
+\item[constants: ] Nuclear data physical constants
+\item[utils: ] STL-11, STL-14, Boost, Loki functions
+\item[translate\_isomer: ] Nuclide name translation
+\end{description}
+\item Four classes:
+\begin{description}
+\item[CuratedData: ] Data name, type, provenance
+\item[Exsdir: ] Table meta-data by SZAID
+\item[Chart: ] Chart of the nuclides data
+\item[Library: ] Subset of SZAIDS corresponding to MG Libraries
+\end{description}
+\end{itemize} 
+and depends only on the STL-03 namespace.
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+NDATK Use Cases
+\end{center}
+\begin{enumerate}
+\setcounter{enumi}{-1}
+\item Single Temperature Library Access
+\item Calculate element AWR from isotope data
+\item Multi-Temperature Library Access
+\end{enumerate}
+\end{xslide}
+
+\addtime{360}
+\begin{note}\small
+\begin{enumerate}
+\setcounter{enumi}{-1}
+\item Create single temperature continuous energy \texttt{Library}; retrieve
+  table meta-data by SZA.
+\item Create \texttt{Chart} of the nuclides; calculate atomic weight
+  ratio of elements using nuclide atomic weight ratios and abundances
+  and compare.
+\item Create multi-temperature continuous energy \texttt{Library};
+  retrieve table meta-data by SZA and temperature.
+\end{enumerate}
+
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+Status
+\end{center}
+\begin{enumerate}
+\item \sout{MG szaid $\Leftrightarrow$ CE szaid}
+\item \textcolor{red}{Several user access through polyvalent program pattern}
+\item \textcolor{green}{NDI multi-temperature features}
+\item \textcolor{green}{NDI sza translation features}
+\item \textcolor{green}{Curated Data}
+\item \textcolor{green}{Continuous Energy Libraries}
+\end{enumerate}
+
+\end{xslide}
+
+\addtime{60}
+\begin{note}\small
+\begin{enumerate}
+\item MG elementals make one-to-one translation impossible; item six
+  supersedes this requirement
+\item OO C++ library API implemented; others may follow
+\item Done
+\item Done
+\item Done
+\item Done
+\end{enumerate}
+\end{note}
+
+\begin{xslide}
+\begin{center}\Large
+To Do
+\end{center}
+
+\begin{itemize}
+\item Path search policies for Exsdir
+\item SZA and SZAID search policies in Library
+\item Temperature match policy in Library
+\item Flat C/FORTRAN interface (Requirement 2)
+\item Command line interface (Requirement 2)
+\item Physical Constants class
+\end{itemize}
+\end{xslide}
+
+\addtime{60}
+\begin{note}\small
+\begin{itemize}
+\item Code currently must ensure data in place and paths correct;
+  NDI/xsdir search path policies needed.
+\item Library currently looks for SZA in library list only and partial
+  or complete SZAID in xsdir only; a half dozen other search policies
+  are possible and could be implemented with appropriate templating.
+\item Library currently looks for nearest temperature; a half dozen
+  other search policies are possible and could be implemented with
+  appropriate templating.
+\item OO C++ API currently implemented; additional flat API could be
+  defined and code written.
+\item OO C++ API currently implemented; stand alone CLI application
+  could be written.
+\item constants.hh define a subset of physical constants in ndatk
+  appropriate units; could define curated Constants class with user
+  defined units.
+\end{itemize}
+\end{note}
+\end{document}

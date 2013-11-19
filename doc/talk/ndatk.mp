@@ -9,7 +9,7 @@ etex
 input boxes;
 input context;
 
-beginfig(10);			% NDI Commanded Information Problem Frame
+beginfig(10);			% ndatk Commanded Information Problem Frame
 
   boxit.uc(btex \begin{minipage}{.5in} \centering
     User Code \end{minipage} etex);
@@ -28,7 +28,7 @@ beginfig(10);			% NDI Commanded Information Problem Frame
   drawdashedboxed(r);
 
   boxit.ndi(btex \begin{minipage}{.2in} \centering
-    NDI \end{minipage} etex);
+    ndatk \end{minipage} etex);
   boxjoin(a.se=b.ne; a.sw=b.nw);
   boxit.api(btex \begin{minipage}{.5in} \centering
     API \end{minipage} etex);
@@ -47,53 +47,49 @@ beginfig(10);			% NDI Commanded Information Problem Frame
 
   boxjoin(a.se=b.ne; a.sw=b.nw);
   boxit.g(btex \begin{minipage}{.5in} \centering
-    gendir \end{minipage} etex);
+    Exsdir \end{minipage} etex);
   boxit.sn(btex \begin{minipage}{.5in} \centering
-    sn \end{minipage} etex);
+    xsdir \end{minipage} etex);
   boxit.tn(btex \begin{minipage}{.5in} \centering
-    tn \end{minipage} etex);
+    Library \end{minipage} etex);
   boxit.pd(btex \begin{minipage}{.5in} \centering
-    pd \end{minipage} etex);
-  boxit.rc(btex \begin{minipage}{.5in} \centering
-    rc \end{minipage} etex);
+    Chart \end{minipage} etex);
 
   sn.c = (2.0*72, 0.5*72);
 
   fill bpath sn withcolor (1.0, 0.5, 0.5);
   fill bpath tn withcolor (0.8, 0.8, 0.8);
   fill bpath pd withcolor (0.5, 1.0, 0.5);
-  fill bpath rc withcolor (0.5, 0.5, 1.0);
 
-  drawboxed(g, sn, tn, pd, rc);
+  drawboxed(g, sn, tn, pd);
   
   draw api.e -- uc.w;
   label.lft(btex UC!R etex,
     point .5 * length (api.e -- uc.w) of (api.e -- uc.w));
 
   draw api.e -- ud.w;
-  label.top(btex NDI!UD etex,
+  label.top(btex ndatk!UD etex,
     point .5 * length(api.e -- ud.w) of (api.e -- ud.w));
 
   draw rdr.e -- g.w;
   draw rdr.e -- sn.w;
   draw rdr.e -- tn.w;
   draw rdr.e -- pd.w;
-  draw rdr.e -- rc.w;
-  label.lft(btex NDI!ND etex,
-    point 0.5 * length(rdr.e -- rc.w) of (rdr.e -- rc.w));
+
+  label.lft(btex ndatk!ND etex,
+    point 0.5 * length(rdr.e -- pd.w) of (rdr.e -- pd.w));
 
   draw r.w -- g.e dashed evenly;
   draw r.w -- sn.e dashed evenly;
   draw r.w -- tn.e dashed evenly;
   draw r.w -- pd.e dashed evenly;
-  draw r.w -- rc.e dashed evenly;
-  label.rt(btex ND etex, point .5 * length (r.w -- rc.e) of (r.w -- rc.e));
+  label.rt(btex ND etex, point .5 * length (r.w -- pd.e) of (r.w -- pd.e));
 
   drawarrow r.w -- ud.e dashed evenly;
   label.top(btex UD etex, point .5 * length (r.w -- ud.e) of (r.w -- ud.e));
   draw r.w -- uc.e dashed evenly;
   label.rt(btex R etex, point .5 * length (r.w -- uc.ne) of (r.w -- uc.ne));
 
-endfig;				% NDI Commanded Information Problem Frame
+endfig;				% ndatk Commanded Information Problem Frame
 
 end.
