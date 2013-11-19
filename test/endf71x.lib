@@ -14,6 +14,9 @@ provenance:
 File edited Mark G. Gray to remove temperatures and sza to szaid
 translation checked using check_endf71x.awk on 2013-09-26.
 %%
+provenance:
+Added 6012 -> 6000.8*c by Mark G. Gray on 2013-11-19.
+%%
 
 ids:
 # sza szaid
@@ -101,6 +104,13 @@ ids:
 6000  6000.84c
 6000  6000.85c
 6000  6000.86c
+6012  6000.80c
+6012  6000.81c
+6012  6000.82c
+6012  6000.83c
+6012  6000.84c
+6012  6000.85c
+6012  6000.86c
 7014  7014.80c
 7014  7014.81c
 7014  7014.82c

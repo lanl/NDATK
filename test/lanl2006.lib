@@ -13,6 +13,9 @@ make_lanl2006.py to include sza and temperature on 2013-08-09.
 provenance:
 File reformatted by Mark G. Gray to exclude temperature on 2013-08-30.
 %%
+provenance:
+Added 6012 -> 6000.66c by Mark G. Gray on 2013-11-19.
+%%
 
 ids:
 # sza szaid
@@ -28,6 +31,7 @@ ids:
 5010 5010.66c
 5011 5011.66c
 6000 6000.66c
+6012 6000.66c
 7014 7014.62c
 7015 7015.66c
 8016 8016.62c
