@@ -36,8 +36,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 noinst_PROGRAMS = test_Chart$(EXEEXT) use1_Chart$(EXEEXT) \
 	test_Exsdir$(EXEEXT) test_FileStat$(EXEEXT) \
-	use0_Library$(EXEEXT) test_translate_isomer$(EXEEXT) \
-	test_utils$(EXEEXT)
+	use0_Library$(EXEEXT) use2_Library$(EXEEXT) \
+	test_translate_isomer$(EXEEXT) test_utils$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -70,6 +70,9 @@ use0_Library_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_use1_Chart_OBJECTS = use1_Chart-use1_Chart.$(OBJEXT)
 use1_Chart_OBJECTS = $(am_use1_Chart_OBJECTS)
 use1_Chart_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_use2_Library_OBJECTS = use2_Library-use2_Library.$(OBJEXT)
+use2_Library_OBJECTS = $(am_use2_Library_OBJECTS)
+use2_Library_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -81,11 +84,11 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
 	$(test_FileStat_SOURCES) $(test_translate_isomer_SOURCES) \
 	$(test_utils_SOURCES) $(use0_Library_SOURCES) \
-	$(use1_Chart_SOURCES)
+	$(use1_Chart_SOURCES) $(use2_Library_SOURCES)
 DIST_SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
 	$(test_FileStat_SOURCES) $(test_translate_isomer_SOURCES) \
 	$(test_utils_SOURCES) $(use0_Library_SOURCES) \
-	$(use1_Chart_SOURCES)
+	$(use1_Chart_SOURCES) $(use2_Library_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -168,6 +171,9 @@ test_Chart_CXXFLAGS = $(ndatk_INCLUDE)
 use0_Library_SOURCES = use0_Library.cc
 use0_Library_LDADD = $(ndatk_LIB)
 use0_Library_CXXFLAGS = $(ndatk_INCLUDE)
+use2_Library_SOURCES = use2_Library.cc
+use2_Library_LDADD = $(ndatk_LIB)
+use2_Library_CXXFLAGS = $(ndatk_INCLUDE)
 use1_Chart_SOURCES = use1_Chart.cc
 use1_Chart_LDADD = $(ndatk_LIB)
 use1_Chart_CXXFLAGS = $(ndatk_INCLUDE)
@@ -240,6 +246,9 @@ use0_Library$(EXEEXT): $(use0_Library_OBJECTS) $(use0_Library_DEPENDENCIES)
 use1_Chart$(EXEEXT): $(use1_Chart_OBJECTS) $(use1_Chart_DEPENDENCIES) 
 	@rm -f use1_Chart$(EXEEXT)
 	$(CXXLINK) $(use1_Chart_LDFLAGS) $(use1_Chart_OBJECTS) $(use1_Chart_LDADD) $(LIBS)
+use2_Library$(EXEEXT): $(use2_Library_OBJECTS) $(use2_Library_DEPENDENCIES) 
+	@rm -f use2_Library$(EXEEXT)
+	$(CXXLINK) $(use2_Library_LDFLAGS) $(use2_Library_OBJECTS) $(use2_Library_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -254,6 +263,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_utils-test_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use0_Library-use0_Library.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use1_Chart-use1_Chart.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use2_Library-use2_Library.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -366,6 +376,20 @@ use1_Chart-use1_Chart.obj: use1_Chart.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='use1_Chart.cc' object='use1_Chart-use1_Chart.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use1_Chart_CXXFLAGS) $(CXXFLAGS) -c -o use1_Chart-use1_Chart.obj `if test -f 'use1_Chart.cc'; then $(CYGPATH_W) 'use1_Chart.cc'; else $(CYGPATH_W) '$(srcdir)/use1_Chart.cc'; fi`
+
+use2_Library-use2_Library.o: use2_Library.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use2_Library_CXXFLAGS) $(CXXFLAGS) -MT use2_Library-use2_Library.o -MD -MP -MF "$(DEPDIR)/use2_Library-use2_Library.Tpo" -c -o use2_Library-use2_Library.o `test -f 'use2_Library.cc' || echo '$(srcdir)/'`use2_Library.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/use2_Library-use2_Library.Tpo" "$(DEPDIR)/use2_Library-use2_Library.Po"; else rm -f "$(DEPDIR)/use2_Library-use2_Library.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='use2_Library.cc' object='use2_Library-use2_Library.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use2_Library_CXXFLAGS) $(CXXFLAGS) -c -o use2_Library-use2_Library.o `test -f 'use2_Library.cc' || echo '$(srcdir)/'`use2_Library.cc
+
+use2_Library-use2_Library.obj: use2_Library.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use2_Library_CXXFLAGS) $(CXXFLAGS) -MT use2_Library-use2_Library.obj -MD -MP -MF "$(DEPDIR)/use2_Library-use2_Library.Tpo" -c -o use2_Library-use2_Library.obj `if test -f 'use2_Library.cc'; then $(CYGPATH_W) 'use2_Library.cc'; else $(CYGPATH_W) '$(srcdir)/use2_Library.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/use2_Library-use2_Library.Tpo" "$(DEPDIR)/use2_Library-use2_Library.Po"; else rm -f "$(DEPDIR)/use2_Library-use2_Library.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='use2_Library.cc' object='use2_Library-use2_Library.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(use2_Library_CXXFLAGS) $(CXXFLAGS) -c -o use2_Library-use2_Library.obj `if test -f 'use2_Library.cc'; then $(CYGPATH_W) 'use2_Library.cc'; else $(CYGPATH_W) '$(srcdir)/use2_Library.cc'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

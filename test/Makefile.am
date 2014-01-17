@@ -4,7 +4,7 @@ ndatk_INCLUDE = -I$(top_srcdir)/src
 ndatk_LIB = ../src/libndatk.a
  
 noinst_PROGRAMS = test_Chart use1_Chart \
-	test_Exsdir test_FileStat use0_Library \
+	test_Exsdir test_FileStat use0_Library use2_Library \
 	test_translate_isomer test_utils
 
 test_Chart_SOURCES = test_Chart.cc
@@ -14,6 +14,10 @@ test_Chart_CXXFLAGS = $(ndatk_INCLUDE)
 use0_Library_SOURCES = use0_Library.cc
 use0_Library_LDADD = $(ndatk_LIB)
 use0_Library_CXXFLAGS = $(ndatk_INCLUDE)
+
+use2_Library_SOURCES = use2_Library.cc
+use2_Library_LDADD = $(ndatk_LIB)
+use2_Library_CXXFLAGS = $(ndatk_INCLUDE)
 
 use1_Chart_SOURCES = use1_Chart.cc
 use1_Chart_LDADD = $(ndatk_LIB)
