@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([ndatk], [0.8], [gray@lanl.gov])
+AC_INIT([ndatk], [0.9], [gray@lanl.gov])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_SRCDIR([src/CuratedData.hh])
 
