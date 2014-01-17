@@ -64,7 +64,7 @@ namespace ndatk
 
         \return number of tables in directory.
     */
-    int number_of_tables(void) const;
+    int number_of_tables(void) const { return order.size(); }
 
     /**
        Table identifier by index.
@@ -72,7 +72,7 @@ namespace ndatk
        \param[in] i int
        \return table identifier std::string
     */
-    std::string table_identifier(int i) const;
+    std::string table_identifier(int i) const { return order.at(i); }
 
     /**
        Table identifier by (partial) name.
@@ -87,8 +87,17 @@ namespace ndatk
 
        \param[in] id std::string
        \return line or record int
+       \note O(n) operation
     */
     int address(std::string id) const;
+
+    /**
+       Cache directory data for id.
+
+       \param[i] id std::string
+       \note O(ln(n)) operation
+    */
+    void at(std::string id) const;
 
     /**
        Length of binary data block or zero by table identifier.
@@ -155,6 +164,8 @@ namespace ndatk
     };
     typedef std::map<std::string, DirectoryData> Directory_map;
     Directory_map directory;    // Directory
+    mutable std::string current_id;     // Cached identifier
+    mutable DirectoryData current_data; // Cached directory data
   };
 }
 #endif

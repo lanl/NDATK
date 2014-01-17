@@ -5,6 +5,7 @@
 
 #include "Library.hh"
 #include "utils.hh"
+#include "constants.hh"
 #include "translate_isomer.hh"
 
 namespace ndatk
@@ -54,40 +55,68 @@ namespace ndatk
     s.close();
   }
 
-  // Number of tables
-  int Library::number_of_tables(void) const
-  {
-    return ids.size();
-  }
-
   // Return table identifier isomer name
   string Library::table_identifier(string name)
   {
     string::size_type d;
     string result(""); 
 
-    if ((d = name.find('.')) != name.npos) { // Policy: lookup name in Exsdir
-      int sza = translate_isomer(name.substr(0,d));
-      string s = lexical_cast<string, int>(sza) + name.substr(d);
-      result = e.table_identifier(s);
-    } else {                    // Policy: lookup name in Library
-      int sza = translate_isomer(name);
+    if ((d = name.find('.')) != name.npos) { // pszaid (partial szaid)
+      // Policy: lookup partial szaid in Exsdir
+      int sza = translate_isomer(name.substr(0,d)); // canonical sza
+      string s = lexical_cast<string, int>(sza) + name.substr(d); // pszaid
+      result = current_isomer = e.table_identifier(s);
+      szaids.clear();
+      szaids[this->temperature()] = current_isomer;
+    } else { // sza
+      // Policy: lookup sza in Library
+      int sza = translate_isomer(name); // canonical sza
+      // Find canonical sza(s) in ids 
       typedef pair<Library::TableIdentifiers::const_iterator, 
                    Library::TableIdentifiers::const_iterator> ip_type;
       ip_type ip = ids.equal_range(sza);
+      // Copy matches to szaids by temperature 
       szaids.clear();
       for (Library::TableIdentifiers::const_iterator it = ip.first; 
-           it != ip.second; ++it) 
-        szaids.push_back(it->second);
-      if (!szaids.empty())
-        result = szaids[0];
+           it != ip.second; it++) {
+        string szaid = it->second;
+        double temp = e.temperature(szaid);
+        szaids[temp] = szaid;
+      }
+      if (!szaids.empty()) {      
+        // Policy: default to room temperature
+        double room_temp = 293.15 * boltzmann_constant; // K * MeV/K
+        this->temperature(room_temp);
+        result = current_isomer;
+      }
     }
-    if (result != "")               // Change only if valid
-      current_isomer = result;
     return result;
   }
 
-  std::string Library::table_identifier(void) const
+  // Find temperature nearest temp, set current_isomer, return temperature
+  double Library::temperature(double temp)
+  {
+    double result = -1.0;
+    if (!szaids.empty()) {
+      // Find iterator of closest temperature in szaids to temp
+      Library::temp_map::const_iterator p = szaids.upper_bound(temp);
+      if (p == szaids.begin()) {               // temp < smallest
+        /* no op */
+      } else if (p == szaids.end()) {        // temp > largest
+        p--;
+      } else {                    // smallest <= temp <= largest
+        Library::temp_map::const_iterator b = p--; 
+        // p->first <= temp <= b->first
+        if ((b-> first - temp) < (temp - p->first)) // closer to b
+          p = b;
+      }
+      result = p->first;
+      current_isomer = p->second;
+    }
+    return result;
+  }
+
+  string Library::table_identifier(void) const
   {
     return current_isomer;
   }
@@ -149,6 +178,16 @@ namespace ndatk
   double Library::temperature(void) const
   {
     return e.temperature(current_isomer);
+  }
+
+  // Vector of temperatures
+  vector<double> Library::temperatures(void) const
+  {
+    vector<double> v;
+    for (Library::temp_map::const_iterator it = szaids.begin(); 
+         it != szaids.end(); it++)
+      v.push_back(it->first);
+    return v;
   }
 
 }

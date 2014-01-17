@@ -68,10 +68,13 @@ namespace ndatk
 
        \return number of tables int
     */
-    int number_of_tables(void) const;
+    int number_of_tables(void) const {return ids.size();} 
 
-    /// Return and rememeber table identifier for name
+    /// Return and remember table identifier for name
     std::string table_identifier(std::string name);
+
+    /// Return and remember temperature for table 
+    double temperature(double temp);
 
     /// Return current table identifier
     std::string table_identifier(void) const;
@@ -85,7 +88,7 @@ namespace ndatk
     /// Length of binary record or zero of current table identifier
     int record_length(void) const;
     
-    /// Number of binary entries per record or zero of current table identifier
+    /// Number of entries per record or zero of current table identifier
     int entries_per_record(void) const;
 
     /// File name of current table identifier
@@ -106,16 +109,23 @@ namespace ndatk
     /// Temperature (MeV) of current table identifier
     double temperature(void) const;
 
+    /// Return number of temperatures for set SZA
+    int number_of_temperatures(void) const {return szaids.size();}
+
+    /// Return vector of temperatures for set SZA
+    std::vector<double> temperatures(void) const;
+ 
   private:
+
+    typedef std::map<double, std::string> temp_map;
+    typedef std::multimap<int, std::string> TableIdentifiers;
 
     static std::string type_;
     void parse(std::istream &s);
 
-    typedef std::multimap<int, std::string> TableIdentifiers;
     TableIdentifiers ids;                // table identifiers
     const Exsdir &e;
-    typedef std::vector<std::string> isomers;
-    isomers szaids;
+    temp_map szaids;
     std::string current_isomer;
   };
 }

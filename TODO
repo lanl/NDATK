@@ -29,7 +29,7 @@ ndatk   -*-Org-*-
     type: ndatk_library_1.0
 *** DONE Fix file format
     record-jar format
-*** TODO sza temp szaid format
+*** DONE sza temp szaid format
 ** Class
 *** DONE Add exceptions for I/O failures
     - throw exception for unopened files
@@ -40,6 +40,7 @@ ndatk   -*-Org-*-
 *** TODO Search policies for sza, temp
 *** TODO Add identifier search policy
 *** TODO Add output stream capability
+*** DONE Multi-temperature disambiguation
 
 * Exsdir
 ** Data
@@ -55,6 +56,8 @@ ndatk   -*-Org-*-
 *** TODO Speed up line parsing
 *** DONE Check magic string
 *** DONE Parse CuratedData
+*** DONE Cache directory lookup
+*** DONE Document expensive v. cheap lookups
 *** TODO Add search path policies
     - Exsdir
     - xsdir
