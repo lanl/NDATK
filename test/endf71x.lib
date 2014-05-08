@@ -17,6 +17,10 @@ translation checked using check_endf71x.awk on 2013-09-26.
 provenance:
 Added 6012 -> 6000.8*c by Mark G. Gray on 2013-11-19.
 %%
+provenance:
+Added 45117.90c and 46119.90c (fission products) by Mark G. Gray on 
+2014-05-08. 
+%%
 
 ids:
 # sza szaid
@@ -1056,6 +1060,7 @@ ids:
 45105  45105.84c
 45105  45105.85c
 45105  45105.86c
+45117  45117.90c
 46102  46102.80c
 46102  46102.81c
 46102  46102.82c
@@ -1105,6 +1110,7 @@ ids:
 46110  46110.84c
 46110  46110.85c
 46110  46110.86c
+46119  46119.90c
 47107  47107.80c
 47107  47107.81c
 47107  47107.82c
