@@ -88,4 +88,10 @@ void utilsTest::runTest() {
   UT_ASSERT((lexical_cast<int, string>("42") == 42));
   UT_ASSERT((lexical_cast<string, int>(42) == "42"));
 
+  // Test some of the POSIX based functions
+  UT_ASSERT(get_realpath(".") == get_cwd());
+  UT_ASSERT(is_readable("utilsTest.cc"));
+  UT_ASSERT(file_starts_with("utilsTest.cc", "using"));
+
+
 }

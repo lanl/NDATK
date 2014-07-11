@@ -60,7 +60,7 @@ libndatk_a_AR = $(AR) $(ARFLAGS)
 libndatk_a_LIBADD =
 am_libndatk_a_OBJECTS = CuratedData.$(OBJEXT) Chart.$(OBJEXT) \
 	Exsdir.$(OBJEXT) Library.$(OBJEXT) FileStat.$(OBJEXT) \
-	translate_isomer.$(OBJEXT) utils.$(OBJEXT)
+	Finder.$(OBJEXT) translate_isomer.$(OBJEXT) utils.$(OBJEXT)
 libndatk_a_OBJECTS = $(am_libndatk_a_OBJECTS)
 am_TestRunner_OBJECTS = TestRunner.$(OBJEXT) LibraryTest.$(OBJEXT) \
 	ChartTest.$(OBJEXT) ExsdirTest.$(OBJEXT) \
@@ -160,12 +160,12 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CXXFLAGS = -ansi -pedantic -Wall -fPIC
 include_HEADERS = ndatk.hh Library.hh Chart.hh Exsdir.hh FileStat.hh \
-	CuratedData.hh translate_isomer.hh utils.hh constants.hh
+	Finder.hh CuratedData.hh translate_isomer.hh utils.hh constants.hh
 
 lib_LIBRARIES = libndatk.a
 libndatk_a_SOURCES = CuratedData.cc CuratedData.hh \
 	Chart.cc Chart.hh Exsdir.cc Exsdir.hh Library.cc Library.hh \
-	FileStat.cc FileStat.hh \
+	FileStat.cc FileStat.hh Finder.cc Finder.hh \
 	translate_isomer.cc translate_isomer.hh \
 	utils.cc utils.hh constants.hh
 
@@ -264,6 +264,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Exsdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExsdirTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileStat.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Finder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Library.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LibraryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestRunner.Po@am__quote@

@@ -23,6 +23,7 @@
 #include <vector>
 #include <istream>
 #include <sstream>
+#include <fstream>
 #include <map>
 
 /**
@@ -155,6 +156,8 @@ namespace ndatk {
       \param[in] s1 a full std::string.
       \param[in] s2 a sub std::string.
       \return true if s1 starts with s2.
+      \warning The use of this routine in bind2ptr requires non-reference
+      parameters.
   */
   inline bool starts_with(std::string s1, std::string s2) {
     return 0 == s1.compare(0, s2.size(), s2);
@@ -176,7 +179,7 @@ namespace ndatk {
       \param[in] s2 a std::string.
       \return true if s1 starts with s2 ignoring case.
   */
-  extern bool starts_with_nocase(const std::string &s1, const std::string &s2);
+  extern bool starts_with_nocase(const std::string &s1, const std::string s2);
 
   /** 
       Trim initial whitespace from string.
@@ -229,7 +232,7 @@ namespace ndatk {
      \param[in] s a std::string.
      \return Camelcase s.
   */
-  extern std::string title(const std::string s);
+  extern std::string title(const std::string &s);
  
   /**
      Split space delimited string into vector of tokens.
@@ -270,6 +273,16 @@ namespace ndatk {
   */
   extern std::istream &quoted_str(std::istream &is, std::string &s);
 
+  /**
+     Does first logical line of file start with magic string?
+
+     \param[in] is a std::string;
+     \param[in] is a std::string;
+     \return bool.
+  */
+  extern bool file_starts_with(const std::string &Filename, 
+                               const std::string &magic);
+
   /** 
       Const accessor to value from associative container by key.
 
@@ -293,6 +306,26 @@ namespace ndatk {
       throw std::out_of_range("Key not found in map!");
     }
     return it -> second;
+  }
+
+  /**
+     Const accessor to iterator from associative container by key.
+  */
+  template <typename T>
+  const typename T::const_iterator &
+  map_near(const T &container, const typename T::value_type::first_type key)
+  {
+    typename T::const_iterator b = container.begin();
+    typename T::const_iterator p = container.upper_bound(key);
+    typename T::const_iterator e = container.end();
+
+    if (b < p && p < e) {
+      if ((key - (p-1)->first) < (p->first - key))
+        p--;
+    } else if (p == e) {
+      p--;
+    }
+    return p;
   }
 
   /** 
@@ -323,7 +356,7 @@ namespace ndatk {
      \param[in] name a std::string.
      \return environment value as string.
   */
-  extern std::string get_env(const std::string name);
+  extern std::string get_env(const std::string &name);
 
   /**
      Wrap POSIX getcwd (current working directory) with C++ interface.
@@ -338,5 +371,19 @@ namespace ndatk {
      \return hostname as string.
   */
   extern std::string get_hostname(void);
+
+  /**
+     Wrap POSIX access with C++ interface.
+
+     \return true if file exists and is readable.
+  */
+  extern bool is_readable(const std::string &filename);
+
+  /**
+     Wrap POSIX realpath with C++ interface.
+
+     \return absolute path as string.
+  */
+  extern std::string get_realpath(const std::string &path);
 }
 #endif

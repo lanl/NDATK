@@ -60,7 +60,7 @@ namespace ndatk {
   }
 
   // Compare the start of the first string with the second, ignoring case.
-  bool starts_with_nocase(const string &s1, const string &s2)
+  bool starts_with_nocase(const string &s1, const string s2)
   {
     typedef string::const_iterator iter;
     iter p1;
@@ -73,12 +73,8 @@ namespace ndatk {
     return (s2.size() > s1.size()) ? false: true;
   }
 
-  // Split string into vector of words.
-  //
-  // See "Accelerated C++" p. 103
-  //
   // Capitalize first character, lowercase remaining characters
-  string title(const string s)
+  string title(const string &s)
   {
     string t = s;
     for (string::size_type i = 0; i < t.size(); i++)
@@ -90,6 +86,7 @@ namespace ndatk {
   }
 
   // Split space delimited string into vector of words.
+  // See "Accelerated C++" p. 103
   vector<string> split(const string &s)
   {
     typedef string::const_iterator iter;
@@ -175,28 +172,62 @@ namespace ndatk {
     return is;
   }
 
-  // Wrap POSIX getenv to get environment string with C++ interface
-  std::string get_env(const std::string name)
+  // Does first logical line of file start with magic string?
+  bool file_starts_with(const string &filename, const string& magic)
   {
-    std::string s(getenv(name.c_str()));
-    return s;
+    ifstream s(filename.c_str());
+    string first_line;
+ 
+    if (s && get_logical_line(s, first_line))
+      return starts_with(first_line, magic);
+    else
+      return false;
+  }
+
+  // Wrap POSIX getenv to get environment string with C++ interface
+  string get_env(const std::string &name)
+  {
+    char *buf;
+    if ((buf = getenv(name.c_str())))
+      return string(buf);
+    else
+      return string("");
   }
 
   // Wrap POSIX getcwd to get current working directory with C++ interface
-  std::string get_cwd(void)
+  string get_cwd(void)
   {
-    char buf[FILENAME_MAX];
-    getcwd(buf, FILENAME_MAX);
-    std::string s(buf);
-    return s;
+    char buf[PATH_MAX];
+    if (getcwd(buf, PATH_MAX))
+      return string(buf);
+    else
+      return string("");
   }
 
   // Wrap POSIX gethostname
-  std::string get_hostname(void)
+  string get_hostname(void)
   {
     char buf[HOST_NAME_MAX];
-    gethostname(buf, HOST_NAME_MAX);
-    std::string s(buf);
-    return s;
+    if (gethostname(buf, HOST_NAME_MAX) == 0)
+      return string(buf);
+    else
+      return string("");
+  }
+
+  // Wrap POSIX access to test if file exists and is readable
+  bool is_readable(const string &filename)
+  {
+    return access(filename.c_str(), R_OK) == 0;
+  }
+
+  // Wrap POSIX realpath
+  string get_realpath(const string &path)
+  {
+    char buf[PATH_MAX];
+    if (realpath(path.c_str(), buf)) {
+      return string(buf);
+    } else {
+      return string("");
+    }
   }
 }
