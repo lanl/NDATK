@@ -63,7 +63,7 @@ am_libndatk_a_OBJECTS = CuratedData.$(OBJEXT) Chart.$(OBJEXT) \
 	Finder.$(OBJEXT) translate_isomer.$(OBJEXT) utils.$(OBJEXT)
 libndatk_a_OBJECTS = $(am_libndatk_a_OBJECTS)
 am_TestRunner_OBJECTS = TestRunner.$(OBJEXT) LibraryTest.$(OBJEXT) \
-	ChartTest.$(OBJEXT) ExsdirTest.$(OBJEXT) \
+	ChartTest.$(OBJEXT) ExsdirTest.$(OBJEXT) FinderTest.$(OBJEXT) \
 	translate_isomerTest.$(OBJEXT) utilsTest.$(OBJEXT) \
 	UnitTest.$(OBJEXT)
 TestRunner_OBJECTS = $(am_TestRunner_OBJECTS)
@@ -173,6 +173,7 @@ TestRunner_SOURCES = TestRunner.cc \
 	LibraryTest.cc LibraryTest.hh \
 	ChartTest.cc ChartTest.hh \
 	ExsdirTest.cc ExsdirTest.hh \
+	FinderTest.cc FinderTest.hh \
 	translate_isomerTest.cc translate_isomer.hh \
 	utilsTest.cc utilsTest.hh \
 	UnitTest.cc UnitTest.hh 
@@ -265,6 +266,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExsdirTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileStat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Finder.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FinderTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Library.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LibraryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestRunner.Po@am__quote@

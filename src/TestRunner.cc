@@ -2,6 +2,7 @@
 #include "LibraryTest.hh"
 #include "ChartTest.hh"
 #include "ExsdirTest.hh"
+#include "FinderTest.hh"
 #include "translate_isomerTest.hh"
 #include "utilsTest.hh"
 
@@ -13,6 +14,7 @@ int main()
   ChartTest test2; test2.runTest();
   ExsdirTest test3; test3.runTest();
   LibraryTest test4; test4.runTest();
+  FinderTest test6; test6.runTest();
 
   std::cout << "SUCCESS!" << std::endl;
   std::cout << UnitTest::getNumSuccess() << " tests completed." << std::endl;

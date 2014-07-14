@@ -52,6 +52,7 @@
    Library[shape=box];
    Exsdir[shape=box];
    CuratedData[shape=box];
+   Finder[shape=box];
    constants[shape=plaintext];
    utils[shape=plaintext];
    translate_isomer[shape=plaintext];
@@ -70,6 +71,7 @@
    Exsdir -> constants;
    Exsdir -> utils;
    Exsdir -> CuratedData;
+   Exsdir -> Finder;
         
    translate_isomer -> utils;
    }
@@ -94,9 +96,10 @@
    provide translation from element, isotope, and isomer specifiers to
    the standard SZA integer.  At its lowest level, the ndatk package
    provides general utility functions in utils.hh, physical
-   constants in constants.hh, and an abstract base class for
-   all of its curated data in ndatk::CuratedData.  The ndatk package
-   depends solely on code in C++'s Standard Template Library
+   constants in constants.hh, file path resolution in the ndatk::Finder 
+   class and an abstract base class for all of its curated data in 
+   ndatk::CuratedData.  The ndatk package depends solely on code in 
+   C++'s Standard Template Library
 */
 namespace ndatk {
 

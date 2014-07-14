@@ -16,6 +16,7 @@ TestRunner_SOURCES = TestRunner.cc \
 	LibraryTest.cc LibraryTest.hh \
 	ChartTest.cc ChartTest.hh \
 	ExsdirTest.cc ExsdirTest.hh \
+	FinderTest.cc FinderTest.hh \
 	translate_isomerTest.cc translate_isomer.hh \
 	utilsTest.cc utilsTest.hh \
 	UnitTest.cc UnitTest.hh 
