@@ -105,12 +105,13 @@ namespace ndatk {
   // Split character delimited string into vector of words.
   vector<string> split(const string &s, char c)
   {
-    string::size_type i, j;
+    string::size_type start;
+    string::size_type end;
     vector<string> ret;
     
-    for (i=0, j=s.find(c); j != string::npos; i=j+1, j=s.find(i,c)) 
-      ret.push_back(s.substr(i, j-i));
-    ret.push_back(s.substr(i, j-i));
+    for (start = 0; (end = s.find(c, start)) != string::npos; start = end+1)
+      ret.push_back(s.substr(start, end-start));
+        ret.push_back(s.substr(start));
     return ret;
   }
 

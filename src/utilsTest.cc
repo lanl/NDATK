@@ -48,18 +48,32 @@ void utilsTest::runTest() {
   UT_ASSERT(cmp_nocase(string("Hello World!"), "HELLO WORLD!") == 0);
   UT_ASSERT(cmp_nocase(string("Hello World!"), "hello world!") == 0);
 
+  // Test trim functions
   UT_ASSERT(ltrim("  \tLeft Trim  ") == "Left Trim  ");
   UT_ASSERT(rtrim("  Right Trim \t ") == "  Right Trim");
   UT_ASSERT(trim("\t  Both Trim\t  ") == "Both Trim");
 
+  // Test title case
   UT_ASSERT(title("HELLO") == "Hello");
   UT_ASSERT(title("hello") == "Hello");
   UT_ASSERT(title("hElLo") == "Hello"); 
 
+  // Test split on whitespace
   vector<string> v = split("Hello World!");
   UT_ASSERT(v.size() == 2);
   UT_ASSERT(v[0] == "Hello");
   UT_ASSERT(v[1] == "World!");
+
+  // Test split on character
+  vector<string> w = split(":foo:bar:baz:::", ':');
+  UT_ASSERT(w.size() == 7);     // one more than delimiter count in string
+  UT_ASSERT(w[0] == "");        // leading delimiter produces empty string
+  UT_ASSERT(w[1] == "foo");
+  UT_ASSERT(w[2] == "bar");
+  UT_ASSERT(w[3] == "baz");
+  UT_ASSERT(w[4] == "");        // successive delimiters produce empty string
+  UT_ASSERT(w[5] == "");        // successive delimiters produce empty string
+  UT_ASSERT(w[6] == "");        // trailing  delimiter produces empty string
 
   istringstream s("# comment\n \n  line # comment\ntrailing\n");
   string line;

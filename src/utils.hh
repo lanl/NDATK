@@ -251,6 +251,8 @@ namespace ndatk {
      \param[in] s a character delimited std::string.
      \param[in] c a character delimiter.
      \return std::vector of std::string tokens.
+     \note Leading, trailing, and successive delimiters all produce
+     empty strings in vector.
   */
   extern std::vector<std::string> split(const std::string &s, char c);
 
