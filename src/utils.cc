@@ -111,7 +111,7 @@ namespace ndatk {
     
     for (start = 0; (end = s.find(c, start)) != string::npos; start = end+1)
       ret.push_back(s.substr(start, end-start));
-        ret.push_back(s.substr(start));
+    ret.push_back(s.substr(start));
     return ret;
   }
 
@@ -173,14 +173,14 @@ namespace ndatk {
     return is;
   }
 
-  // Does first logical line of file start with magic string?
+  // Does first logical line of file contain magic string?
   bool file_starts_with(const string &filename, const string& magic)
   {
     ifstream s(filename.c_str());
     string first_line;
  
     if (s && get_logical_line(s, first_line))
-      return starts_with(first_line, magic);
+      return first_line.find(magic) != string::npos;
     else
       return false;
   }

@@ -89,7 +89,7 @@ namespace ndatk
   // Construct Chart from id and Exsdir
   Chart::Chart(string id, Exsdir &e)
   {
-    string filename = e.file_name(id);
+    string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
       string e("Cannot open file ");

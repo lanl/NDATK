@@ -10,6 +10,9 @@ namespace ndatk
 {
   using namespace std;
 
+  const string default_path="/opt/local/codes/data/nuclear/ndatk/data:"
+    "/opt/local/codes/data/nuclear/ndatk/1.0.0";
+
   istream& Exsdir::get_xsdir(istream& s)
   {
     string line;
@@ -28,13 +31,17 @@ namespace ndatk
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
         fields = split(line);
-        ifstream f1(fields[1].c_str());
-        if (!f1) {
-          cerr << "Cannot open file " << fields[1] << endl;
-          exit(1);
+        if (include_guard.find(fields[1]) == include_guard.end()) {
+          include_guard.insert(fields[1]);
+          // Should I check for a type below?
+          ifstream f1(aFinder.abs_path(fields[1]).c_str());
+          if (!f1) {
+            cerr << "Cannot open file " << fields[1] << endl;
+            exit(1);
+          }
+          get_xsdir(f1);
+          f1.close();
         }
-        get_xsdir(f1);
-        f1.close();
       } else if (state == AWR) {
         continue;               // TODO: add AWR parse here
       } else if (state == DIR) {
@@ -59,15 +66,24 @@ namespace ndatk
     return s;
   }
 
-  // Construct Exsdir from data on named file
-  Exsdir::Exsdir(const string filename)
+  // Default construct Exsdir
+  Exsdir::Exsdir(void): CuratedData(), order(), directory(), 
+                        aFinder(default_path)
   {
-    ifstream s(filename.c_str());
+  }
+
+  // Construct Exsdir from data on named file
+  Exsdir::Exsdir(const string filename): CuratedData(), order(), directory(),
+                                         aFinder(default_path)
+  {
+    string abs_filename(aFinder.abs_path(filename, type()));
+    ifstream s(abs_filename.c_str());
     if (!s) {
       string e("Cannot open file ");
       e += filename + "!";
       throw ifstream::failure(e.c_str());
     }
+    include_guard.insert(filename);
     s >> *this;
     s.close();
   }
@@ -138,6 +154,20 @@ namespace ndatk
   {
     this->at(id);
     return current_data.name;
+  }
+
+  // Absolute path to readable file by table identifier
+  string Exsdir::abs_file_name(string id) const
+  {
+    this->at(id);
+    return aFinder.abs_path(current_data.name);
+  }
+
+  // Absolute path to readable file with magic string by table identifier
+  string Exsdir::abs_file_name(string id, string magic) const
+  {
+    this->at(id);
+    return aFinder.abs_path(current_data.name, magic);
   }
 
   // Directory access route by identifier

@@ -21,16 +21,47 @@ namespace ndatk
   /**
      \class Finder
 
-     Find readable file in path optionally starting with magic string;
-     return absolute path to file.
+     Find the first readable file in the user specified search path 
+     optionally starting with a magic string; return absolute path to file.
 
+     Names starting with "/" are resolved as absolute paths; names starting
+     with  "./", or "../" are resolved against the current working directory.
+     All other names are appended to the each element of the user 
+     specified search path list and tried until a readable file starting 
+     with an optional magic string is found.  If no match is found, 
+     the absolute path returned is "".
+
+     The search path is specified by the following grammar:
+     SEARCH_PATH -> '"' ELEMENTS '"';
+     ELEMENTS -> empty
+              |  ELEMENT (':' ELEMENT)*;
+     ELEMENT -> ENVIRONMENT
+             | CURRENT_PATH                   # previous path value
+             | posix_path;
+     ENVIRONMENT -> '$' [A-Za-z0-9._-]+;      # environment variable value
+     CURRENT_PATH -> "!!";
+
+     Standard POSIX conformant path names are added to the search path
+     literally.  Environment variable values, signified by a leading '$' 
+     are parsed as a search path and added to the search path
+     wherever they appear as an element.  The special string "!!" is 
+     replaced with the current path wherever it appears.
+
+     \note The empty string "" sets an empty search path; when the path is 
+     empty names not starting with "/", "./", or "../" will never be found.
+     The current working directory can be specified in the search path by 
+     either "." or "".  The search path format is based on the standard UNIX
+     PATH environment variable; the use of "!!" to signify the former search
+     path in a new path specification is modeled after its use in modern UNIX
+     shells to signify the previous command.
    */
   class Finder
   {
+
   public:
 
     /**
-       Initialize Finder.
+       Initialize Finder with empty path.
     */
     Finder(void);
 
@@ -47,31 +78,7 @@ namespace ndatk
 
        \param[in] path std::string
     */
-    void push_front(const std::string &path); // add path to front of list
-    /**
-       Add colon delimited path to the start of path list.
-
-       \param[in] path std::string
-    */
-    void push_back(const std::string &path); // add path to back of list
-    /**
-       Add colon delimited path from environment variable 
-       to the end of path list.
-
-       \param[in] env_var std::string
-    */
-    void push_front_env(const std::string &env_var);
-    /**
-       Add colon delimited path from environment variable 
-       to the start of path list.
-
-       \param[in] env_var std::string
-    */
-    void push_back_env(const std::string &env_var);
-    /**
-       Clear path list.
-    */
-    void clear(void);
+    void set_path(const std::string &path); // set path to parsed string
 
     // Queries
     /**
@@ -80,6 +87,7 @@ namespace ndatk
        \return absoulute path string
      */
     std::string abs_path(const std::string &file) const;
+
     /**
        Absoulte path of readable file in path list
        that starts with the magic string.
@@ -88,15 +96,26 @@ namespace ndatk
     */
     std::string abs_path(const std::string &file,
                          const std::string &magic) const;
+
     /**
        Path list as colon delimited string
 
        \return path string
      */
-    std::string to_string(void) const;
+    std::string get_path(void) const;
 
   private:
+
+    /**
+       Parse path string according to current path and environment
+
+       \param[in] path colon delimited path
+       \return vector of expanded path 
+    */
+    std::vector<std::string> parse_path(const std::string &path) const;
+
     std::vector<std::string> path_list; // path list
+
   };
 }
 #endif

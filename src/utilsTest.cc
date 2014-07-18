@@ -2,7 +2,7 @@
 #include <sstream>
 #include "utils.hh"
 #include "utilsTest.hh"
-
+#include <iostream>
 using namespace std;
 using namespace ndatk;
 
@@ -74,6 +74,9 @@ void utilsTest::runTest() {
   UT_ASSERT(w[4] == "");        // successive delimiters produce empty string
   UT_ASSERT(w[5] == "");        // successive delimiters produce empty string
   UT_ASSERT(w[6] == "");        // trailing  delimiter produces empty string
+  w = split("", ':');
+  UT_ASSERT(w.size() == 1);     // empty string splits into one empty string
+  UT_ASSERT(w[0] == "");
 
   istringstream s("# comment\n \n  line # comment\ntrailing\n");
   string line;

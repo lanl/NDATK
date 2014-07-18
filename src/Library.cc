@@ -44,7 +44,7 @@ namespace ndatk
   // Construct library from id and Exsdir
   Library::Library(string id, const Exsdir &x): CuratedData(), ids(), e(x) 
   {
-    string filename = e.file_name(id);
+    string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
       string e("Cannot open file ");

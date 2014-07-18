@@ -279,7 +279,7 @@ namespace ndatk {
   extern std::istream &quoted_str(std::istream &is, std::string &s);
 
   /**
-     Does first logical line of file start with magic string?
+     Does first logical line of file contain magic string?
 
      \param[in] is a std::string;
      \param[in] is a std::string;

@@ -13,8 +13,10 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include <istream>
 #include "CuratedData.hh"
+#include "Finder.hh"
 
 namespace ndatk
 {
@@ -27,7 +29,7 @@ namespace ndatk
   public:
 
     // Default constructor
-    Exsdir(void): CuratedData(), order(), directory() {}
+    Exsdir(void);
 
     /**
        Construct Exsdir from named file.
@@ -116,6 +118,11 @@ namespace ndatk
     ///\return File name by table identifier
     std::string file_name(std::string id) const;
 
+    ///\return absolute path to file_name
+    std::string abs_file_name(std::string id) const;
+
+    std::string abs_file_name(std::string id, std::string magic) const;
+
     ///\return Directory access route or zero by table identifier
     std::string access_route(std::string id) const;
 
@@ -166,6 +173,8 @@ namespace ndatk
     Directory_map directory;    // Directory
     mutable std::string current_id;     // Cached identifier
     mutable DirectoryData current_data; // Cached directory data
+    std::set<std::string> include_guard; // limit include recursion
+    Finder aFinder;                      // file search object
   };
 }
 #endif
