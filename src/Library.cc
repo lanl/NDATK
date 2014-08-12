@@ -59,7 +59,7 @@ namespace ndatk
   string Library::table_identifier(string name)
   {
     string::size_type d;
-    string result(""); 
+    string result; 
 
     if ((d = name.find('.')) != name.npos) { // pszaid (partial szaid)
       // Policy: lookup partial szaid in Exsdir
@@ -83,7 +83,9 @@ namespace ndatk
         double temp = e.temperature(szaid);
         szaids[temp] = szaid;
       }
-      if (!szaids.empty()) {      
+      if (szaids.empty()) {     // No matching zaid found
+        result = current_isomer = "";
+      } else {      
         // Policy: default to room temperature
         double room_temp = 293.15 * boltzmann_constant; // K * MeV/K
         this->temperature(room_temp);
@@ -148,6 +150,12 @@ namespace ndatk
   std::string Library::file_name(void) const
   {
     return e.file_name(current_isomer);
+  }
+
+  // Absolute file name by table identifier
+  std::string Library::abs_file_name(void) const
+  {
+    return e.abs_file_name(current_isomer);
   }
 
   // Directory access route or zero by table identifier

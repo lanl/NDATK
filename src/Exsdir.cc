@@ -31,13 +31,15 @@ namespace ndatk
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
         fields = split(line);
+        // Include file if not already included
         if (include_guard.find(fields[1]) == include_guard.end()) {
-          include_guard.insert(fields[1]);
-          // Should I check for a type below?
+          include_guard.insert(fields[1]); // add to include list
+          // Should I check for a provenance type?
           ifstream f1(aFinder.abs_path(fields[1]).c_str());
           if (!f1) {
-            cerr << "Cannot open file " << fields[1] << endl;
-            exit(1);
+            string e("Cannot open file ");
+            e += fields[1] + "!";
+            throw ifstream::failure(e.c_str());
           }
           get_xsdir(f1);
           f1.close();
@@ -83,7 +85,7 @@ namespace ndatk
       e += filename + "!";
       throw ifstream::failure(e.c_str());
     }
-    include_guard.insert(filename);
+    include_guard.insert(filename); // add filename to include list
     s >> *this;
     s.close();
   }
@@ -157,6 +159,7 @@ namespace ndatk
   }
 
   // Absolute path to readable file by table identifier
+  // N.B. This routine does not use access route!!!
   string Exsdir::abs_file_name(string id) const
   {
     this->at(id);

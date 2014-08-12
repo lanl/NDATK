@@ -19,7 +19,7 @@ namespace ndatk
 {
   /** 
       Chemical symbols std::string indexed by int atomic number in
-      std::vector .
+      std::vector.
   */
   extern const std::vector<std::string> Z_to_symbol;
 

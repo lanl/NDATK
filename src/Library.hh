@@ -63,18 +63,29 @@ namespace ndatk
     */
     std::string type(void) const { return std::string("ndatk_library_1.0"); }
 
+    /** Set table identifier matching name and return match.
+
+        \param[in] name std::string
+        \return Actual ID found or "" if no match
+        \note Subsequent queries for record data will throw exceptions
+        if ID returned is "".
+    */
+    std::string table_identifier(std::string name);
+
+    /** Set temperature matching temp and return match.
+        
+        \param[in] temp double
+        \return nearest available temperature matching temp.
+        \note Set current table_identifier to nearest temperature.
+    */
+    double temperature(double temp);
+
     /**
        Number of tables in Library.
 
        \return number of tables int
     */
     int number_of_tables(void) const {return ids.size();} 
-
-    /// Return and remember table identifier for name
-    std::string table_identifier(std::string name);
-
-    /// Return and remember temperature for table 
-    double temperature(double temp);
 
     /// Return current table identifier
     std::string table_identifier(void) const;
@@ -93,6 +104,9 @@ namespace ndatk
 
     /// File name of current table identifier
     std::string file_name(void) const;
+
+    /// Absolute file name of current table identifier
+    std::string abs_file_name(void) const;
 
     /// Directory access route or zero of current table identifier
     std::string access_route(void) const;
@@ -131,7 +145,9 @@ namespace ndatk
 }
 /**
    \example use0_Library.cc
+   Use case for single temperature Library class.
 
-   Use case for Library class.
+   \example use2_Library.cc
+   Use case for multi-temperature Library class.
 */
 #endif

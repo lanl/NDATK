@@ -121,7 +121,7 @@ namespace ndatk
   }
 
   // Provenance history
-  string CuratedData::events(void) const
+  string CuratedData::history(void) const
   {
     string e;
     for (ProvenanceVector::const_iterator i = provenance.begin();

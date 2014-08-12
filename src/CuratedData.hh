@@ -4,7 +4,7 @@
 /**
    \file CuratedData.hh
 
-   Data file type and provenance descriptions.
+   Data file type, identifier, and provenance descriptions.
 
    \author Mark G. Gray <gray@lanl.gov>
    \see Jon Bentley, "More Programming Pearls", Addison-Wesley 1988, pg. 40
@@ -27,10 +27,19 @@ namespace ndatk
   
      The ndatk::CuratedData abstract base class provides derived
      classes which represent curated data files with type, name, and
-     history.  Type is a string that adorns curated data files and
-     specifies the type of data they contain.  Name is a string that
-     adorns curated data files that specifies its unique identifier.
-     Event is a paragraph documents events in the data's history.
+     history.  Type is a string found in the first logical line of 
+     curated data files that signifies the kind of data they contain.  
+     Name is a string found in the second logical line of curated data 
+     files that signifies its unique identifier.  History is a sequence 
+     of paragraphs found in curated data files that document events in 
+     the data's history.
+
+     According to the W-7 model of curated data, data creation,
+     transformation, and validation occurs as a series of events that
+     may take data as input and produce data as output.  Each of these
+     events can be characterized by answers to what, why, where, when,
+     who, which, and how questions; the set of characterizations
+     constitutes the data's provenance.
 
      \dot
      digraph w7 {
@@ -79,13 +88,8 @@ namespace ndatk
      }
      \enddot
      
-     According to the W-7 model of curated data, data creation,
-     transformation, and validation occurs as a series of events that
-     may take data as input and produce data as output.  Each of these
-     events can be characterized by answers to what, why, where, when,
-     who, which, and how questions; the set of characterizations
-     constitutes the data's provenance.
-
+     An ndatk::CuratedData event is implemented as a free form paragraph
+     containing the relevant parts of the W-7 model.
   */
   class CuratedData
   {
@@ -128,7 +132,7 @@ namespace ndatk
 
         \return std::string description of events
     */
-    std::string events(void) const;
+    std::string history(void) const;
 
     /// Required virtual dtor
     virtual ~CuratedData(void) = 0;

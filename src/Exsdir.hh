@@ -23,6 +23,15 @@ namespace ndatk
   /**
      \class Exsdir
      Extended cross section directory.
+
+     The ndatk::Exsdir uses a ndatk::Finder to locate its curated data file,
+     any include file in that file, and in returning the absolute path of 
+     files in its directory.
+
+     Since an ndatk::Exsdir reads files which can include files, recursive
+     includes are possible.  This class avoids infinite recursive includes
+     by maintaining a set of included files so far and a test to include a 
+     file only if it is not in that set.
   */
   class Exsdir: public CuratedData
   {
@@ -96,7 +105,7 @@ namespace ndatk
     /**
        Cache directory data for id.
 
-       \param[i] id std::string
+       \param[in] id std::string
        \note O(ln(n)) operation
     */
     void at(std::string id) const;
@@ -109,33 +118,85 @@ namespace ndatk
     */
     int table_length(std::string id) const;
 
-    ///\return Length of binary record or zero by table identifier
+    /**
+       Length of binary record or zero by table identifier.
+
+       \param[in] id std::string
+       \return int 
+    */
     int record_length(std::string id) const;
     
-    ///\return Number of binary entries per record or zero by table identifier
+    /**
+       Number of binary entries per record or zero by table identifier.
+
+       \param[in] id std::string
+       \return int
+    */
     int entries_per_record(std::string id) const;
 
-    ///\return File name by table identifier
+    /**
+       File name by table identifier.
+
+       \param[in] id std::string
+       \return std::string
+    */
     std::string file_name(std::string id) const;
 
-    ///\return absolute path to file_name
+    /**
+       Absolute path to file by id with magic string.
+
+       \param[in] id std::string
+       \return std::string
+    */
     std::string abs_file_name(std::string id) const;
 
+    /**
+       Absolute path to file by id with magic string.
+       
+       \param[in] id std::string
+       \param[in] magic std::string
+       \return std::string
+    */
     std::string abs_file_name(std::string id, std::string magic) const;
 
-    ///\return Directory access route or zero by table identifier
+    /**
+       Directory access route or zero by table identifier.
+
+       \param[in] id std::string
+       \return std::string
+    */
     std::string access_route(std::string id) const;
 
-    ///\return Probability table flag by table identifier
+    /**
+       Probability table flag by table identifier.
+
+       \param[in] id std::string
+       \return std::string
+    */
     bool probability_table_flag(std::string id) const;
 
-    ///\return Atomic weight (u) by table identifier
+    /**
+       Atomic weight (u) by table identifier.
+
+       \param[in] id std::string
+       \return double
+    */
     double atomic_weight(std::string id) const;
 
-    ///\return Atomic weight ratio by table identifier
+    /**
+       Atomic weight ratio by table identifier.
+
+       \param[in] id std::string
+       \return double
+    */
     double atomic_weight_ratio(std::string id) const;
 
-    ///\return Temperature (MeV) by table identifier
+    /**
+       Temperature (MeV) by table identifier.
+
+       \param[in] id std::string
+       \return double
+    */
     double temperature(std::string id) const;
 
     /// Define const_iterator type for Library

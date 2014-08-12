@@ -31,15 +31,18 @@ namespace ndatk
      with an optional magic string is found.  If no match is found, 
      the absolute path returned is "".
 
-     The search path is specified by the following grammar:
-     SEARCH_PATH -> '"' ELEMENTS '"';
-     ELEMENTS -> empty
-              |  ELEMENT (':' ELEMENT)*;
-     ELEMENT -> ENVIRONMENT
-             | CURRENT_PATH                   # previous path value
+     The search path is specified by the following IOS/IEC 14977 EBNF 
+     grammar:
+     \code
+     SEARCH_PATH = '"', ELEMENTS, '"';
+     ELEMENTS = empty
+              | ELEMENT, {':' ELEMENT};
+     ELEMENT = ENVIRONMENT
+             | CURRENT_PATH                   (* previous path value *)
              | posix_path;
-     ENVIRONMENT -> '$' [A-Za-z0-9._-]+;      # environment variable value
-     CURRENT_PATH -> "!!";
+     ENVIRONMENT = '$', {[A-Za-z0-9._-]}-;    (* environment variable value *)
+     CURRENT_PATH = '!!';
+     \endcode
 
      Standard POSIX conformant path names are added to the search path
      literally.  Environment variable values, signified by a leading '$' 
@@ -74,7 +77,11 @@ namespace ndatk
 
     // Commands
     /**
-       Add colon delimited path to the start of path list.
+       Set colon delimited path string as search path.
+
+       Elements starting with "$" are replaced by the named environment
+       variable value, if it exists.  The element "!!" is replaced by the
+       current search path.
 
        \param[in] path std::string
     */
@@ -84,6 +91,7 @@ namespace ndatk
     /**
        Absolute path of readable file in path list.
 
+       \param[in] file std::string
        \return absoulute path string
      */
     std::string abs_path(const std::string &file) const;
@@ -92,6 +100,8 @@ namespace ndatk
        Absoulte path of readable file in path list
        that starts with the magic string.
 
+       \param[in] file std::string
+       \param[in] magic std::string
        \return absolute path string
     */
     std::string abs_path(const std::string &file,

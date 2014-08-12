@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
   // Print file header
   std::cout << x.name() <<": " << x.type() << std::endl;
-  std::cout << x.events();
+  std::cout << x.history();
 
   // Print Periodic Table entries for the first 10 elements
   std::cout << "Read " << 

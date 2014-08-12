@@ -281,8 +281,8 @@ namespace ndatk {
   /**
      Does first logical line of file contain magic string?
 
-     \param[in] is a std::string;
-     \param[in] is a std::string;
+     \param[in] Filename a std::string;
+     \param[in] magic a std::string;
      \return bool.
   */
   extern bool file_starts_with(const std::string &Filename, 
@@ -308,7 +308,7 @@ namespace ndatk {
   {
     typename T::const_iterator it = container.find(key); // O(lg n)
     if (it == container.end()) {
-      throw std::out_of_range("Key not found in map!");
+      throw std::out_of_range(key + " not found in map!");
     }
     return it -> second;
   }
