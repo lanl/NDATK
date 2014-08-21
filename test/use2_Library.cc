@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
       cout << "Couldn't find " << s << " in Library!" << endl;
     else {
       cout << "(" << szaid <<"): " 
-           << l.file_name() << "@" << l.address() << endl;
+           << l.file_name() << "@" << l.abs_file_name() << endl;
       vector<double> t = l.temperatures();
-      cout << szaid << " has " << l.number_of_temperatures() 
+      cout << s << " has " << l.number_of_temperatures() 
            << " tables in " << l.name() << ":" << endl;
       for (int i = 0; i < l.number_of_temperatures(); i++) {
         double x = l.temperature(t[i]);

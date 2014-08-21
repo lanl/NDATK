@@ -10,8 +10,11 @@ namespace ndatk
 {
   using namespace std;
 
-  const string default_path="/opt/local/codes/data/nuclear/ndatk/data:"
-    "/opt/local/codes/data/nuclear/ndatk/1.0.0";
+  const string default_path=
+    "/opt/local/codes/data/nuclear/ndatk/data:"
+    "/opt/local/codes/data/nuclear/ndatk/1.0.0:"
+    "/usr/projects/data/nuclear/ndatk/data:"
+    "/usr/projects/data/nuclear/ndatk/1.0.0";
 
   istream& Exsdir::get_xsdir(istream& s)
   {
