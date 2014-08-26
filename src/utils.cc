@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <unistd.h>
+#include <limits.h>
 #include "utils.hh"
 
 namespace ndatk {
