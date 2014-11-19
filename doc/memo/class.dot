@@ -1,0 +1,42 @@
+digraph ndatk {
+        center=1;
+        ratio=fill
+        fontsize=8
+        node[fontsize=8,shape="record"];
+        edge[fontsize=8]
+
+        CuratedData[label="{\{abstract\}\nCuratedData||+name(void):string\l"+
+                          "+number_of_events(void):size_type\l"+
+                          "+event(size_type):string\l}"];
+        Chart[label="{\<\<interface\>\>\nChart||+Chart(string, Exsdir&)\l"+
+                    "+number_of_elements(void):int\l"+
+                    "+number_of_nuclides(void):int\l"+
+                    "+isotopes(string):vector\<int\>\l"+
+                    "+chemical_symbol(int):string\l"+
+                    "+atomic_weight_ratio(integer):double\l"+
+                    "+natural_abundance(integer):double\l}",color=green];
+        Library[label="{\<\<interface\>\>\nLibrary||+Library(string, Exsdir&)\l"+
+                      "+number_of_tables(void):int\l"+
+                      "+table_identifier(string):string\l"+
+                      "+address(void):integer\l"+
+                      "+file_name(void):string\l"+
+                      "+abs_file_name(void):string\l"+
+                      "+number_of_temperatures(void):int\l"+
+                      "+temperatures(void):vector\<double\>\l}",color=blue];
+        Exsdir[label="{\<\<interface\>\>\nExsdir||+Exsdir(string)\l"+
+                     "+file_name(string):string\l"+
+                     "+number_of_tables(void):int\l}",color=red];
+        Finder[label="{Finder||\l}"];
+
+        Library -> Exsdir[dir=both, arrowhead=open, arrowtail=odiamond];
+        Chart -> Exsdir[arrowhead=open];
+        edge[arrowhead=empty];
+        Chart -> CuratedData;
+        Exsdir -> CuratedData;
+        Library -> CuratedData;
+        Exsdir -> Finder[dir=both, arrowhead=open, arrowtail=diamond];
+
+        {rank=min; CuratedData}
+        {rank=same; Library; Chart}
+        {rank=max; Finder}
+}

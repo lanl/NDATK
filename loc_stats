@@ -5,17 +5,19 @@ LIB="Library.cc Library.hh \
 Chart.cc Chart.hh \
 Exsdir.cc Exsdir.hh \
 CuratedData.cc CuratedData.hh \
+Finder.cc Finder.hh \
 translate_isomer.cc translate_isomer.hh \
-utils.cc utils.hh"
+utils.cc utils.hh constants.hh ndatk.hh"
 
 UNIT="LibraryTest.cc LibraryTest.hh \
 ChartTest.cc ChartTest.hh \
 ExsdirTest.cc ExsdirTest.hh \
+FinderTest.cc FinderTest.hh \
 translate_isomerTest.cc translate_isomerTest.hh \
 utilsTest.cc utilsTest.hh \
-UnitTest.cc UnitTest.hh"
+UnitTest.cc UnitTest.hh TestRunner.cc"
 
-USE="use0_Library.cc use1_Chart.cc \
+USE="use0_Library.cc use1_Chart.cc use2_Library.cc \
 test_Chart.cc test_Exsdir.cc \
 test_utils.cc test_translate_isomer.cc"
 
