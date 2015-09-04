@@ -1,4 +1,8 @@
-talk.pdf: talk.tex ndatk.10 class.pdf package.pdf w7.pdf
+%.pdf: %.dot
+	dot -Teps -o $*.eps $<
+	epstopdf $*.eps
+
+talk.pdf: talk.tex ndatk.10 class.pdf package.pdf w7.pdf nds.pdf
 	pdflatex talk.tex
 	pdflatex talk.tex
 
@@ -9,14 +13,9 @@ ndatk.10: ndatk.mp
 	mpost ndatk.mp
 
 class.pdf: class.dot
-	dot -Teps -o class.eps class.dot
-	epstopdf class.eps
 
 package.pdf: package.dot
-	dot -Teps -o package.eps package.dot
-	epstopdf package.eps
+
+nds.pdf: nds.dot
 
 w7.pdf: w7.dot
-	dot -Teps -o w7.eps w7.dot
-	epstopdf w7.eps
-

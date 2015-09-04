@@ -1,0 +1,138 @@
+digraph nds {
+
+	page="11, 8.5"
+        size="10,7.5"
+	center=1
+	ratio=compress;
+        fontsize=24;
+	label=<<BR/> <BR/>Nuclear Data Supply Chain<BR/> <BR/><font color="red">Suppliers</font><BR/>Nuclear Data Team<BR/><font color="blue">Users</font><BR/> <BR/>\
+	oval=process<BR/>rectangle=product<BR/>solid line=production<BR/>dashed line=requirement<BR/>dotted line=information>
+
+        node[style="invis"];
+        0->1->2->3->4->5->6->7->8->9->A->B[style="invis"];
+        node[style="solid"];
+
+
+        /* NDT and management */
+        node[shape="none", fontsize=24];
+        ST[label=<<font color="red">MBC<BR/>RCL<BR/>ACK</font><BR/>MCW<BR/>JLC>];
+        CT[label=<<font color="red">MBC<BR/>RCL<BR/>ACK</font><BR/>MCW<BR/>JLC>];
+        PT[label="JLC\nDKP"];
+        DT[label="MGG\nMBL"];
+        UT[label="MBL\nMGG"];
+
+        ST->CT->PT->DT->UT[style="invis"];
+
+	node[shape="ellipse", fontsize=24, penwidth=4];
+        edge[penwidth=4, arrowsize=2.0];
+	/* NDT roles */
+	SM[label="Supply\nManagement"];
+	CE[label="CE\nProcessing\nVerification\nValidation"];
+	MG[label="MG\nProcessing\nVerification\nValidation"];
+        ME[label="NDI Extras\nProcessing\nVerification\nValidation"];
+	DM[label="NDI\nDevelopment\nVerification\nMaintenance"];
+        DE[label="ndatk\nDevelopment\nVerification\nMaintenance", color=green];
+	US[label="User\nSupport"];
+
+	/* Suppliers roles */
+        LANSCE[label="LANSCE\nExperiments", color=red, fontcolor=red];
+	CSWEG[label="CSWEG\nEvaluations", fontcolor=red];
+	T2[label="T-2\nEvaluations", color=red, fontcolor=red];
+        SKIP[label="NJOY\nDevelopment\nVerification\nMaintenance", \
+        fontcolor=red];
+
+	/* Users roles */
+	CEU[label="CE Code\nUse", color=blue, fontcolor=blue];
+	CED[label="CE Code\nDevelopment", color=blue, fontcolor=blue];
+	MGU[label="MG Code\nUse", color=blue, fontcolor=blue];
+	MGD[label="MG Code\nDevelopment", color=blue, fontcolor=blue];
+
+	node[shape="box", fontsize=24, penwidth=4];
+	/* Code and data products */
+        EXP[label="Experimental\nData", color=red, fontcolor=red]; 
+	ENDF[label="ENDF\nData", color=red, fontcolor=red];
+	NJOY[label="NJOY\nCode", color=red, fontcolor=red];
+	ACE[label="ACE\nData"];
+	NDI[label="NDI\nCode"];
+        NDATK[label="ndatk\nCode", color=green];
+	NDID[label="NDI\nData"];
+	CEC[label="CE\nCodes", color=blue, fontcolor=blue];
+	MGC[label="MG\nCodes", color=blue, fontcolor=blue];
+
+        SM -> LANSCE[style=dashed];
+        SM -> LANSCE[style=dotted, arrowhead=none];
+	SM -> CSWEG[style=dotted, arrowhead=none];
+	SM -> T2[style=dashed];
+	SM -> T2[style=dotted, arrowhead=none];
+	SM -> SKIP[style=dashed];
+	SM -> SKIP[style=dotted, arrowhead=none];
+
+        LANSCE -> EXP[color=red];
+	CSWEG -> ENDF[color=red];
+        EXP -> T2[color=red];
+        EXP -> CSWEG[color=red];
+	T2 -> ENDF[color=red];
+	SKIP -> NJOY[color=red]
+
+	ENDF -> CE[color=red];
+	NJOY -> CE[color=red];
+	ENDF -> MG[color=red];
+	NJOY -> MG[color=red];
+
+	CE -> SM[style=dotted, arrowhead=none];
+	CE -> ACE;
+	CE -> US[style=dotted, arrowhead=none];
+
+	MG -> SM[style=dotted, arrowhead=none];
+	MG -> NDID;
+       	MG -> US[style=dotted, arrowhead=none];
+
+	ACE -> CEC;
+        ACE -> NDATK;
+        NDID -> ME -> NDID;
+	NDID -> NDI;
+
+	DM -> NDI;
+        DE -> NDATK;
+        
+	DM -> MG[style=dotted, arrowhead=none];
+	DM -> US[style=dotted, arrowhead=none];
+	DE -> CE[style=dotted, arrowhead=none];
+	DE -> US[style=dotted, arrowhead=none];
+
+	NDI -> MGC;
+        NDATK -> CEC;
+
+	CED -> CEC[color=blue];
+	CED -> US[style=dotted, arrowhead=none];
+	CED -> US[style=dashed]; 
+	US -> CEU[style=dotted, arrowhead=none];
+	US -> MGU[style=dotted, arrowhead=none];
+	MGD -> MGC[color=blue];
+	MGD -> US[style=dotted, arrowhead=none];
+	MGD -> US[style=dashed]; 
+	MGC -> MGU[color=blue];
+	MGC -> MG;
+
+	CEC -> CEU[color=blue];
+	CEC -> CE; 
+
+	CEU -> US[style=dashed];
+	MGU -> US[style=dashed];
+
+        {rank=same; 0; SM; ST}
+        {rank=same; 1; LANSCE}
+        {rank=same; 2; EXP}
+        {rank=same; 3; CSWEG; T2; SKIP; CT}
+        {rank=same; 4; ENDF; NJOY}
+        {rank=same; 5; CE; MG; PT;};
+        {rank=same; 6; ACE; NDID}
+        {rank=same; 7; DM; DE; DT; ME}
+        {rank=same; 8; NDI; NDATK}
+        {rank=same; 9; US; CED; MGD; UT}
+        {rank=same; A; CEC; MGC};
+        {rank=same; B; CEU; MGU} 
+
+}
+
+	

@@ -5,32 +5,38 @@ digraph ndatk {
         node[fontsize=8,shape="record"];
         edge[fontsize=8]
 
-        CuratedData[label="{CuratedData||+name():string\l"+
-                          "+type():string\l"+
-                          "+provenance():string\l}"];
-        Chart[label="{Chart||+chemical_symbol(integer):string\l"+
-                    "+element_name(integer):string\l"+
-                    "+atomic_weight_ratio(integer):string\l"+
-                    "+natural_abundance(integer):double\l}"];
-        Library[label="{Library|-identifier:string\l-temperature:double\l|"+
-                      "+table_itentifier(integer):string\l"+
+        CuratedData[label="{\{abstract\}\nCuratedData||+name(void):string\l"+
+                          "+number_of_events(void):size_type\l"+
+                          "+event(size_type):string\l}"];
+        Chart[label="{\<\<interface\>\>\nChart||+Chart(string, Exsdir&)\l"+
+                    "+number_of_elements(void):int\l"+
+                    "+number_of_nuclides(void):int\l"+
+                    "+isotopes(string):vector\<int\>\l"+
+                    "+chemical_symbol(int):string\l"+
+                    "+atomic_weight_ratio(integer):double\l"+
+                    "+natural_abundance(integer):double\l}",color=green];
+        Library[label="{\<\<interface\>\>\nLibrary||+Library(string, Exsdir&)\l"+
+                      "+number_of_tables(void):int\l"+
                       "+table_identifier(string):string\l"+
-                      "+temperature(double):double\l"+
-                      "+address():integer\l"+
-                      "+file_name():string\l"+
-                      "+access_route():string\l}"];
-        Exsdir[label="{Exsdir||+address(string):integer\l"+
+                      "+address(void):integer\l"+
+                      "+file_name(void):string\l"+
+                      "+abs_file_name(void):string\l"+
+                      "+number_of_temperatures(void):int\l"+
+                      "+temperatures(void):vector\<double\>\l}",color=blue];
+        Exsdir[label="{\<\<interface\>\>\nExsdir||+Exsdir(string)\l"+
                      "+file_name(string):string\l"+
-                     "+access_route(string):string\l"+
-                     "+temperature(string):double\l}"];
+                     "+number_of_tables(void):int\l}",color=red];
+        Finder[label="{Finder||+Finder(void)\l}"];
+
         Library -> Exsdir[dir=both, arrowhead=open, arrowtail=odiamond];
         Chart -> Exsdir[arrowhead=open];
         edge[arrowhead=empty];
         Chart -> CuratedData;
         Exsdir -> CuratedData;
         Library -> CuratedData;
+        Exsdir -> Finder[dir=both, arrowhead=open, arrowtail=diamond];
 
         {rank=min; CuratedData}
         {rank=same; Library; Chart}
-        {rank=max; Exsdir}
+        {rank=max; Finder}
 }

@@ -48,20 +48,18 @@ beginfig(10);			% ndatk Commanded Information Problem Frame
   boxjoin(a.se=b.ne; a.sw=b.nw);
   boxit.g(btex \begin{minipage}{.5in} \centering
     Exsdir \end{minipage} etex);
-  boxit.sn(btex \begin{minipage}{.5in} \centering
-    xsdir \end{minipage} etex);
   boxit.tn(btex \begin{minipage}{.5in} \centering
     Library \end{minipage} etex);
   boxit.pd(btex \begin{minipage}{.5in} \centering
     Chart \end{minipage} etex);
 
-  sn.c = (2.0*72, 0.5*72);
+  g.c = (2.0*72, 0.5*72);
 
-  fill bpath sn withcolor (1.0, 0.5, 0.5);
-  fill bpath tn withcolor (0.8, 0.8, 0.8);
+  fill bpath g withcolor (1.0, 0.5, 0.5);
+  fill bpath tn withcolor (0.5, 0.5, 1.0);
   fill bpath pd withcolor (0.5, 1.0, 0.5);
 
-  drawboxed(g, sn, tn, pd);
+  drawboxed(g, tn, pd);
   
   draw api.e -- uc.w;
   label.lft(btex UC!R etex,
@@ -72,7 +70,6 @@ beginfig(10);			% ndatk Commanded Information Problem Frame
     point .5 * length(api.e -- ud.w) of (api.e -- ud.w));
 
   draw rdr.e -- g.w;
-  draw rdr.e -- sn.w;
   draw rdr.e -- tn.w;
   draw rdr.e -- pd.w;
 
@@ -80,7 +77,6 @@ beginfig(10);			% ndatk Commanded Information Problem Frame
     point 0.5 * length(rdr.e -- pd.w) of (rdr.e -- pd.w));
 
   draw r.w -- g.e dashed evenly;
-  draw r.w -- sn.e dashed evenly;
   draw r.w -- tn.e dashed evenly;
   draw r.w -- pd.e dashed evenly;
   label.rt(btex ND etex, point .5 * length (r.w -- pd.e) of (r.w -- pd.e));
