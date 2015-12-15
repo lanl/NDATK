@@ -1,0 +1,457 @@
+% Template larmemos -- 13 Jan 99
+
+\documentclass[12pt]{lamemo}
+\usepackage{times}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[all,cmtip]{xy}
+
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+\DeclareGraphicsRule{*}{mps}{*}{}
+
+\usepackage{color}
+\definecolor{amber}{rgb}{1,.5,0}
+\usepackage[normalem]{ulem}
+
+%\usepackage{newcent}
+%\pagestyle{secret}             % use this pagestyle for SRD
+%\pagestyle{unclassified}       % use this pagestyle for U
+%\pagestyle{official}           % use this pagestyle for OUO
+\pagestyle{unmarked}           % use this pagestyle for no marking
+% Fixed information
+% All lines are required.
+\divisionname{Computational Physics}	% center, project, or divison name 
+\groupname{XCP--5}		% organization number and/or name
+\phone{7-5341, 5-2879}		% sender phone, FAX number
+\fromms{Mark G. Gray, F663}	% sender initials, mail stop
+\originator{mgg}		% memo originator
+\typist{mgg}			% memo typist
+
+% Information on this memo
+% The \toms, \refno, and \subject commands are required.
+
+\toms{Christopher J. Werner, F663} % recipient initials, mail stop
+
+\refno{XCP--5:16--006(U)} % reference number 
+
+\subject{Proposed Solution to the Elemental Match Problem}
+
+\date{November 19, 2015}
+
+% Optional information:
+\adc{dkp}
+% \thru{nobody, MSnowhere}       % person(s) to send memo through
+% \cy{aaa\\bbb}                  % copy list
+\distribution{Edward D. Dendy, B218\\
+Robert C. Ward, T086\\
+Joann M. Campbell, T087\\
+Kevin G. Honnell, F663\\
+Terry R. Adams, F605\\
+Steven D. Nolen, F605\\
+Jeremy E. Sweezy, A143\\
+Clell J. Solomon, F663\\
+XCP--5 File}    % distribution list
+% \enc{aaa\\bbb}                 % list of enclosures
+% \encas                         % Enc. a/s 
+% \attachments{aaa\\bbb}         % list of attachments
+% \attachmentas                  % attachment as stated
+% \attachmentsas                 % attachments as stated
+% Text of the memo
+
+\newcommand{\ndatk}{\texttt{ndatk}}
+\newcommand{\MCATK}{\texttt{MCATK}}
+\newcommand{\NDI}{\texttt{NDI}}
+\newcommand{\zaid}{\texttt{SZAID}}
+\newcommand{\MCNP}{\texttt{MCNP}}
+\newcommand{\mcm}{\textcolor{green}{\checkmark}}
+\newcommand{\mxm}{\textcolor{red}{$\times$}}
+\begin{document}
+\lstset{language=C++}
+
+\maketitle			% make memo header
+
+\section{Summary}
+% I want to tell Chris that...
+
+Production acceptance of the Monte Carlo Application Tool Kit (\MCATK)
+requires continuous energy neutron transport data grouped to match
+multigroup neutron transport libraries.  The Nuclear Data Access Tool
+Kit (\ndatk) matches evaluated multigroup nuclides and elementals, but
+cannot match calculated multigroup elementals.  I propose additions to
+\ndatk\ that expand composition specifications by concentration of
+nuclides, elementals, chemical substances, and named materials into
+lists of nulcide concentrations.  Use of this tool would provide
+better physical fidelity for both Monte Carlo and deterministic
+transport simulations and fulfill the promise of \MCATK.
+
+\section{Background}
+
+Users of multigroup libraries specify material compositions as
+concentrations of nuclides and elementals.  Although only nuclide
+tables provide consistent, exact reactions, users were forced to use
+elemental tables in older libraries because that was all old evaluations
+provided.  For example, the \texttt{ENDF/B-VI} evaluation contains
+elemental only tables for eighteen elements.
+
+To support legacy input and user convenience, modern multigroup
+libraries are augmented with calculated elemental tables.  Although
+the \texttt{ENDF/B-VII} evaluation has only one elemental table, and
+despite elemental table failures to provide consistent, exact
+reactions, the \texttt{mendf71x} multigroup library provides
+twenty-five additional elemental tables\cite{lee14} at user request.
+
+This poses a problem for the comparison of continuous energy and
+multigroup data based simulations.  \ndatk\cite{gray14} was written to
+provide \MCATK\cite{adams14} users with the ability to match
+multigroup library evaluated tables, but it cannot match calculated
+multigroup elementals.
+
+This memo examines various solutions to the elemental matching
+problem and proposes additional features that could be added to
+\ndatk\ to help solve it.
+
+\newpage
+
+\section{Discussion}
+
+To truly meet the users needs for consistent, accurate, comparable
+calculations between Monte Carlo and deterministic transport,
+continuous energy (CE) and multigroup (MG) data libraries and/or the
+code libraries which serve that data need to be augmented with
+capabilities that meet the following criteria:
+\begin{description}
+  \item[Consistent Data: ] essentially match processed CE data sets to
+    processed MG data sets
+  \item[Evaluation True: ] faithfully match all processed CE and MG
+    data sets to evaluated data
+  \item[\textcolor{blue}{Legacy Input}: ] support ``dusty deck'' input
+    specifications which include elementals
+  \item[\textcolor{red}{Extended Input}: ] support extended input
+    specifications which include chemical substances and named
+    materials
+\end{description}
+
+Here are five possible solutions to the calculated elemental match
+problem evaluated against these criteria:
+
+\subsection{Option 0: Do Nothing}\mbox{}\\
+
+Current continuous energy and multigroup data served by \ndatk\ and
+\NDI, respectively, match processed data tables for only that subset
+of data in evaluations (no calculated CE elementals), do not
+faithfully match evaluated data (calculated MG elementals), match
+``dusty decks'' only for multigroup data (no calculated CE
+elementals), and do not support chemical substances or named
+materials.  The diagram in Figure~\ref{fig:0} summarizes the criteria
+relations among data and input for this option.
+
+\setcounter{figure}{-1}
+\begin{figure}\centering
+\[
+\xymatrix{
+  & X \ar[ddl]_{\textcolor{red}{u}} \ar[ddr]^{\textcolor{red}{u}} & \\
+  & L \ar[dl]^{\textcolor{blue}{u}} \ar@{<=>}[dr] \ar[u]_{\subset} & \\
+  C \ar[rr]^{\subset} & & M \\
+  & E \ar@{<=>}[ul] \ar[ur]_{\textcolor{blue}{d}} &
+}
+\]
+\caption{Relations among Evaluations (E), Continuous Energy Libraries
+  (C), Multigroup Libraries (M), Legacy Input (L), and Extended Input
+  (X) in Option~0.  Continuous energy libraries are a subset of
+  multigroup libraries, only continuous energy data faithfully matches
+  evaluated data, the \textcolor{blue}{data team} calculates elemental
+  tables for multigroup data to match legacy input while
+  \textcolor{blue}{users} map legacy input into continuous energy
+  data, and \textcolor{red}{users} map extended input into continuous
+  energy and multigroup libraries.} \label{fig:0}
+\end{figure}
+
+\subsection{Option 1: Nuclides Only Input Specifications}\mbox{}\\
+
+The simplest option to ensure a common set of evaluated data for
+continuous energy and multigroup neutron transport is to restrict code
+input to evaluated nuclide and elemental tables only.  The
+\texttt{lanl2006} continuous energy\cite{gray14} and
+multigroup\cite{white07} libraries already abide by this policy, and
+it and could be further enforced by producing continuous energy and
+multigroup libraries based solely on the \texttt{ENDF/B-VII}
+evaluation, i.e., proper subsets of the current \texttt{mendf71x} and
+\texttt{mt71x}\cite{conlin15} multigroup libraries.  This option
+requires no code changes, but shifts the onus on users to manually
+expand their material specifications in terms only of available
+evaluation tables.  It uses only evaluated data consistently across
+multigroup and continuous energy sets with full fidelity, but supports
+neither legacy inputs nor named material specifications.  The diagram
+in Figure~\ref{fig:1} summarizes the criteria relations among data and
+input for this option.
+
+\begin{figure}\centering
+\[
+\xymatrix{ & X \ar[ddl]_{\textcolor{red}{u}}
+  \ar[ddr]^{\textcolor{red}{u}} & \\
+  & L \ar[dl]^{\textcolor{blue}{u}} \ar[dr]_{\textcolor{blue}{u}}
+  \ar[u]_{\subset} & \\
+  C \ar@{<=>}[rr] & & M \\ & E \ar@{<=>}[ul] \ar@{<=>}[ur]& }
+\]
+\caption{Relations among Evaluations (E), Continuous Energy Libraries
+  (C), Multigroup Libraries (M), Legacy Input (L), and Extended Input
+  (X) in Option~1.  Continuous energy libraries essentially match
+  multigroup libraries, both faithfully match evaluated data,
+  \textcolor{blue}{users} map legacy input into continuous energy and
+  multigroup libraries, and \textcolor{red}{users} map extended input
+  into continuous energy and multigroup libraries.} \label{fig:1}
+\end{figure}
+
+Suggesting users stick with evaluation only input specifications
+probably won't work; users not only demand backwards compatibility and
+prefer to specify compositions in terms of elementals, but
+additionally want to specify compositions in terms of chemical
+substances, e.g., $\mathrm{H}_2\mathrm{O}$, and named mixtures, e.g.,
+stainless steel\footnote{The more than 150 different grades of
+  stainless steel makes this requirement particularly challenging.}.
+
+\subsection{Option 2: Continuous Energy Elemental Tables}\mbox{}\\
+
+Creating continuous energy elementals to match calculated multigroup
+elementals also requires no host code work, but it would require major
+data team work.  Whereas multigroup elemental cross sections are
+trivially calculated by natural abundance weighted averages of
+isotopic cross section vectors on a single fixed, common, energy
+grid\cite[Kinematic Quantities]{gray09}, continuous energy elemental
+cross sections would require calculating averages of functions defined
+by piece-wise basis functions on several adaptive, unique, energy
+grids.  The continuous energy results must then be expressed in terms
+of basis functions on some appropriate resultant adaptive grid.
+Because this calculation has never been part of any production work
+done by the data team, it would be, at best, a research project
+involving algorithms traditionally part of \texttt{NJOY} and hence
+normally the province of T--2.
+
+Nor could such a calculation be made fully consistent; elemental
+``reactions'' cannot produce consistent products and do not conserve
+energy in either multigroup or continuous energy form.  The average
+reaction energy ($Q$) relies on an estimate of the neutron flux, which
+is conveniently provided for multigroup elementals by the weight
+function\cite[Kinetic Quantities]{gray09}; no such estimate exists for
+continuous energy which is, of course, precisely its benefit.
+Elementals are inherently less precise than nuclide tables, and a
+principal reason to use continuous energy data is for the greater
+precision it can offer.  The diagram in Figure~\ref{fig:2} summarizes
+the criteria relations among data and input for this option.
+
+\begin{figure}\centering
+\[
+\xymatrix{
+  & X \ar[ddl]_{\textcolor{red}{u}} \ar[ddr]^{\textcolor{red}{u}} & \\
+  & L \ar@{<=>}[dl] \ar@{<=>}[dr] \ar[u]_{\subset} & \\
+  C \ar@{<=>}[rr] & & M \\
+  & E \ar[ul]^{\textcolor{blue}{d}} \ar[ur]_{\textcolor{blue}{d}}&
+}
+\]
+\caption{Relations among Evaluations (E), Continuous Energy Libraries
+  (C), Multigroup Libraries (M), Legacy Input (L), and Extended Input
+  (X) in Option~2.  Continuous energy libraries essentially match
+  multigroup libraries, neither faithfully matches evaluated data, the
+  \textcolor{blue}{data team} calculates elemental tables for
+  continuous energy and multigroup libraries to match legacy input,
+  and \textcolor{red}{users} map extended input into continuous energy
+  and multigroup libraries.} \label{fig:2}
+\end{figure}
+
+This option would make continuous energy and multigroup elemental
+treatments consistent, assuming an appropriate method to calculate
+continuous energy elemental tables can be found, and it would support
+legacy inputs, but it would fail faithfully reflect the underlying
+evaluations, and would do nothing to support named materials in input.
+
+\subsection{Option~3: Continuous Energy Elementals Expansion}\mbox{}\\ 
+
+\begin{figure}\centering
+\[
+\xymatrix{
+  & X \ar[ddl]_{\textcolor{red}{u}} \ar[ddr]^{\textcolor{red}{u}} & \\
+  & L \ar[dl]^{\textcolor{blue}{h}} \ar@{<=>}[dr] \ar[u]_{\subset} & \\
+  C \ar[rr]^{\subset} & & M \\
+  & E \ar@{<=>}[ul] \ar[ur]_{\textcolor{blue}{d}} &
+}
+\]
+\caption{Relations among Evaluations (E), Continuous Energy Libraries
+  (C), Multigroup Libraries (L), Legacy Input (L), and Extended Input
+  (X) in Option~3.  Continuous energy libraries are a subset of
+  multigroup libraries, only continuous energy data faithfully matches
+  evaluated data, the \textcolor{blue}{data team} calculates elemental
+  tables for multigroup data to support legacy input while
+  \textcolor{blue}{host codes} map legacy input into continuous energy
+  data, and \textcolor{red}{users} map extended input into continuous
+  energy and multigroup libraries.} \label{fig:3}
+\end{figure}
+
+The \texttt{Chart} class in the current production release of
+\ndatk\ provides natural abundance data of isotopes by element as
+illustrated in its release memo\cite[Appendix II]{gray14}.  This
+capability could be used by host codes to expand an input
+specification in terms of elementals and nuclides into one in terms of
+nuclides alone.  For \texttt{C++} hosts minimal interface work is
+needed, however codes in other languages would have to write a
+cross-language interface to use this capability.  For this reason,
+this option is unlikely to be embraced by multigroup codes, who would
+likely continue to use the element tables available to them.
+Continuous energy codes would then have to settle for approximate
+comparisons where elemental tables are concerned.  Further, each code
+that did adopt this solution would have to create its own custom
+calculation code, defeating the purpose of having a common library.
+The diagram in Figure~\ref{fig:3} summarizes the criteria relations
+among data and input for this option.
+
+Expansion of continuous energy elementals but not multigroup
+elementals would satisfy legacy inputs for both multigroup (via
+elemental tables) and continuous energy (via elemental expansion), but
+would not handle input consistently between the two, would not
+faithfully reflect evaluations for multigroup tables, and would not
+support named material specifications in input.
+
+\subsection{Option~4: Universal Elementals Expansion}\mbox{}\\
+
+An \ndatk\ Version 1.1 release would add a flat interface to support
+the use of Option~3 everywhere.  More work would be required for
+\ndatk, but the availability of library routines in several languages
+that provide common, curated, natural abundance data makes it
+significantly more likely that several codes would adopt this
+solution.
+
+An \ndatk\ Version 2.0 release would add:
+\begin{enumerate}
+\item Polyvalent-program Pattern\cite[p. 281]{raymond03}\\
+  The \ndatk\ API currently supports only \texttt{C++}; it is not as
+  useful as it could be.  The API should be flattened to support
+  \texttt{C} and \texttt{FORTRAN} linkages.  It should be augmented
+  with command line and scripting interfaces.
+
+\item Policy-based Class Design\cite[Ch. 1]{alexandrescu01}\\
+  The \ndatk\ classes are not as flexible as they should be for a tool
+  kit.  User selectable policies should be added to:
+  \begin{itemize}
+  \item specify behavior for missing \texttt{SZA} in a library
+  \item specify behavior for incomplete \texttt{SZAID} match
+  \item{specify temperature match behavior}
+  \end{itemize}
+
+\item Curated Physical Data Class with Unit Conversions\\
+  A complete set of physical constants available with uncertainties in
+  user specified units.
+  
+\item Curated Materials Data Class with Composition Calculations\\ A
+  library of named materials defined by nuclide composition, together
+  with a calculator for the nuclide composition of pure substances by
+  chemical formula and the nuclide composition of elementals.
+
+\end{enumerate}
+
+Features~1 and 4 could solve the fundamental elemental matching
+problem and hopefully attract widespread adoption by providing the
+added benefit of a uniform, consistent, and convenient calculation of
+material composition specification by mixture, substance, elemental,
+and nuclide.
+
+Additionally, Features~2 and 3 would improve the functionality
+available to \ndatk's existing code base, and could be of use
+elsewhere.  The augmentation with command line and scripting
+interfaces could make \ndatk\ useful to legacy codes which would
+benefit from preprocessing input without rewriting code, essentially
+enabling Option~1 for those codes.  The diagram in Figure~\ref{fig:4}
+summarizes the criteria relations among data and input for this
+option.
+
+\begin{figure}\centering
+\[
+\xymatrix{
+  & X \ar[ddl]_{\textcolor{red}{h}} \ar[ddr]^{\textcolor{red}{h}} & \\
+  & L \ar[dl]^{\textcolor{blue}{h}} \ar[dr]_{\textcolor{blue}{h}}
+  \ar[u]_{\subset} & \\ 
+  C \ar@{<=>}[rr] & & M \\
+  & E \ar@{<=>}[ul] \ar@{<=>}[ur] &
+}
+\]
+\caption{Relations among Evaluations (E), Continuous Energy libraries
+  (C), Multigroup Libraries (M), Legacy Input (L), and Extended Input
+  (X) in Option~4.  Continuous energy libraries essentially match
+  multigroup libraries, both faithfully match evaluated data,
+  \textcolor{blue}{host codes} map legacy input into continuous energy
+  and multigroup libraries, and \textcolor{red}{host codes} map
+  extended input into continuous energy and multigroup
+  libraries. } \label{fig:4}
+\end{figure}
+
+This option satisfies all criteria.
+
+\section{Conclusion}
+
+Production acceptance and widespread use of \MCATK\ requires both
+\ndatk, to match evaluated nuclide and elemental tables in libraries,
+and a solution to the calculated multigroup elemental matching
+problem.  The solutions considered to the matching problem are
+summarized in Table~\ref{tbl:summary}.
+
+\begin{table}\centering
+  \caption{Evaluation of Five Solution Options Versus
+    Criteria.}\label{tbl:summary}
+\begin{tabular}{l|cccc} 
+  & \multicolumn{4}{c}{Criteria} \\ \hline
+  Options & Consistent Data & Evaluation True &
+  \textcolor{blue}{Legacy Input} & \textcolor{red}{Extended Input} \\ \hline
+  0) Do Nothing          & \mxm & \mxm & \mxm & \mxm \\
+  1) Use Nuclides Only   & \mcm & \mcm & \mxm & \mxm \\
+  2) Make CE Elementals  & \mcm & \mxm & \mcm & \mxm \\
+  3) Do CE Expansion     & \mxm & \mxm & \mcm & \mxm \\
+  4) Universal Expansion & \mcm & \mcm & \mcm & \mcm
+\end{tabular}
+\end{table}
+Each solution requires a different mix of work from the nuclear data
+team, host codes, and end users: Options~1 and 2 require major work by
+end users, Option~2 requires major work by the nuclear data team,
+Option~3 requires major work by \MCATK\ and other Monte Carlo codes,
+while Option~4 shares the work between \ndatk\ and host codes.  Only
+Option~4 adds additional features through the extension of \ndatk.
+The new features let \MCATK, multigroup transport codes, host codes,
+and users expand input specifications containing nuclides, elementals,
+chemical substances and named materials into nuclide concentration
+specifications.  Based on the estimates used for \ndatk\ 1.0.0, I
+estimate the effort involved in Option~4 at 3 person-months or 1/4 FTE
+for 12 months.  I recommend Option~4.
+
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{lee14} Mary Beth Lee and Mark G. Gray, \emph{Updated
+  \NDI\ Library \texttt{MENDF71X} and its Production-Depletion Chain
+  Data Sets}, XCP--5:14--013, June 19, 2014
+  
+\bibitem{gray14} Mark G. Gray, \emph{The Nuclear Data Access Tool
+  Kit}, XCP--5:14--005, November 14, 2014
+
+\bibitem{adams14} T. Adams et al., \emph{Monte Carlo Application
+  ToolKit (MCATK)}, Ann. Nucl. Energy (2014),
+  http://dx.doi.org/10.1016/j.anucene.2014.08.047
+
+\bibitem{white07} Morgan C. White, \emph{Release of the
+  \texttt{LANL2006} \NDI\ Neutron Multigroup Data Library},
+  X--1:MCW--07--67, July 20, 2007
+  
+\bibitem{conlin15} Jeremy Lloyd Conlin et al., \emph{\texttt{MT71X}
+  Multi-temperature Library Based on \texttt{ENDF/B-VII.1}},
+  XCP--5:15--048, October 29, 2015
+
+\bibitem{gray09} Mark G. Gray, \emph{NDI Elemental Data},
+  X--1:09--25, January 29, 2009
+  
+\bibitem{raymond03} Eric S. Raymond, \emph{The Art of \texttt{UNIX}
+  Programming}, Addison-Wesley, 2003
+
+\bibitem{alexandrescu01} Andrei Alexandrescu, \emph{Modern
+  \texttt{C++} Design}, Addison-Wesley, 2001
+
+\end{thebibliography}
+
+\end{document}
+

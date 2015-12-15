@@ -1,0 +1,114 @@
+* Summary
+  I want to tell Chris that...
+
+  Production acceptance of the Monte Carlo Application Tool Kit
+  requires continuous energy neutron transport data grouped to match
+  multigroup transport neutron libraries.  The Nuclear Data Access
+  Tool Kit provides equivalent continuous energy libraries for
+  nuclides and elementals from common evaluation sources, but it
+  cannot provide the calculated elementals used in multigroup
+  libraries.  I propose additions to the Nuclear Data Access Tool Kit
+  to expand composition specifications in terms of nuclides,
+  elementals, and materials into lists of nuclides and their
+  concentrations.  The use of this tool for all composition
+  specifications would provide better physical fidelity for multigroup
+  and continuous energy simulations and fulfill
+  the promise of ndatk and MCATK.
+
+* Background
+
+Users of multigroup neutron transport libraries specify material
+compositions by concentrations of nuclides and elementals.  Although
+only nuclide tables provide consistent reaction products and exact
+reaction energy conservation, users were forced to use elemental
+tables in older libraries because that was all they had.  For example,
+the ENDF/B-VI evaluation contains only elemental tables for eighteen
+elements.
+
+To support legacy input decks and user convenience, modern multigroup
+neutron transport libraries are augmented with calculated elemental
+tables.  Although the ENDF/B-VII evaluation has only one elemental
+table, and despite elemental table failures to provide consistent
+reaction products and exact reaction energy conservation, the mendf71x
+multigroup library provides twenty-six elemental tables at user
+request.
+
+Now users want to compare simulations using multigroup and continuous
+energy transport data.  The Nuclear Data Access Tool Kit (ndatk) was
+written to provide Monte Carlo Application Tool Kit (MCATK) users with
+the ability to match multigroup libraries, but calculated multigroup
+elemental matching continues to pose a problem.
+
+This memo examines various solution to the elemental matching problem, and
+proposes additional features that could be added to ndatk to solve it.
+
+* Semiformal Proposal
+** Situation
+
+  - Users of modern multigroup nuclear data specify material
+    composition by concentrations of isotopes and elements.
+
+  - ENDF/B-VI evaluations had more than 19% element only tables.
+
+  - ENDF/B-VII evaluations had fewer than 1% (C) element only tables 
+
+  - More than 25% of natural elements in mendf71x (MG) available as
+    element tables by calculation.
+
+  - Users of modern continuous energy nuclear data specify material
+    composition by concentrations of isotopes.
+
+  - Less than 1% of natural elements in mendf71x (CE) available as
+    element tables.
+
+** Problem
+
+  - Users would like to compare simulations run with MG, CE data.
+
+  - Construction of element tables in CE unfeasable.
+
+  - Use of element tables in MG average energy quantities.
+
+  - Consistent P/D with element tables not possible.
+
+  - Both MG and CE data users would prefer named materials (like
+    S.S.).
+
+** Criteria
+
+  - Nuclear data must match for MG, CE.
+
+  - Nuclear data must use common subset of evaluation.
+
+  - Nuclear data must permit specification of element tables
+    (i.e. support "dusty decks").
+
+  - Nuclear data should extend to named materials (like S.S.).
+
+** Solution
+
+  Use table of natural abundances to expand input with elements into
+  isotopic compositions.
+
+  - Option 0 :: Use ndatk::Chart to calculate composition using N.A.
+                data (see XCP-5:15-005, App. II).
+                + No ndatk code work
+                - CE code work
+                - cross-language interface work
+                - MG code work
+                - Not likely to be embraced by MG
+
+  - Option 1 :: Develop ndatk 1.1 with flat interface to support
+                Option 0 everywhere.
+                - Some ndatk code work
+                - CE code work
+                + No cross-language interface work
+                - MG code work
+
+  - Option 2 :: Develop ndatk 2.0 with flat interface and
+                ndatk::Material class
+                - Much ndatk code work
+                + minimal CE code work
+                + No cross-language interface work
+                + minimal MG code work
+                + Substances and Mixtures added for all

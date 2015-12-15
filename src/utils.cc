@@ -118,27 +118,31 @@ namespace ndatk {
 
   // Get Logical Line
   //
-  // Get line from stream,
-  // truncate after comment character ('#'),
+  // Get physical line from stream,
+  // truncate at comment character ('#'),
   // trim leading, following whitespace,
-  // append next logical line from stream if 
-  // line ends in continuation characters ('\' or '+').
+  // repeat until non-empty; 
+  // append next logical line from stream if non-empty 
+  // line ends in continuation characters '\' or '+'.
   // Returns stream as I/O status.
   istream &get_logical_line(istream &s, string &line)
   {
     while (getline(s, line)) {
         string::iterator j = line.end();
-        line.erase(find(line.begin(), j, '#'), j); // truncate at comment
-        line = trim(line);                     // trim surrounding spaces
-        j = line.end() - 1;             // pointer to last char
-        if (*j == '\\' || *j == '+') {  // concatenate next line
-          *j = ' ';
-          string next_line;
-          if (!get_logical_line(s, next_line)) return s;
-          line.append(next_line);
+        line.erase(find(line.begin(), j, '#'), j); // remove trailing comment
+        line = trim(line);      // remove surrounding spaces
+        if (!line.empty()) {    // got non-blank stripped physical line
+          j = line.end() - 1;             
+          if (*j == '\\' || *j == '+') {  // concatenate rest of line
+            *j = ' ';
+            string rest;        // continuation line(s)
+            get_logical_line(s, rest);
+            line.append(rest);
+          }
+          break;                // got non-blank stripped logical line
         }
-        if (line.size() != 0) return s;
-      }
+        // got blank stripped physical line; process next physical line
+    }          
     return s;
   }
 

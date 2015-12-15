@@ -1,0 +1,204 @@
+% Template larmemos -- 13 Jan 99
+
+\documentclass[12pt]{lamemo}
+\usepackage{times}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+\DeclareGraphicsRule{*}{mps}{*}{}
+
+\usepackage{color}
+\definecolor{amber}{rgb}{1,.5,0}
+\usepackage[normalem]{ulem}
+
+%\usepackage{newcent}
+%\pagestyle{secret}             % use this pagestyle for SRD
+%\pagestyle{unclassified}       % use this pagestyle for U
+%\pagestyle{official}           % use this pagestyle for OUO
+\pagestyle{unmarked}           % use this pagestyle for no marking
+% Fixed information
+% All lines are required.
+\divisionname{Computational Physics}	% center, project, or divison name 
+\groupname{XCP--5}		% organization number and/or name
+\phone{7-5341, 5-2879}		% sender phone, FAX number
+\fromms{Mark G. Gray, F663}	% sender initials, mail stop
+\originator{mgg}		% memo originator
+\typist{mgg}			% memo typist
+
+% Information on this memo
+% The \toms, \refno, and \subject commands are required.
+
+\toms{Albert C. Kahler, B214} % recipient initials, mail stop
+
+\refno{XCP--5:15--036(U)} % reference number 
+
+\subject{Data Updates to the Nuclear Data Access Tool Kit}
+
+\date{May 18, 2015}
+
+% Optional information:
+\adc{dkp}
+% \thru{nobody, MSnowhere}       % person(s) to send memo through
+% \cy{aaa\\bbb}                  % copy list
+\distribution{Stephanie C. Frankle, B259\\
+Robert C. Little, B218\\ 
+Robert C. Ward, T086\\
+Joann M. Campbell, T087\\
+Charles A. Wingate, T087\\
+Kevin G. Honnell, F663\\
+Jon A. Dahl, D409\\
+Terry R. Adams, F605\\
+Steven D. Nolen, F605\\
+XCP--5 File}    % distribution list
+% \enc{aaa\\bbb}                 % list of enclosures
+% \encas                         % Enc. a/s 
+% \attachments{aaa\\bbb}         % list of attachments
+% \attachmentas                  % attachment as stated
+% \attachmentsas                 % attachments as stated
+% Text of the memo
+
+\newcommand{\ndatk}{\texttt{ndatk}}
+\newcommand{\MCATK}{\texttt{MCATK}}
+\newcommand{\NDI}{\texttt{NDI}}
+\newcommand{\zaid}{\texttt{SZAID}}
+\newcommand{\MCNP}{\texttt{MCNP}}
+\begin{document}
+\lstset{language=C++}
+
+\maketitle			% make memo header
+
+\section{Summary}
+% I want to tell Skip that...
+The Nuclear Data Access Tool Kit, which provides continuous energy
+libraries corresponding to multigroup libraries, has been updated with
+the addition of new photon (\texttt{mcplib84}, \texttt{e68g\_103}) and
+neutron (\texttt{mendf71x}) transport libraries.  The code library and
+continuous energy neutron and photon data libraries are available on
+the open and secure X-LAN, open and secure HPC network, and
+Livermore's Sequoia and Zin computers.
+
+\section{Background}
+
+On November 13, 2014 I released the first production version (1.0.0)
+of the Nuclear Data Access Tool Kit\cite{gray14} (\ndatk) on LANL and
+LLNL platforms for use by the Monte Carlo Application Tool
+Kit\cite{adams14} (\MCATK) team and its users.  The release included
+libraries to match the \texttt{lanl2006}\cite{white07} multigroup
+library, \texttt{endf71x}\cite{conlin13} continuous energy library,
+and a subset\cite{lee13} of the tables corresponding to the
+\texttt{mtmg08}\cite{white09} multigroup library.
+
+This memo describes the subsequent addition of the continuous energy
+\texttt{mendf71x} neutron and \texttt{mcplib84} and \texttt{e68g\_103}
+photon transport libraries.
+libraries to \ndatk.
+\newpage
+
+\section{Discussion}
+
+On March 13, 2015 I added the \texttt{mcplib84} and \texttt{e68g\_103}
+continuous energy photon transport libraries to \ndatk.  The
+\texttt{mcplib84} library is a direct copy of \MCNP's
+\texttt{mcplib84}\cite{white12} with 100 elemental tables.  The
+\texttt{e68g\_103} library adds 423 isotopic SZAs from
+\texttt{endf71x} pointing to the elemental tables of \texttt{mcplib84}
+to create a library corresponding to \NDI's
+\texttt{e68g\_103}\cite{white05} multigroup photon transport library.
+The use of the \texttt{endf71x} isotope SZAs in \texttt{e68g\_103}
+ensures compatibility with \NDI's SZA resolution for photons and with
+all continuous energy neutron transport libraries currently in or
+planned for \ndatk.
+
+On May 18, 2015 I added the \texttt{mendf71x} continuous energy
+neutron transport library to \ndatk.  The \texttt{mendf71x} library
+adds the fission products 45117.90c and 46119.90c from \ndatk's
+\texttt{lanl2006} library, and 33073.71c from the \ndatk's upcoming
+\texttt{mt71x} library to create a library corresponding to \NDI's
+\texttt{mendf71x}\cite{lee14} multigroup neutron transport library.
+
+Table~\ref{tbl:data} summarizes the libraries available in \ndatk.
+\begin{table}\centering
+
+\caption{Data libraries in \ndatk.  The production release of
+  \ndatk\ 1.0.0 contained three continuous energy neutron transport
+  libraries that correspond to the indicated \NDI\ and
+  \MCNP\ libraries.  Subsequent data releases contained
+  \textcolor{blue}{two} continuous energy photon transport libraries,
+  which correspond to the indicated \NDI\ and \MCNP\ libraries, and
+  \textcolor{green}{a} continuous energy neutron transport library
+  which corresponds to the indicated \NDI\ library.} \label{tbl:data}
+\mbox{}\\
+\begin{tabular}{rrrr|rr}\hline
+\ndatk & SZAs & Temperatures & Date & \NDI & \MCNP \\ \hline
+\texttt{lanl2006} & 180 & 1 & 5/30/13 & $\approx$ \texttt{lanl2006} & \\
+\texttt{endf71x} & 424 & 7 & 11/15/13 & & \texttt{endf71x} \\
+\texttt{mtmg08} & 64 & 10 & 5/18/14 & $\subset$ \texttt{mtmg08} \\ \hline
+\textcolor{blue}{\texttt{mcplib84}} & 100 & 1 & 3/13/15 &  & \texttt{mcplib84}\\
+\textcolor{blue}{\texttt{e68g\_103}} & 523 & 1 & 3/13/15 & \texttt{e68g\_103} &\\ \hline
+\textcolor{green}{\texttt{mendf71x}} & 427 & 1 & 5/18/15 & \texttt{mendf71x} & 
+\end{tabular}
+\end{table}
+
+\section{Conclusion}
+
+The Nuclear Data Access Tool Kit, which provides continuous energy
+libraries corresponding to multigroup libraries, has been updated
+with the addition of new photon and neutron libraries.  The
+code library, \texttt{lanl2006}, \texttt{endf71x}, \texttt{mtmg08} and
+\texttt{mendf71x} continuous energy neutron data libraries, and
+\texttt{mcplib84} and \texttt{e68g\_103} continuous energy photon data
+libraries are available on the open and secure X-LAN, open and secure
+HPC network, and on Livermore's Sequoia and Zin computers.
+
+The ease with which the libraries were created and release updated,
+once the required tables were identified, is a testament to the sound
+design of \ndatk.  The policy on how production data is released, how
+special data is handled, and the relation between code and data
+releases has yet to be worked out.
+
+We anticipate the release of new \ndatk\ code and data
+(\texttt{mt71x}) libraries coincident with the release of new
+\NDI\ code and data (\texttt{mt71x}) libraries at the end of FY15.
+
+
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{gray14} Mark G. Gray, \emph{The Nuclear Data Access Tool
+  Kit}, XCP--5:14--005, November 14, 2014
+
+\bibitem{adams14} T. Adams et al., \emph{Monte Carlo Application
+  ToolKit (MCATK)}, Ann. Nucl. Energy (2014),
+  http://dx.doi.org/10.1016/j.anucene.2014.08.047
+
+\bibitem{white07} Morgan C. White, \emph{Release of the LANL2006 NDI
+  Neutron Multigroup Data Library}, X--1:MCW--07--67, July 20, 2007
+
+\bibitem{conlin13} Jeremy Lloyd Conlin et al., \emph{Continuous Energy
+  Neutron Cross Section Data Tables Based upon ENDF/B-VII.1}
+  LA--UR--13--20137, 2013
+
+\bibitem{lee13} M. Beth Lee, \emph{Multi-temperature Continuous Energy
+  Data for \texttt{MCATK}}, XCP--5:13--035(U), October 16, 2013
+
+\bibitem{white09} Morgan C. White, \emph{Release of the MTMG08 NDI
+  Neutron Multigroup Data Library}, X--1:MCW--09--08, February 18,
+  2009
+
+\bibitem{white12} Morgan C. White, \emph{Further Notes on MCPLIB03/04
+  and New MCPLIB63/84 Compton Broadening Data For All Version of MCNP5},
+  XCP--5:MCW--12--011, January 3, 2012
+
+\bibitem{white05} Morgan C. White, \emph{NDI Multigroup Neutron
+  Libraries E66\_618, E68\_618, FP\_618, and PRE7\_618 and NDI
+  Multigroup Photon Library E68G\_103}, X--5:MCW--05--95, September
+  14, 2005
+
+\bibitem{lee14} Mary Beth Lee and Mark G. Gray \emph{Updated NDI
+  Library MENDF71X and its Production-Depletion Chain Data Sets},
+  XCP--5:14--013, June 19, 2014
+\end{thebibliography}
+
+\end{document}
+
