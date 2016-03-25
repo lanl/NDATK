@@ -37,6 +37,9 @@ namespace ndatk
   {
   public:
 
+    // Default data path
+    static const std::string default_path;
+    
     // Default constructor
     Exsdir(void);
 
@@ -44,8 +47,10 @@ namespace ndatk
        Construct Exsdir from named file.
 
        \param[in] filename string
+       \param[in] path string
     */
-    explicit Exsdir(const std::string filename);
+    Exsdir(const std::string filename,
+           const std::string path=Exsdir::default_path);
 
     /** 
         Read Exsdir from stream.
@@ -56,6 +61,15 @@ namespace ndatk
     */
     friend std::istream &operator>>(std::istream &s, Exsdir &e);
 
+    /**
+       Set file search path.
+
+       \param[in] path std::string Search path
+    */
+    void set_path(const std::string path) {
+      aFinder.set_path(path);
+    }
+      
     /**
         Is object in valid state?
 
@@ -208,6 +222,11 @@ namespace ndatk
     /// Const_iterator to end of table identifiers
     const_iterator end(void) const;
 
+    /// Path string
+    std::string get_path(void) const {
+      return aFinder.get_path();
+    }
+    
   private:
 
     std::istream& get_xsdir(std::istream &s);

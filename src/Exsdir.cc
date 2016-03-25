@@ -10,7 +10,7 @@ namespace ndatk
 {
   using namespace std;
 
-  const string default_path=
+  const string Exsdir::default_path=
     "/opt/local/codes/data/nuclear/ndatk/data:"
     "/opt/local/codes/data/nuclear/ndatk/1.0.1:"
     "/usr/projects/data/nuclear/ndatk/data:"
@@ -75,13 +75,14 @@ namespace ndatk
 
   // Default construct Exsdir
   Exsdir::Exsdir(void): CuratedData(), order(), directory(), 
-                        aFinder(default_path)
+                        aFinder(Exsdir::default_path)
   {
   }
 
-  // Construct Exsdir from data on named file
-  Exsdir::Exsdir(const string filename): CuratedData(), order(), directory(),
-                                         aFinder(default_path)
+  // Construct Exsdir from data on named file with optional path
+  Exsdir::Exsdir(const string filename,
+                 const string path): CuratedData(), order(), directory(),
+                                         aFinder(path)
   {
     string abs_filename(aFinder.abs_path(filename, type()));
     ifstream s(abs_filename.c_str());
