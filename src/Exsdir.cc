@@ -12,11 +12,11 @@ namespace ndatk
 
   const string Exsdir::default_path=
     "/opt/local/codes/data/nuclear/ndatk/data:"
-    "/opt/local/codes/data/nuclear/ndatk/1.0.1:"
+    "/opt/local/codes/data/nuclear/ndatk/1.0.2:"
     "/usr/projects/data/nuclear/ndatk/data:"
-    "/usr/projects/data/nuclear/ndatk/1.0.1:"
+    "/usr/projects/data/nuclear/ndatk/1.0.2:"
     "/usr/gapps/lanl-data/nuclear/ndatk/data:"
-    "/usr/gapps/lanl-data/nuclear/ndatk/1.0.1";
+    "/usr/gapps/lanl-data/nuclear/ndatk/1.0.2";
 
   istream& Exsdir::get_xsdir(istream& s)
   {
