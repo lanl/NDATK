@@ -5,6 +5,8 @@ This script will create the initial library file to be used in NDATK.
 
 import argparse
 import textwrap
+import os
+import time
 
 
 def libHeader(args):
@@ -20,7 +22,11 @@ def libHeader(args):
         provenance:
         File originally created by {user} on {date}
         %%
-        """.format(libtype=args.type, name=args.name, user=os.getlogin())
+        """.format(
+            libtype=args.type,
+            name=args.name,
+            user=os.getlogin(),
+            date=time.ctime()),
     )
 
     return header
@@ -42,6 +48,6 @@ if __name__ == "__main__":
     print("\nCreating an NDATK library file for library: {}".format(args.name))
 
     header = libHeader(args)
-    print("--------------------------------",
+    print("-"*80,
           header,
-          "--------------------------------\n")
+          "-"*80)
