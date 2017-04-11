@@ -8,6 +8,8 @@ import textwrap
 import os
 import time
 
+import pyMCNP.xsdir
+
 
 def libHeader(args):
     """
