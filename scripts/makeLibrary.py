@@ -41,9 +41,16 @@ if __name__ == "__main__":
     requiredArgs = parser.add_argument_group("Required arguments:")
     requiredArgs.add_argument("name", type=str,
                               help="The name of the library")
-#   optionalArgs = parser.add_argument_group("Optional arguments:")
     parser.add_argument("--type", type=str, default="ndatk_library_1.0",
                         help="The type of library file.")
+    entryArgs = parser.add_mutually_exclusive_group(required=True)
+    entryArgs.add_argument("--entries", type=str,
+                           help="Path to file with xsdir entries on it")
+    entryArgs.add_argument("--xsdir", type=str,
+                           help="Path to full xsdir file")
+    entryArgs.add_argument("--files", nargs="+")
+
+
 
     args = parser.parse_args()
 
@@ -53,3 +60,12 @@ if __name__ == "__main__":
     print("-"*80,
           header,
           "-"*80)
+
+    # Get list of ZAIDs and filenames
+    ZA_files = {}
+    if args.entries:
+        pass
+    elif args.xsdir:
+        pass
+    elif args.files:
+        pass
