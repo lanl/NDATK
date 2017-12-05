@@ -1,4 +1,5 @@
 #include <string>
+
 #include "ChartTest.hh"
 #include "utils.hh"
 
@@ -42,5 +43,35 @@ void ChartTest::runTest(void)
   UT_ASSERT(x.atomic_weight("3he") == x.atomic_weight(2003));
   UT_ASSERT(x.atomic_weight("3-He") == x.atomic_weight(2003));
 
-            
+  // Create some atom composition maps using
+  // values copied from ChartTest::chart_dat
+  map<int, double> H1{{1001, 1.0}};
+  map<int, double> H{{1001, 0.999850}, {1002, 0.000150}};
+  map<int, double> He4{{2004, 1.0}};
+  map<int, double> He{{2003, 0.000001}, {2004, 0.999999}};
+  map<int, double> Li{{3006, 0.075900}, {3007, 0.924100}};
+
+  // Atom composition
+  UT_ASSERT(x.atom_comp_of("1001") == H1); 
+  UT_ASSERT(x.atom_comp_of("H") == H);
+  UT_ASSERT(x.atom_comp_of("2004") == He4);
+  UT_ASSERT(x.atom_comp_of("2000") == He);
+  UT_ASSERT(x.atom_comp_of("Li") == Li);
+
+  // Create some mass composition maps
+  // values calculated by ndatk.py prototype
+  map<int, double> mH{{1001, 0.999735623351062}, 
+      {1002, 0.0002997352662605792}};
+  map<int, double> mHe{{2003, 7.53517121605419e-07}, 
+      {2004, 0.9999990686469464}};
+  map<int, double> mLi{{3006, 0.0657755107208508}, 
+      {3007, 0.9340857440036178}};
+
+  // Mass composition
+  UT_ASSERT(x.mass_comp_of("1001") == H1); 
+  UT_ASSERT(x.mass_comp_of("H") == mH);
+  UT_ASSERT(x.mass_comp_of("2004") == He4);
+  UT_ASSERT(x.mass_comp_of("2000") == mHe);
+  UT_ASSERT(x.mass_comp_of("Li") == mLi);
+
 }

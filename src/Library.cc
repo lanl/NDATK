@@ -198,4 +198,32 @@ namespace ndatk
     return v;
   }
 
+  // Composition of map in Library
+  map<int, double> Library::comp_of(const map<int, double> &composition) const
+  {
+    map<int, double> result;
+    for (auto const &x: composition) 
+      if (ids.find(x.first) != ids.end()) // sza in this library
+        result[x.first] = x.second;
+    return result;
+  }
+
+  // Library composition of name from f
+  // Chart c example: l.comp_of(name, bind(&Chart::atom_comp_of, c, _1));
+  map<int, double> Library::comp_of(string name, 
+                                    function<map<int, double>(string)> f) const
+  {
+    map<int, double> result;
+    try {
+      int sza = translate_isomer(name); // may throw bad_cast or out_of_range
+      if (ids.find(sza) != ids.end())
+        result[sza] = 1.0;      // use table found in library
+      else
+        result = comp_of(f(name)); // try composition provided by f
+    } catch (exception &e) {       // name unrecognized
+      result = comp_of(f(name));   // try composition provided by f
+    }
+    return result;
+  }
 }
+

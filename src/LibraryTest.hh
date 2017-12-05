@@ -68,6 +68,7 @@ class LibraryTest: public UnitTest
 public:
   LibraryTest(): x(exsdir_data()), y(library_data, x) {} 
   void runTest();
+  map<int, double> comp(string name) const;
 
 private:
   Exsdir x;

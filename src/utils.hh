@@ -333,6 +333,46 @@ namespace ndatk {
     return p;
   }
 
+  /**
+     Normalize values in associative container if sum greater than or 
+     equal to min_comp otherwise return empty container.
+
+     \param[in] container Associative container with name: value pairs.
+     \param[in] min_comp Minimum value that can be normalized.
+     \return Normalized container if sum at least min_comp else empty.
+  */
+  template <typename T>
+  T normalize_map(const T &container, 
+                  const typename T::value_type::second_type min_comp=0.95)
+  {
+    T result;
+    typename T::value_type::second_type total = 0.0;
+    for (auto const &x: container)
+      total += x.second;
+    if (total >= min_comp)
+      for (auto const &x: container)
+        result[x.first] = x.second/total;
+    return result;
+  }
+
+  /**
+     Copy entries in associative container whose values greater than floor.
+
+     \param[in] container Associative container with name: value pairs. 
+     \param[in] floor Cutoff value for high pass filter.
+     \return Filtered container by floor value; may be empty.
+  */
+  template <typename T>
+  T project_map(const T &container, 
+                const typename T::value_type::second_type floor=0.00)
+  {
+    T result;
+    for (auto const &x: container)
+      if (x.second > floor)
+        result[x.first] = x.second;
+    return result;
+  }
+
   /** 
       Convert Source type to Target type through stringstream.
    

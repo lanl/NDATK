@@ -15,6 +15,8 @@
 #include <map>
 #include <vector>
 #include <istream>
+#include <functional>
+
 #include "CuratedData.hh"
 #include "Exsdir.hh"
 
@@ -128,7 +130,28 @@ namespace ndatk
 
     /// Return vector of temperatures for set SZA
     std::vector<double> temperatures(void) const;
- 
+
+    /**
+       Library composition of map.
+
+       Filter composition map c through avaliable library tables.
+    */
+    std::map<int, double> comp_of(const std::map<int, double> &c) const;
+
+    /**
+       Library composition of name from f.
+
+       Return {{sza, 1.0}} if sza=translate_isomer(name) is in library
+       otherwise composition returned by f(name) filtered through library.
+
+       \param[in] name Table or f name.
+       \param[in] f Callback returning composition map for name.
+       \returns Compsition map of name in library.
+     */
+    std::map<int, double> 
+    comp_of(std::string name,
+            std::function<std::map<int, double>(std::string)> f) const;
+
   private:
 
     typedef std::map<double, std::string> temp_map;

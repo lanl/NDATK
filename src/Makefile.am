@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CXXFLAGS = -ansi -pedantic -Wall -fPIC
+AM_CXXFLAGS = -std=c++11 -pedantic -Wall -fPIC
 include_HEADERS = ndatk.hh Library.hh Chart.hh Exsdir.hh FileStat.hh \
 	Finder.hh CuratedData.hh translate_isomer.hh utils.hh constants.hh
 

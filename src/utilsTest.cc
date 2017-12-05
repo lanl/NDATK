@@ -1,4 +1,5 @@
 #include <string>
+#include <map>
 #include <sstream>
 #include "utils.hh"
 #include "utilsTest.hh"
@@ -110,5 +111,38 @@ void utilsTest::runTest() {
   UT_ASSERT(is_readable("utilsTest.cc"));
   UT_ASSERT(file_starts_with("utilsTest.cc", "using"));
 
+  // Test of composition map functions
+  map<int, double> empty;          // empty map
+  map<int, double> H1{{1001, 1.0}};
+  map<int, double> H{{1001, 0.999885}, {1002, 0.000115}};
+  map<int, double> O16{{8016, 1.0}};
+  map<int, double> O{{8016, 0.99757}, {8017, 0.00038}, {8018, 0.00205}};
+
+  // project_map is identity if amounts are positive
+  UT_ASSERT(project_map(empty) == empty);
+  UT_ASSERT(project_map(H1) == H1);
+  UT_ASSERT(project_map(H) == H);
+  UT_ASSERT(project_map(O16) == O16);
+  UT_ASSERT(project_map(O) == O);
+
+  // project map with floor
+  UT_ASSERT(project_map(empty, .1) == empty);
+  UT_ASSERT(project_map(H1, .1) == H1);
+  map<int, double> Hp{{1001, 0.999885}};
+  UT_ASSERT(project_map(H, .1) == Hp);
+  map<int, double> Op{{8016, 0.99757}};
+  UT_ASSERT(project_map(O, .1) == Op);
+  UT_ASSERT(project_map(O, 1.0) == empty);
+  
+  // normalize normalized maps
+  UT_ASSERT(normalize_map(empty) == empty);
+  UT_ASSERT(normalize_map(H1) == H1);
+  UT_ASSERT(normalize_map(H) == H);
+  UT_ASSERT(normalize_map(O16) == O16);
+  UT_ASSERT(normalize_map(O) == O);
+            
+  // normalize some projected maps
+  UT_ASSERT(normalize_map(project_map(H, .1)) == H1);
+  UT_ASSERT(normalize_map(project_map(O, .1)) == O16);
 
 }

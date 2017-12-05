@@ -237,4 +237,41 @@ namespace ndatk
     int sza = translate_isomer(name);
     return this->half_life(sza);
   }
+
+  // Atom composition of isomer name
+  map<int, double> Chart::atom_comp_of(string name) const
+  {
+    map<int, double> result;
+ 
+    int sza = translate_isomer(name);
+    if (nuclides.find(ground_state(sza)) != nuclides.end())
+      result[sza] = 1.0;
+    else if (is_element(sza))
+      for (auto isotope: isotopes(extract_Z(sza))) {
+        double NA = natural_abundance(isotope);
+        if (NA > 0.0)
+          result[isotope] = NA;
+      }
+    return result;
+  }
+
+  // Mass composition of isomer name
+  map<int, double> Chart::mass_comp_of(string name) const
+  {
+    map<int, double> result;
+ 
+    int sza = translate_isomer(name);
+    if (nuclides.find(ground_state(sza)) != nuclides.end())
+      result[sza] = 1.0;
+    else if (is_element(sza)) {
+      double atomic_weight_element = atomic_weight(sza);
+      for (auto isotope: isotopes(extract_Z(sza))) {
+        double NA = natural_abundance(isotope);
+        if (NA > 0.0)
+          result[isotope] = NA * 
+            atomic_weight(isotope)/atomic_weight_element;
+      }
+    }
+    return result;
+  }
 }
