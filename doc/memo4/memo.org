@@ -1,0 +1,196 @@
+                       ndatk Elemental Support
+#+STARTUP: content
+
+* Prewriting 
+
+** Who is my reader?
+
+   _C.J. Solomon_, MCATK team, Joann Campbell
+
+*** What does the reader want, expect, or need to hear from me?
+    - Review of elemental problem and solution options
+    - Option selected
+    - Design
+    - Implementation
+    - Possible extensions
+
+*** How much does ther reader know already
+    - What ndatk does (?)
+    - How MG elementals work (?)
+
+*** What effect do I want my report ot have on the reader?
+    - _Inform_ reader of what's been done and what could be done next
+
+*** Are other people likely to read my report?
+    Aaron Koskelo, Chris Werner, Jerry Brock, MCNP, NDT
+
+** What do I most want to tell my primary reader? 
+
+   ndatk has been updated to resolve element names into elemental or 
+   isotopic tables available in the selected continuous energy library
+   consistent with the calculated elemental tables in multi-group (NDI)
+   libraries.
+
+** What will the reader do with this information?
+   Recognize this project as complete, on time and budget.
+
+   
+* Timeline
+
+** Background
+
+*** Calculate NDI elementals: [fn:1], 01/29/09
+*** Release ndatk: [fn:2], 11/14/14
+*** Propose Elemental match solution: [fn:3], 11/19/15
+
+** Highlights
+
+*** Discuss options, design with MCATK 11/08/17
+*** Funding 11/09/17
+*** First prototype for option 3b 11/15/17
+*** Discuss options, design with NDT 11/16/17
+*** Discuss features with MCATK 11/20/17
+*** Demo third prototype for MCATK 11/21/17
+*** Implement option 3a in ndatk 12/01/17
+*** Unit test option 3a in ndatk 12/04/17
+
+
+
+* ENDF/B Elemental History
+  Number of elementals in MG libraries:
+  |      | evaluated | calculated | total |
+  |------+-----------+------------+-------|
+  | VI   |        18 |          8 |    26 |
+  | VII  |         1 |         25 |    26 |
+  | VIII |         1 |         25 |    26 |
+  #+TBLFM: $4=$2+$3
+
+
+
+* Draft: Project Completion Report 
+
+** Summary
+
+   The ndatk code library has been updated to resolve element names
+   into the elemental or isotopic tables available in the selected
+   continuous energy ndatk "Library" and consistent with the
+   calculated elemental tables in multi-group (NDI) libraries.  The
+   new API also provides the natural atomic or mass fraction
+   composition of an element from an ndatk "Chart" of the elements,
+   giving the user complete information about what is present in the
+   library versus what is present naturally.  This extenstion is built
+   from took-kit components and provides an example for possible
+   future capability, including named material components.
+   
+
+** Background
+
+   As ENDF/B evaluations moved from VI to VII, they moved from less
+   precise elemental tables to more precise nuclide tables.  Although
+   at the time the nuclear data team recommended that users replace
+   elements in input files with their constituent natural isotopes in
+   proportion to their abundances, we found users instead either
+   supplimenting new data libraries with old elemental tables or
+   replacing elements with their most abundant isotope.  
+
+   In January 2009 the nuclear data team developed a code to calculate
+   multi-group elemental tables[fn:1] that addressed this
+   problem, and has deployed calculated elemental tables in all
+   subsequent multi-group (NDI) library releases.
+
+   In November 2014, I released the Nuclear Data Access Tool Kit
+   (ndatk)[fn:2], an API to group continuous energy ENDF/B data into
+   logical libraries that match multi-group NDI libraries as closely
+   as possible.  Because the representation of continuous energy data
+   makes it unfeasable to calculate elemental tables, ndatk simply
+   omits the elementals calculated for multi-group.  Consequently
+   users have reverted to the bad habit of replacing elements with
+   their most abundant isotope, making a complete match between
+   multi-group and continuous energy transport difficult.
+ 
+   In November 2015, I examined possible solutions to the elemental
+   match problem[fn:3].  In October 2017, Joann Campbell made
+   available funds to implement one of these solutions in ndatk. This
+   memo documents the release of the option 3 solution from that memo.
+
+
+** Highlights
+
+   Option 3, Figure 3[fn:3]
+   d:E -> M = ndi_zaid.py
+   h:L -> C = ndatk::ndi_atom_comp_of & ndatk::ndi_mass_comp_of
+
+   - a :: Tools to let user implement option 3
+   - b :: Functions which use tools providing NDI equivalent
+   - c :: Class which encapsulates functions & information
+
+
+** Exceptions
+
+   Design tension among:
+   - Levelized design
+   - Tool-kit components
+   - Existing abstractions
+   - Encapsulation
+   - User requested features
+
+   Callback: "Using client supplied functions that enable lower-level
+   subsystems to perform specific tasks in a more global context" [fn:4]
+   where:
+   - client supplied functions: Chart::atom_comp_of, Chart::mass_comp_of
+   - lower-level subsystem: Library::comp_of
+
+   Features of Callback
+   + Keeps Chart, Library at level 3, independent
+   + Provide home for Chart informative functions
+   + eliminates atom, mass calculation redundancy in Library
+   + Supports future expansion with a Chart-like named material class
+
+
+** Outcome/Action
+   Outcome:
+   - Option 3b implemented as:
+     h: L -> C = ndi_atom_comp_of, ndi_mass_comp_of
+   Future work could include:
+   - Implement Option 3c: LibraryEx::atom_comp_of, 
+     LibraryEx::mass_comp_of
+   - Implement Option 4 [fn:3]
+     h:X -> C + M; L subset X
+     - Composition vector space {X, +:X x X -> X, *:R x X -> X}
+       with basis unit amount of nuclides
+     - Chart-like container for named mixtures: map<string, X>
+     - Chart-like currated data for named mixtures
+
+
+** Appendix
+   use3_ndi_atom_comp_of.cc
+   
+
+* Glossary
+  - nuclide :: nucleus with a specific s, Z, and A
+  - isomers :: nuclides with the same Z
+  - element :: natural abundance mix of isotopes
+  - table :: microscopic cross sections and related data for n+T
+             reactions
+  - isotope (of element) :: nuclide with same Z as element
+  - continuous energy table :: representation of cross sections by
+       piecewise functions
+  - multi-group energy table :: representation of cross sections by
+       weighted averages
+  - elemental table :: microscopic cross sections for element as if it
+       were a nuclide
+
+
+* Footnotes
+
+[fn:1] Mark Gray, "NDI Elemental Data", X-1:09-25
+
+[fn:2] Mark Gray, "The Nuclear Data Access Tool Kit", XCP-5:15-005
+
+[fn:3] Mark Gray, "Proposed Solution to the Elemental Match Problem",
+XCP-5:16-006
+
+[fn:4] John Lakos, "Large-Scale C++ Software Design"
+
+
+
