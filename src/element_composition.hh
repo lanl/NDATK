@@ -26,6 +26,8 @@ namespace ndatk
              of its components are in library, else map {{}}.
 
       \param[in] name Nuclide or element name.
+      \param[in] l Library reference.
+      \param[in] c Chart reference.
       \return Composition map of isotope: atom fraction.
       \exception std::bad_cast If S, Z, or A not integer.
       \exception std::out_of_range If chemical symbol not in symbol_to_Z.
@@ -42,6 +44,8 @@ namespace ndatk
              of its components are in Library, else map {{}}.
 
       \param[in] name Nuclide or element name.
+      \param[in] l Library reference.
+      \param[in] c Chart reference.
       \return Composition map of isotope: mass fraction.
       \exception std::bad_cast If S, Z, or A not integer.
       \exception std::out_of_range If chemical symbol not in symbol_to_Z.

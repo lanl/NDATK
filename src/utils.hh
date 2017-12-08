@@ -56,6 +56,9 @@
    constants[shape=plaintext];
    utils[shape=plaintext];
    translate_isomer[shape=plaintext];
+   element_composition[shape=plaintext];
+   element_compostion -> Chart;
+   element_compostion -> Library;
    Library -> translate_isomer;
    Library -> constants;
    Library -> utils;

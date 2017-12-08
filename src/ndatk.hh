@@ -83,13 +83,22 @@
    This document describes the C++ library API of ndatk.
 */
 
-#include "Library.hh"
+// Level 4
+#include "element_composition.hh"
+
+// Level 3
 #include "Chart.hh"
+#include "Library.hh"
+
+// Level 2
 #include "Exsdir.hh"
-#include "CuratedData.hh"
-#include "FileStat.hh"
 #include "translate_isomer.hh"
-#include "utils.hh"
+
+// Level 1
+#include "CuratedData.hh"
+#include "Finder.hh"
 #include "constants.hh"
+#include "utils.hh"
+#include "FileStat.hh"
 
 #endif

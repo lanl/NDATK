@@ -14,11 +14,11 @@
     - Implementation
     - Possible extensions
 
-*** How much does ther reader know already
+*** How much does the reader know already
     - What ndatk does (?)
     - How MG elementals work (?)
 
-*** What effect do I want my report ot have on the reader?
+*** What effect do I want my report to have on the reader?
     - _Inform_ reader of what's been done and what could be done next
 
 *** Are other people likely to read my report?
@@ -53,7 +53,8 @@
 *** Demo third prototype for MCATK 11/21/17
 *** Implement option 3a in ndatk 12/01/17
 *** Unit test option 3a in ndatk 12/04/17
-
+*** Implement option 3b in ndatk 12/07/17
+*** Use case option 3b in ndatk 12/08/17
 
 
 * ENDF/B Elemental History
@@ -78,7 +79,7 @@
    new API also provides the natural atomic or mass fraction
    composition of an element from an ndatk "Chart" of the elements,
    giving the user complete information about what is present in the
-   library versus what is present naturally.  This extenstion is built
+   library versus what is present naturally.  This extension is built
    from took-kit components and provides an example for possible
    future capability, including named material components.
    
@@ -90,7 +91,7 @@
    at the time the nuclear data team recommended that users replace
    elements in input files with their constituent natural isotopes in
    proportion to their abundances, we found users instead either
-   supplimenting new data libraries with old elemental tables or
+   supplementing new data libraries with old elemental tables or
    replacing elements with their most abundant isotope.  
 
    In January 2009 the nuclear data team developed a code to calculate
@@ -102,7 +103,7 @@
    (ndatk)[fn:2], an API to group continuous energy ENDF/B data into
    logical libraries that match multi-group NDI libraries as closely
    as possible.  Because the representation of continuous energy data
-   makes it unfeasable to calculate elemental tables, ndatk simply
+   makes it unfeasible to calculate elemental tables, ndatk simply
    omits the elementals calculated for multi-group.  Consequently
    users have reverted to the bad habit of replacing elements with
    their most abundant isotope, making a complete match between
@@ -159,11 +160,11 @@
      - Composition vector space {X, +:X x X -> X, *:R x X -> X}
        with basis unit amount of nuclides
      - Chart-like container for named mixtures: map<string, X>
-     - Chart-like currated data for named mixtures
+     - Chart-like curated data for named mixtures
 
 
 ** Appendix
-   use3_ndi_atom_comp_of.cc
+   use3_ndi_comp_of.cc
    
 
 * Glossary
@@ -174,7 +175,7 @@
              reactions
   - isotope (of element) :: nuclide with same Z as element
   - continuous energy table :: representation of cross sections by
-       piecewise functions
+       piece-wise functions
   - multi-group energy table :: representation of cross sections by
        weighted averages
   - elemental table :: microscopic cross sections for element as if it
