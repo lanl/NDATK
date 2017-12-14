@@ -11,12 +11,12 @@ using namespace std;
 
 // Some nuclide and elemental names from lanl06ex
 const vector<string> names{
-  "1001", "C", "12000", "14000", "17000",
-    "18000", "K", "20000", "22000", "23000",
-    "24000", "Fe", "26056", "28000", "29000",
-    "31000", "Zr", "42000", "47000", "48000",
-    "49000", "Xe", "63000", "64000", "72000",
-    "74000", "Ir", "82000", "U-235" 
+  "1001", "C", "12000", "14000", "17",
+    "18000", "K", "20000", "22000", "23",
+    "24000", "Fe", "56Fe", "28000", "29",
+    "31000", "Zr", "42000", "47000", "48",
+    "49000", "Xe", "63000", "64000", "72",
+    "74000", "Ir", "82000", "U-235", "1095242" 
     };
 
 // Stream map to string
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     cout << "Expand names into atom composition according to Library:";
   cout << endl;
   for (auto name: names) {
-    cout << setw(6) << name << " -> " ;
+    cout << setw(7) << name << " -> " ;
     if (m)
       cout << "m " << comp_str(ndatk::ndi_mass_comp_of(name, l, c));
     else

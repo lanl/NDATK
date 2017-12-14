@@ -1,0 +1,343 @@
+% Template larmemos -- 13 Jan 99
+
+\documentclass[12pt]{lamemo}
+\usepackage{times}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[all,cmtip]{xy}
+
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+\DeclareGraphicsRule{*}{mps}{*}{}
+
+\usepackage{color}
+\definecolor{amber}{rgb}{1,.5,0}
+\usepackage[normalem]{ulem}
+
+%\usepackage{newcent}
+%\pagestyle{secret}             % use this pagestyle for SRD
+%\pagestyle{unclassified}       % use this pagestyle for U
+%\pagestyle{official}           % use this pagestyle for OUO
+\pagestyle{unmarked}           % use this pagestyle for no marking
+% Fixed information
+% All lines are required.
+\divisionname{Computational Physics}	% center, project, or divison name 
+\groupname{XCP--8}		% organization number and/or name
+\phone{7-5341, 5-2879}		% sender phone, FAX number
+\fromms{Mark G. Gray, F663}	% sender initials, mail stop
+\originator{mgg}		% memo originator
+\typist{mgg}			% memo typist
+
+% Information on this memo
+% The \toms, \refno, and \subject commands are required.
+
+\toms{Joann M. Campbell, T087\\
+      C. J. Solomon, F663\vspace{1mm}} % recipient initials, mail stop
+
+\refno{XCP--8:18--006(U)} % reference number 
+
+\subject{\texttt{ndatk} Element Support}
+
+\date{December 13, 2017}
+
+% Optional information:
+\adc{dkp}
+% \thru{nobody, MSnowhere}       % person(s) to send memo through
+% \cy{aaa\\bbb}                  % copy list
+\distribution{
+Terry R. Adams, F605\\
+Steven D. Nolen, F605\\
+Jeremy E. Sweezy, A143\\
+Travis J. Trahan, F663\\
+Christopher J. Werner, F663\\
+Austin P. McCartney, A143\\
+Morgan C. White, F663\\
+Brendan K. Krueger, T087\\
+Aaron C. Koskelo, B259 \\
+XCP--8 File}    % distribution list
+% \enc{aaa\\bbb}                 % list of enclosures
+% \encas                         % Enc. a/s 
+% \attachments{aaa\\bbb}         % list of attachments
+% \attachmentas                  % attachment as stated
+% \attachmentsas                 % attachments as stated
+% Text of the memo
+
+\newcommand{\ndatk}{\texttt{ndatk}}
+\newcommand{\MCATK}{\texttt{MCATK}}
+\newcommand{\NDI}{\texttt{NDI}}
+\newcommand{\zaid}{\texttt{SZAID}}
+\newcommand{\MCNP}{\texttt{MCNP}}
+\newcommand{\mcm}{\textcolor{green}{\checkmark}}
+\newcommand{\mxm}{\textcolor{red}{$\times$}}
+\begin{document}
+\lstset{language=C++}
+
+\maketitle			% make memo header
+
+\section{Summary}
+% I want to tell CJ that...
+
+The Nuclear Data Access Tool Kit has been updated to resolve element
+names into the elemental or constituent isotopic tables available in
+the selected continuous energy library and consistent with the
+calculated elemental tables in multigroup libraries.  This extension
+is built from tool kit components which provide complete information
+about what is present in the library versus what is present naturally
+and an example for possible future capability, including named
+material components.
+
+\section{Background}
+
+As \texttt{ENDF/B} evaluations moved from \texttt{VI} to \texttt{VII},
+they moved from less precise elemental data to more precise nuclide
+data.  Although at the time the nuclear data team recommended that
+users expand elements in input files into their constituent natural
+isotopes in proportion to their abundances, we found multigroup users
+instead replacing elements with their most abundant isotope.
+
+In January 2009 the nuclear data team developed \texttt{ndi\_zaid.py}
+to calculate multigroup elemental tables\cite{gray09} that addressed
+this problem; the multigroup \texttt{mendf71x} and \texttt{mt71x}
+libraries deployed twenty-five calculated elemental tables.
+
+In November 2014, I released the Nuclear Data Access Tool Kit
+(\ndatk)\cite{gray14}, which groups continuous energy data into
+logical libraries that match multigroup \NDI\ data libraries as
+closely as possible.  Currently \ndatk\ (1.0.2) simply omits the
+elementals calculated for multigroup.  Consequently, continuous energy
+users have reverted to the bad habit of replacing elements with their
+most abundant isotope.
+ 
+In November 2015, I examined possible solutions to the elemental match
+problem\cite{gray15}.  In October 2017, Joann Campbell made available
+funds to implement a solution in \ndatk. This memo documents the
+release of the option~3 solution from that memo.
+
+\newpage
+
+\section{Discussion}
+
+The \ndatk\ code library\cite{gray14} provides an interface to
+continuous energy nuclear data tables which groups them into logical
+libraries designed to match the multigroup energy nuclear data
+libraries provided by \NDI.  Recent \texttt{ENDF/B} evaluations have
+been parallel processed by the Nuclear Data Team to make this match
+easy, with the notable exception of calculated multigroup elementals.
+
+An elemental is a table containing kinematic (e.g. microscopic
+reaction cross section) and kinetic (e.g. microscopic reaction
+energy) data for the interactions of neutrons incident on an element
+target as if the element were composed of a single kind of nuclide.
+Although the kinematic values provide a good average representation of
+the actual scattering physics, the kinetic values require the incident
+neutron flux to provide a good average representation of the actual
+energetic physics.  For multigroup tables the weight function provides
+an obvious estimate of the incident neutron flux\cite[Eq.~3]{gray09}.
+
+In a previous memo\cite{gray15} I examined options to match multigroup
+elementals with continuous energy data.  Option~0, which required
+continuous energy users to manually expand elements in their input,
+and option~1, which required both multigroup and continuous energy
+users to manually expand elements in their inputs, have failed.
+Option~2, which requires the calculation of continuous energy
+elementals, remains infeasible both for the lack of a suitable neutron
+flux estimate and the incommensurate nuclide and reaction dependent
+energy grids.  Option~4, which would automatically expand both
+elements and named materials for both multigroup and continuous energy
+libraries, is beyond the scope of the current work.  This memo
+documents the implementation of option~3.
+
+\begin{figure}\centering
+\[
+\xymatrix{
+  & X \ar[ddl]_{\textcolor{red}{u}} \ar[ddr]^{\textcolor{red}{u}} & \\
+  & L \ar[dl]^{\textcolor{blue}{h}} \ar@{<=>}[dr] \ar[u]_{\subset} & \\
+  C \ar[rr]^{\subset} & & M \\
+  & E \ar@{<=>}[ul] \ar[ur]_{\textcolor{blue}{d}} &
+}
+\]
+\caption{Relations among Evaluations ($E$), Continuous Energy Libraries
+  ($C$), Multigroup Libraries ($M$), Legacy Input ($L$), and Extended Input
+  ($X$) in Option~3.  Continuous energy libraries are a subset of
+  multigroup libraries, only continuous energy data faithfully matches
+  evaluated data, the \textcolor{blue}{data team} calculates elemental
+  tables for multigroup data to support legacy input while
+  \textcolor{blue}{host codes} map legacy input into continuous energy
+  data, and \textcolor{red}{users} map extended input into continuous
+  energy and multigroup libraries.} \label{fig:3}
+\end{figure}
+
+The diagram in Figure~\ref{fig:3} summarizes the relationships among
+nuclear data evaluations ($E$), continuous and multigroup energy
+processed tables ($C$, $M$), and user input ($L$, $X$) in option~3.
+The key to this option is to match the functionality of the existing
+stand-alone code that calculates elementals as a weighted average of
+isotope tables for inclusion in a multigroup library release:
+\[
+\textcolor{blue}{d}:E \rightarrow M \doteq \mathtt{ndi\_zaid.py},
+\]
+with new inline \ndatk\ calls that map element names to a mixture of
+isotope tables in a related continuous energy library:
+\[
+\textcolor{blue}{h}:L \rightarrow C = \left\{ \begin{array}{l}
+    \mathtt{ndi\_atom\_comp\_of} \\
+    \mathtt{ndi\_mass\_comp\_of}
+    \end{array} \right. .
+\]
+When the continuous energy transport host uses the natural isotopic
+mix for an element, it calculates, with higher fidelity, the average
+quantities found in the multigroup elemental tables.  
+
+The \texttt{Chart} class in the current production release of \ndatk\
+(1.0.2) already provides the natural abundance of isotopes by element
+as illustrated in its release memo\cite[Appendix~II]{gray14}.  This
+capability is encapsulated in this new release in two convenience
+member functions:
+\begin{description}
+\item[\texttt{Chart::atom\_comp\_of}: ] natural atomic abundance of
+  isotopes in element
+\item[\texttt{Chart::mass\_comp\_of}: ] natural mass abundance of
+  isotopes in element
+\end{description}
+that return a \texttt{map<int, double>} of the canonical SZA of
+isotopes to their atomic or mass abundance in the element according to
+the curated \texttt{Chart} data.
+
+Providing analogous methods using the \texttt{Library} class raises
+design tensions among maintaining a levelized design\cite{lakos96},
+using tool kit components, maintaining existing abstractions and
+encapsulations\cite{gray14}, and satisfying user requested new
+features.  Simply adding analogous methods to the \texttt{Library}
+class makes it dependent on the \texttt{Chart} class through only two
+of its many member functions.  Adding methods to a new class dependent
+on both \texttt{Chart} and \texttt{Library} keeps them independent,
+but at the expense of a feature poor (at least in option~3) new
+Level~4 class.  Adding analogous Level~4 functions to those in
+\texttt{Chart} leads to redundant, complex\cite{wiki} ($\mathbf{M} =
+7$), code.  Fortunately, these competing concerns can be resolved by
+using the callback levelization technique.
+
+Lakos defines the \textbf{Callback Levelization Technique} as:
+\begin{quote}
+  Using client supplied functions that enable lower-level subsystems
+  to perform specific tasks in a more global context.\cite{lakos96}
+\end{quote}
+where, in the case of this \ndatk\ extension:
+\begin{description}
+\item[client supplied functions: ] \texttt{Chart::atom\_comp\_of}, 
+  \texttt{Chart::mass\_comp\_of},
+\item[lower-level subsystem: ] \texttt{Library::comp\_of},
+\item[global context: ] \texttt{ndi\_atom\_comp\_of}, 
+  \texttt{ndi\_mass\_comp\_of}. 
+\end{description}
+Here the callback keeps \texttt{Chart} and \texttt{Library} independent
+at level~3, respects encapsulation of \texttt{Chart} informative
+functions, eliminates potential atom and mass calculation redundancy in
+\texttt{Library}, reduces complexity, and supports future expansion
+with a \texttt{Chart}-like named material class.
+
+The element expansion functionality is encapsulated in two level~4
+convenience functions:
+\begin{description}
+\item[\texttt{ndi\_atom\_comp\_of}: ] library atomic abundance of
+  isotopes in element,
+\item[\texttt{ndi\_mass\_comp\_of}: ] library atomic abundance of
+  isotopes in element,
+\end{description}
+which use the \texttt{Chart} composition functions as callbacks in the
+\texttt{Library} composition function.
+
+The \texttt{Chart::atom\_comp\_of} and \texttt{Chart::mass\_comp\_of}
+methods were exhaustively unit tested against the data in the mock
+four element, eight nuclide \texttt{early\_universe} ``Chart of the
+Nuclides''.  The \texttt{Library::comp\_of} method was unit tested
+with a mock callback function that also demonstrates how it could be
+used with other material compositions.  The
+\texttt{ndi\_atom\_comp\_of} and \texttt{ndi\_mass\_comp\_of}
+functions were level tested by comparing the use case~3 (See Appendix~I)
+output, using twenty-six element and four nuclide names from the
+multigroup \texttt{lanl06ex} library, against the calculations of
+\texttt{ndi\_zaid.py} for both the \texttt{lanl2006} and
+\texttt{mt71x} continuous energy libraries.
+  
+\section{Conclusion}
+
+Production acceptance and widespread use of \MCATK\cite{adams14}
+requires both \ndatk, to match evaluated elemental and nuclide tables
+in libraries, and a solution to the calculated multigroup elemental
+matching problem.  The 1.1.0 release of \ndatk\ provides a solution to
+the element match problem by resolving element names into the
+elemental or isotopic tables available in the selected continuous
+energy \ndatk\ \texttt{Library} consistent with the calculated
+elemental tables in multigroup \NDI\ libraries.
+
+Expansion of continuous energy elements but not multigroup elementals
+satisfies legacy inputs for both multigroup (via elemental tables) and
+continuous energy (via element expansion), but does not handle input
+consistently between the two, does not faithfully reflect evaluations
+for multigroup tables, and does not support named material
+specifications in input.
+
+However, as long as the input is restricted to only those tables
+available in multigroup libraries and the continuous and multigroup
+energy libraries are based on the same evaluation, this option
+provides the desired seamless match between the underlying data sets
+for two types of transport.
+
+The tool kit implementation of option~3, and specifically the use of a
+callback in the \texttt{Library} class, suggest a path to some future
+implementation of option~4, with code support for the expansion of both
+elements and named materials by both continuous energy and multigroup
+users.
+ 
+A future Option~4 implementation could include:
+\[
+h:X \rightarrow C+M; L \subset X,
+\]
+as an extension of the option~3 functionality, and:
+\[ 
+\{X, +:X\times X \rightarrow X, \cdot:\mathbb{R}\times X \rightarrow X \},
+\]
+a composition vector space with unit amounts of nuclides as basis,
+similar to that used in \texttt{ndi\_zaid.py}, in:
+\begin{itemize}
+\item \texttt{Chart}-like container for named mixtures:
+  \texttt{map<string, X>}
+\item \texttt{Chart}-like curated data for named mixtures
+\end{itemize}
+These code additions for option~4 are straightforward; the real work
+lies in the collation, curation, and ongoing support needed to
+maintain a useful materials composition database.
+
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{gray09} Mark G. Gray, \emph{\NDI\ Elemental Data},
+  X--1:09--25, January 29, 2009
+  
+\bibitem{gray14} Mark G. Gray, \emph{The Nuclear Data Access Tool
+  Kit}, XCP--5:14--005, November 14, 2014
+
+\bibitem{gray15} Mark G. Gray, \emph{Proposed Solution to the
+    Elemental Match Problem}, XCP--5:16--006, November 19, 2016
+
+\bibitem{lakos96} John Lakos, \emph{Large-Scale \texttt{C++} Software
+    Design}, Addison-Wesley, 1996
+
+\bibitem{wiki} \emph{Cyclomatic Complexity}, 
+  https://en.wikipedia.org/wiki/Cyclomatic\_complexity  
+
+\bibitem{adams14} T. Adams et al., \emph{Monte Carlo Application
+  ToolKit (MCATK)}, Ann. Nucl. Energy (2014),
+  http://dx.doi.org/10.1016/j.anucene.2014.08.047
+
+\end{thebibliography}
+
+\footnotesize
+\newpage
+\section{Appendix~I: \texttt{use3\_ndi\_comp\_of.cc}} 
+\label{app:use3} 
+\lstinputlisting{../../test/use3_ndi_comp_of.cc}
+
+\end{document}
+

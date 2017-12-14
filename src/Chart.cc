@@ -121,7 +121,7 @@ namespace ndatk
          it != nuclides.end(); it++)
       if (it->first/1000 == n)
         result.push_back(it->first);
-      return result;
+    return result;
   }
 
   // Vector of isotopes in element by chemical symbol
