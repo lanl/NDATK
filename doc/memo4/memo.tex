@@ -80,11 +80,11 @@ XCP--8 File}    % distribution list
 The Nuclear Data Access Tool Kit has been updated to resolve element
 names into the elemental or constituent isotopic tables available in
 the selected continuous energy library and consistent with the
-calculated elemental tables in multigroup libraries.  This extension
-is built from tool kit components which provide complete information
-about what is present in the library versus what is present naturally
-and an example for possible future capability, including named
-material components.
+calculated elemental tables in corresponding multigroup library.  This
+extension was built from tool kit components which provide complete
+information about what is present in the library versus what is
+present naturally and an example for possible future capability,
+including named material components.
 
 \section{Background}
 
@@ -111,7 +111,7 @@ most abundant isotope.
 In November 2015, I examined possible solutions to the elemental match
 problem\cite{gray15}.  In October 2017, Joann Campbell made available
 funds to implement a solution in \ndatk. This memo documents the
-release of the option~3 solution from that memo.
+implementation of one of those solutions in \ndatk\ 1.1.0.
 
 \newpage
 
@@ -125,14 +125,15 @@ been parallel processed by the Nuclear Data Team to make this match
 easy, with the notable exception of calculated multigroup elementals.
 
 An elemental is a table containing kinematic (e.g. microscopic
-reaction cross section) and kinetic (e.g. microscopic reaction
-energy) data for the interactions of neutrons incident on an element
-target as if the element were composed of a single kind of nuclide.
-Although the kinematic values provide a good average representation of
-the actual scattering physics, the kinetic values require the incident
-neutron flux to provide a good average representation of the actual
-energetic physics.  For multigroup tables the weight function provides
-an obvious estimate of the incident neutron flux\cite[Eq.~3]{gray09}.
+reaction cross section) and kinetic (e.g. microscopic reaction energy)
+data for the interactions of neutrons incident on an element target as
+if the element were composed of a single kind of nuclide.  Although
+the elemental kinematic values provide a good average representation
+of the actual scattering physics, the elemental kinetic values require
+the (a priori unknown) incident neutron flux to provide a good average
+representation of the actual energetic physics.  For multigroup tables
+the weight function provides an obvious estimate of the incident
+neutron flux\cite[Eq.~3]{gray09}.
 
 In a previous memo\cite{gray15} I examined options to match multigroup
 elementals with continuous energy data.  Option~0, which required
@@ -205,8 +206,8 @@ the curated \texttt{Chart} data.
 
 Providing analogous methods using the \texttt{Library} class raises
 design tensions among maintaining a levelized design\cite{lakos96},
-using tool kit components, maintaining existing abstractions and
-encapsulations\cite{gray14}, and satisfying user requested new
+using tool kit components, maintaining existing\cite{gray14}
+abstractions and encapsulations, and satisfying user requested new
 features.  Simply adding analogous methods to the \texttt{Library}
 class makes it dependent on the \texttt{Chart} class through only two
 of its many member functions.  Adding methods to a new class dependent
@@ -262,14 +263,15 @@ multigroup \texttt{lanl06ex} library, against the calculations of
   
 \section{Conclusion}
 
-Production acceptance and widespread use of \MCATK\cite{adams14}
-requires both \ndatk, to match evaluated elemental and nuclide tables
-in libraries, and a solution to the calculated multigroup elemental
-matching problem.  The 1.1.0 release of \ndatk\ provides a solution to
-the element match problem by resolving element names into the
-elemental or isotopic tables available in the selected continuous
-energy \ndatk\ \texttt{Library} consistent with the calculated
-elemental tables in multigroup \NDI\ libraries.
+The 1.1.0 release of \ndatk\ provides a solution to the element match
+problem by resolving element names into the elemental or isotopic
+tables available in the selected continuous energy \ndatk\ library
+consistent with the calculated elemental tables in the corresponding
+multigroup \NDI\ library.  The \texttt{Chart::atom\_comp\_of} and
+\texttt{Chart::mass\_comp\_of} methods and
+\texttt{ndi\_atom\_comp\_of} and \texttt{ndi\_mass\_comp\_of}
+functions provide complete information about what is present in the
+library versus what is present naturally.
 
 Expansion of continuous energy elements but not multigroup elementals
 satisfies legacy inputs for both multigroup (via elemental tables) and
@@ -284,30 +286,28 @@ energy libraries are based on the same evaluation, this option
 provides the desired seamless match between the underlying data sets
 for two types of transport.
 
-The tool kit implementation of option~3, and specifically the use of a
-callback in the \texttt{Library} class, suggest a path to some future
-implementation of option~4, with code support for the expansion of both
-elements and named materials by both continuous energy and multigroup
-users.
+The option~3 use of the \texttt{Chart::atom\_comp\_of} and
+\texttt{Chart::mass\_comp\_of} methods as callback functions in the
+\texttt{Library::comp\_of} method suggest a path to some future
+implementation of option~4, with code support for the expansion of
+both elements and named materials by both continuous energy and
+multigroup users.
  
 A future Option~4 implementation could include:
 \[
 h:X \rightarrow C+M; L \subset X,
 \]
-as an extension of the option~3 functionality, and:
+as a callback extension of the option~3 functionality, and:
 \[ 
 \{X, +:X\times X \rightarrow X, \cdot:\mathbb{R}\times X \rightarrow X \},
 \]
 a composition vector space with unit amounts of nuclides as basis,
-similar to that used in \texttt{ndi\_zaid.py}, in:
-\begin{itemize}
-\item \texttt{Chart}-like container for named mixtures:
-  \texttt{map<string, X>}
-\item \texttt{Chart}-like curated data for named mixtures
-\end{itemize}
-These code additions for option~4 are straightforward; the real work
-lies in the collation, curation, and ongoing support needed to
-maintain a useful materials composition database.
+similar to that used in the calculations in \texttt{ndi\_zaid.py},
+managed by a \texttt{Chart}-like container for named mixtures filled
+with \texttt{Chart}-like curated data.  These code additions for
+option~4 are straightforward; the real work lies in the collation,
+curation, and ongoing support needed to maintain a useful materials
+composition database.
 
 \newpage
 \begin{thebibliography}{99}
@@ -326,10 +326,6 @@ maintain a useful materials composition database.
 
 \bibitem{wiki} \emph{Cyclomatic Complexity}, 
   https://en.wikipedia.org/wiki/Cyclomatic\_complexity  
-
-\bibitem{adams14} T. Adams et al., \emph{Monte Carlo Application
-  ToolKit (MCATK)}, Ann. Nucl. Energy (2014),
-  http://dx.doi.org/10.1016/j.anucene.2014.08.047
 
 \end{thebibliography}
 
