@@ -7,7 +7,7 @@ ndatk_LIB = ../src/libndatk.a
 noinst_PROGRAMS = test_Chart use1_Chart \
 	test_Exsdir test_FileStat use0_Library use2_Library \
 	test_translate_isomer test_utils \
-	use3_ndi_comp_of
+	use3_element_composition
 
 test_Chart_SOURCES = test_Chart.cc
 test_Chart_LDADD = $(ndatk_LIB)
@@ -33,5 +33,5 @@ test_translate_isomer_LDADD = $(ndatk_LIB)
 test_utils_SOURCES = test_utils.cc
 test_utils_LDADD = $(ndatk_LIB)
 
-use3_ndi_comp_of_SOURCES = use3_ndi_comp_of.cc
-use3_ndi_comp_of_LDADD = $(ndatk_LIB)
+use3_element_composition_SOURCES = use3_element_composition.cc
+use3_element_composition_LDADD = $(ndatk_LIB)

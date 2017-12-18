@@ -55,4 +55,16 @@ namespace ndatk
                                          const Library &l, const Chart &c);
 
 }
+
+/** \example use3_element_composition.cc
+
+    Use case for ndatk::element_composition functions.
+
+    - Create ndatk::Exsdir from filename on command line.
+    - Create ndatk::Library from name and ndatk::Exsdir.
+    - Create ndatk::Chart named "chart" from ndatk::Exsdir.
+    - For 26 elements and 4 nuclides:\n
+      print mass or atom fraction
+*/
+       
 #endif
