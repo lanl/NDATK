@@ -74,6 +74,15 @@ namespace ndatk
     */
     std::string table_identifier(std::string name);
 
+    /** Set table identifier matching sza and return match.
+
+        \param[in] sza int
+        \return Actual ID found or "" if no match
+        \note Subsequent queries for record data will throw exceptions
+        if ID returned is "".
+    */
+    std::string table_identifier(int sza);
+
     /** Set temperature matching temp and return match.
         
         \param[in] temp double
