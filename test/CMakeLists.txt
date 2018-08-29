@@ -31,6 +31,6 @@ if (ndatk.tests)
   add_executable(use2_Library ${CMAKE_CURRENT_LIST_DIR}/use2_Library.cc)
   target_link_libraries(use2_Library PUBLIC ndatk UnitTest)
 
-  add_executable(use3_ndi_comp_of ${CMAKE_CURRENT_LIST_DIR}/use3_ndi_comp_of.cc)
-  target_link_libraries(use3_ndi_comp_of PUBLIC ndatk UnitTest)
+#  add_executable(use3_ndi_comp_of ${CMAKE_CURRENT_LIST_DIR}/use3_ndi_comp_of.cc)
+#  target_link_libraries(use3_ndi_comp_of PUBLIC ndatk UnitTest)
 endif()

@@ -63,7 +63,7 @@ namespace ndatk
 
        \return type std::string
     */
-    std::string type(void) const { return std::string("ndatk_library_1.0"); }
+    std::string type(void) const override { return std::string("ndatk_library_1.0"); }
 
     /** Set table identifier matching name and return match.
 

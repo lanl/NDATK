@@ -1,6 +1,24 @@
 target_include_directories(ndatk PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
+  #
+  # Why is the include directory after installation not prefixed by the
+  # project name?
+  #
+  # The original author used the MCATK project as a reference for best
+  # practices. This one of several bad practices inherited from that
+  # project.
+  #
   $<INSTALL_INTERFACE:include/ndatk>)
+
+#
+# Why on Earth are you copying source files to the binary tree?
+#
+# The previous build system assumed in-source builds and existing
+# tests use their own source files as resources for testing. This
+# was a bad idea then, and is troublesome now.
+#
+file(COPY utilsTest.cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY FinderTest.cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_sources(ndatk PRIVATE
   $<BUILD_INTERFACE:

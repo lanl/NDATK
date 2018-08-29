@@ -6,11 +6,16 @@ else()
   set( subproject OFF )
 endif()
 
-project(ndatk VERSION 1.1.0 LANGUAGES CXX)
+project(ndatk 
+  VERSION 1.1.0 
+  DESCRIPTION "Library Abstraction for ACE-format Nuclear Data"
+  LANGUAGES CXX)
+
 include(CTest)
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
-list(APPEND CMAKE_MODULE_PATH "${ndi_SOURCE_DIR}/.cmake")
+
+list(APPEND CMAKE_MODULE_PATH "${ndatk_SOURCE_DIR}/.cmake")
 include(Warnings)
 
 option(ndatk.shared_library
@@ -26,9 +31,6 @@ CMAKE_DEPENDENT_OPTION(ndatk.tests
   "Build the ndatk tests and integrate with ctest"
   ON "BUILD_TESTING; NOT is_subproject" OFF)
 
-set(ndatk.data_path "${ACE_data_path}" CACHE PATH
-  "Path to the installation of the ACE-format nuclear data libraries")
-
 if(ndatk.shared_library)
   add_library(ndatk SHARED "")
 else()
@@ -37,38 +39,61 @@ endif()
 
 add_library(ndatk::ndatk ALIAS ndatk)
 
-set_target_properties(ndatk PROPERTIES
-  POSITION_INDEPENDENT_CODE "${ndatk.position_independent_code}")
-
 target_compile_features(ndatk PUBLIC cxx_std_11)
-set_target_properties(ndatk PROPERTIES CXX_EXTENSIONS OFF)
 
-include(src/CMakeLists.txt)
-include(test/CMakeLists.txt)
+set_target_properties(ndatk PROPERTIES
+  POSITION_INDEPENDENT_CODE "${ndatk.position_independent_code}"
+  CXX_EXTENSIONS OFF
+  WARN_ALL ON
+  WARN_ERROR ON)
+
+target_link_libraries(ndatk PRIVATE 
+  $<BUILD_INTERFACE:Warnings::Warnings_CXX>)
+
+add_subdirectory(src)
+add_subdirectory(test)
 
 install(TARGETS ndatk
   EXPORT ndatkConfig
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
-  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ
+  PERMISSIONS OWNER_EXECUTE OWNER_READ 
+              GROUP_EXECUTE GROUP_READ
+              WORLD_EXECUTE WORLD_READ
   INCLUDES DESTINATION include/ndatk)
 
 install(DIRECTORY src/
   DESTINATION include/ndatk
-  FILES_MATCHING PATTERN "*Test*" EXCLUDE PATTERN "*.hh"
-  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
+  PATTERN "*Test*" EXCLUDE 
+  PATTERN "*.hh"
+  PERMISSIONS OWNER_READ 
+              GROUP_READ 
+              WORLD_READ)
 
 install(EXPORT ndatkConfig
   FILE ndatkConfig.cmake
   NAMESPACE ndatk
-  DESTINATION share
-  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
+  DESTINATION share/cmake/ndatk
+  PERMISSIONS OWNER_READ 
+              GROUP_READ 
+              WORLD_READ)
 
 write_basic_package_version_file("ndatkConfigVersion.cmake"
   VERSION ${ndatk_VERSION}
   COMPATIBILITY SameMajorVersion)
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ndatkConfigVersion.cmake"
-  DESTINATION share
-  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
+  DESTINATION share/cmake/ndatk
+  PERMISSIONS OWNER_READ 
+              GROUP_READ
+              WORLD_READ)
+
+if(NOT subproject)
+  include( InstallRequiredSystemLibraries )
+  set( CPACK_PACKAGE_VENDOR "Los Alamos National Laboratory" )
+  set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" )
+  set( CMAKE_PROJECT_HOMEPAGE_URL "https://xcp-stash.lanl.gov/projects/NDT/repos/ndatk/browse" )
+  set( CPACK_PACKAGE_CONTACT "amccartney@lanl.gov" )
+  include( CPack )
+endif()

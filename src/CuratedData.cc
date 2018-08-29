@@ -130,6 +130,4 @@ namespace ndatk
     return e;
   }
 
-  // Required base class dtor
-  CuratedData::~CuratedData(void) {}
 }
