@@ -135,10 +135,9 @@ namespace ndatk
     std::string history(void) const;
 
     /// Required virtual dtor
-    virtual ~CuratedData(void) = 0;
+    virtual ~CuratedData(void) = default;
 
   protected:
-
     /**
        Output header to stream.
 
