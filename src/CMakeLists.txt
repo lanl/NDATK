@@ -5,7 +5,7 @@ target_include_directories(ndatk PUBLIC
   # project name?
   #
   # The original author used the MCATK project as a reference for best
-  # practices. This one of several bad practices inherited from that
+  # practices. This an unfortunate practice inherited from that
   # project.
   #
   $<INSTALL_INTERFACE:include/ndatk>)
