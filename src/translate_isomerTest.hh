@@ -5,5 +5,5 @@ class translate_isomerTest: public UnitTest
 
 public:
 
-  void runTest();
+  void runTest() override;
 };

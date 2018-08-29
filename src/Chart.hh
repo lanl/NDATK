@@ -84,7 +84,7 @@ namespace ndatk
 
        \return Chart file magic string.
     */
-    std::string type(void) const { return std::string("ndatk_chart_1.0"); }
+    std::string type(void) const override { return std::string("ndatk_chart_1.0"); }
 
     /**
        Number of elements in Chart.
