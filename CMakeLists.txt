@@ -1,10 +1,17 @@
 cmake_minimum_required(VERSION 3.2)
-get_directory_property(is_subproject PARENT_DIRECTORY)
+
+if( DEFINED PROJECT_NAME )
+  set( subproject ON )
+else()
+  set( subproject OFF )
+endif()
 
 project(ndatk VERSION 1.1.0 LANGUAGES CXX)
 include(CTest)
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
+list(APPEND CMAKE_MODULE_PATH "${ndi_SOURCE_DIR}/.cmake")
+include(Warnings)
 
 option(ndatk.shared_library
   "Build the ndatk as a shared library"
