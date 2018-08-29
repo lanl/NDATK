@@ -80,7 +80,7 @@ noinst_PROGRAMS = test_Chart$(EXEEXT) use1_Chart$(EXEEXT) \
 	test_Exsdir$(EXEEXT) test_FileStat$(EXEEXT) \
 	use0_Library$(EXEEXT) use2_Library$(EXEEXT) \
 	test_translate_isomer$(EXEEXT) test_utils$(EXEEXT) \
-	use3_ndi_comp_of$(EXEEXT)
+	use3_element_composition$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
@@ -117,9 +117,11 @@ use1_Chart_DEPENDENCIES = $(ndatk_LIB)
 am_use2_Library_OBJECTS = use2_Library.$(OBJEXT)
 use2_Library_OBJECTS = $(am_use2_Library_OBJECTS)
 use2_Library_DEPENDENCIES = $(ndatk_LIB)
-am_use3_ndi_comp_of_OBJECTS = use3_ndi_comp_of.$(OBJEXT)
-use3_ndi_comp_of_OBJECTS = $(am_use3_ndi_comp_of_OBJECTS)
-use3_ndi_comp_of_DEPENDENCIES = $(ndatk_LIB)
+am_use3_element_composition_OBJECTS =  \
+	use3_element_composition.$(OBJEXT)
+use3_element_composition_OBJECTS =  \
+	$(am_use3_element_composition_OBJECTS)
+use3_element_composition_DEPENDENCIES = $(ndatk_LIB)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -153,12 +155,12 @@ SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
 	$(test_FileStat_SOURCES) $(test_translate_isomer_SOURCES) \
 	$(test_utils_SOURCES) $(use0_Library_SOURCES) \
 	$(use1_Chart_SOURCES) $(use2_Library_SOURCES) \
-	$(use3_ndi_comp_of_SOURCES)
+	$(use3_element_composition_SOURCES)
 DIST_SOURCES = $(test_Chart_SOURCES) $(test_Exsdir_SOURCES) \
 	$(test_FileStat_SOURCES) $(test_translate_isomer_SOURCES) \
 	$(test_utils_SOURCES) $(use0_Library_SOURCES) \
 	$(use1_Chart_SOURCES) $(use2_Library_SOURCES) \
-	$(use3_ndi_comp_of_SOURCES)
+	$(use3_element_composition_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -291,8 +293,8 @@ test_translate_isomer_SOURCES = test_translate_isomer.cc
 test_translate_isomer_LDADD = $(ndatk_LIB)
 test_utils_SOURCES = test_utils.cc
 test_utils_LDADD = $(ndatk_LIB)
-use3_ndi_comp_of_SOURCES = use3_ndi_comp_of.cc
-use3_ndi_comp_of_LDADD = $(ndatk_LIB)
+use3_element_composition_SOURCES = use3_element_composition.cc
+use3_element_composition_LDADD = $(ndatk_LIB)
 all: all-am
 
 .SUFFIXES:
@@ -363,9 +365,9 @@ use2_Library$(EXEEXT): $(use2_Library_OBJECTS) $(use2_Library_DEPENDENCIES) $(EX
 	@rm -f use2_Library$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(use2_Library_OBJECTS) $(use2_Library_LDADD) $(LIBS)
 
-use3_ndi_comp_of$(EXEEXT): $(use3_ndi_comp_of_OBJECTS) $(use3_ndi_comp_of_DEPENDENCIES) $(EXTRA_use3_ndi_comp_of_DEPENDENCIES) 
-	@rm -f use3_ndi_comp_of$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(use3_ndi_comp_of_OBJECTS) $(use3_ndi_comp_of_LDADD) $(LIBS)
+use3_element_composition$(EXEEXT): $(use3_element_composition_OBJECTS) $(use3_element_composition_DEPENDENCIES) $(EXTRA_use3_element_composition_DEPENDENCIES) 
+	@rm -f use3_element_composition$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(use3_element_composition_OBJECTS) $(use3_element_composition_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -381,7 +383,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use0_Library.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use1_Chart.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use2_Library.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use3_ndi_comp_of.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/use3_element_composition.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

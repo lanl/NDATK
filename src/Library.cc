@@ -63,6 +63,7 @@ namespace ndatk
 
     if ((d = name.find('.')) != name.npos) { // pszaid (partial szaid)
       // Policy: lookup partial szaid in Exsdir
+      // N.B. this is an order of magnitude more expensive than local lookup
       int sza = translate_isomer(name.substr(0,d)); // canonical sza
       string s = lexical_cast<string, int>(sza) + name.substr(d); // pszaid
       result = current_isomer = e.table_identifier(s);
@@ -70,27 +71,35 @@ namespace ndatk
       szaids[this->temperature()] = current_isomer;
     } else { // sza
       // Policy: lookup sza in Library
-      int sza = translate_isomer(name); // canonical sza
-      // Find canonical sza(s) in ids 
-      typedef pair<Library::TableIdentifiers::const_iterator, 
-                   Library::TableIdentifiers::const_iterator> ip_type;
-      ip_type ip = ids.equal_range(sza);
-      // Copy matches to szaids by temperature 
-      szaids.clear();
-      for (Library::TableIdentifiers::const_iterator it = ip.first; 
-           it != ip.second; it++) {
-        string szaid = it->second;
-        double temp = e.temperature(szaid);
-        szaids[temp] = szaid;
-      }
-      if (szaids.empty()) {     // No matching zaid found
-        result = current_isomer = "";
-      } else {      
-        // Policy: default to room temperature
-        double room_temp = 293.15 * boltzmann_constant; // K * MeV/K
-        this->temperature(room_temp);
-        result = current_isomer;
-      }
+      result = table_identifier(translate_isomer(name)); // canonical sza
+    }
+    return result;
+  }
+
+  // Return table identifier by sza
+  string Library::table_identifier(int sza)
+  {
+    string result;
+
+    // Find canonical sza(s) in ids 
+    typedef pair<Library::TableIdentifiers::const_iterator, 
+                 Library::TableIdentifiers::const_iterator> ip_type;
+    ip_type ip = ids.equal_range(sza);
+    // Copy matches to szaids by temperature 
+    szaids.clear();
+    for (Library::TableIdentifiers::const_iterator it = ip.first; 
+         it != ip.second; it++) {
+      string szaid = it->second;
+      double temp = e.temperature(szaid);
+      szaids[temp] = szaid;
+    }
+    if (szaids.empty()) {     // No matching zaid found
+      result = current_isomer = "";
+    } else {      
+      // Policy: default to room temperature
+      double room_temp = 293.15 * boltzmann_constant; // K * MeV/K
+      this->temperature(room_temp);
+      result = current_isomer;
     }
     return result;
   }
