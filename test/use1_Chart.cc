@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string.h>
 #include <cmath>
 #include "ndatk.hh"
 
@@ -38,20 +39,22 @@ int main(int argc, char *argv[])
   cout << "calculate elemental awr from isotopic abundances and awr."
             << endl << endl;
 
-  ndatk::Exsdir e(argv[1]);
-  cout << "Created Exsdir " << e.identifier() 
+  ndatk::Exsdir e(argv[i]);
+  cout << "Created Exsdir " << e.name() 
        << " with " << e.number_of_tables() << " tables." << endl;
 
+  cout << "Print Exsdir file provenance:" << endl;
+  for (int i = 0; i < e.number_of_events(); i++)
+    std::cout << e.event(i) << std::endl;
+
   ndatk::Chart x("chart", e);     // parse filename
-  cout << "Created Chart " << x.identifier()
+  cout << "Created Chart " << x.name()
        << " with " << x.number_of_elements() << " elements" 
        << " and " << x.number_of_nuclides() << " nuclides." << endl;
 
-  cout << "Print data file header." << endl;
-  cout << x.identifier() << endl
-            << x.process_date() << endl
-            << x.information() << endl;
-  cout << endl;
+  cout << "Print Chart file provenance:" << endl;
+  for (int i = 0; i < x.number_of_events(); i++)
+    std::cout << x.event(i) << std::endl;
 
   if (verbose)
     cout << "For all elements:" << endl;

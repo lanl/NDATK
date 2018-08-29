@@ -1,15 +1,18 @@
-NAME:
-endf-b/vii
+type: ndatk_chart_1.0
 
-DATE:
-04/01/2013
+name: endf-b/vii
 
-INFO:
-Element data: "Nuclides and Isotopes" 16ed, Nuclide Data: ENDF-B/VII
+provenance:
+File originally collated by Mark G. Gray on 2013-04-01.
+%%
 
-PERIODIC_TABLE:
-# See: "Nuclides and Isotopes" 16ed. p 0
-# Z sym at_wgt(u) name
+provenance:
+Periodic table entries copied by Mark G. Gray from "Nuclides and
+Isotopes, 16ed." inside front cover on 2013-04-01.
+%%
+
+periodic_table:
+# z symbol atomic_weight(u) name
 0 Neutron 1.00866491578 neutron
 1 H 1.00794 hydrogen
 2 He 4.002602 helium
@@ -114,10 +117,22 @@ PERIODIC_TABLE:
 101 Md 258 mendelevium
 102 No 259 nobelium
 103 Lr 262 lawrencium
+%%
 
-CHART_OF_THE_NUCLIDES:
-# See: ENDF/B-VII, MF=1, MT=451 
-# Corrected abundance with "Nuclear Wallet Cards" Oct. 2011
+provenance:
+Chart of the nuclides data extracted by Mark G. Gray from
+ENDF/B-VII.0, MF=1, MT=451 using xnuclides.py on 2013-04-08.
+%%
+provenance:
+Abundance normalization checked by Mark G. Gray using use1_Chart on
+2013-05-10.
+%%
+provenance:
+Abundances corrected by Mark G. Gray where noted using "Nuclear Wallet
+Data Cards", 2011-10 edition on 2013-05-01.
+%%
+
+chart_of_the_nuclides:
 #    sza        awr        abu half-life(s)
        1   1.000000   0.000000 6.139000e+02
     1001   0.999167   0.999850 4.336200e+17
@@ -3957,3 +3972,5 @@ CHART_OF_THE_NUCLIDES:
   111281 278.750000   0.000000 6.000000e+01
   111282 279.743500   0.000000 2.400000e+02
   111283 280.735800   0.000000 6.000000e+02
+%%
+

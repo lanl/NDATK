@@ -1,3 +1,7 @@
+#include <cstdlib>
+#include <cstdio>
+#include <unistd.h>
+#include <limits.h>
 #include "utils.hh"
 
 namespace ndatk {
@@ -57,7 +61,7 @@ namespace ndatk {
   }
 
   // Compare the start of the first string with the second, ignoring case.
-  bool starts_with_nocase(const string &s1, const string &s2)
+  bool starts_with_nocase(const string &s1, const string s2)
   {
     typedef string::const_iterator iter;
     iter p1;
@@ -70,12 +74,8 @@ namespace ndatk {
     return (s2.size() > s1.size()) ? false: true;
   }
 
-  // Split string into vector of words.
-  //
-  // See "Accelerated C++" p. 103
-  //
   // Capitalize first character, lowercase remaining characters
-  string title(const string s)
+  string title(const string &s)
   {
     string t = s;
     for (string::size_type i = 0; i < t.size(); i++)
@@ -86,7 +86,8 @@ namespace ndatk {
     return t;
   }
 
-  // Split string into vector of words.
+  // Split space delimited string into vector of words.
+  // See "Accelerated C++" p. 103
   vector<string> split(const string &s)
   {
     typedef string::const_iterator iter;
@@ -102,29 +103,46 @@ namespace ndatk {
     return ret;
   }
 
+  // Split character delimited string into vector of words.
+  vector<string> split(const string &s, char c)
+  {
+    string::size_type start;
+    string::size_type end;
+    vector<string> ret;
+    
+    for (start = 0; (end = s.find(c, start)) != string::npos; start = end+1)
+      ret.push_back(s.substr(start, end-start));
+    ret.push_back(s.substr(start));
+    return ret;
+  }
+
   // Get Logical Line
   //
-  // Get line from stream,
-  // truncate after comment character ('#'),
+  // Get physical line from stream,
+  // truncate at comment character ('#'),
   // trim leading, following whitespace,
-  // append next logical line from stream if 
-  // line ends in continuation characters ('\' or '+').
+  // repeat until non-empty; 
+  // append next logical line from stream if non-empty 
+  // line ends in continuation characters '\' or '+'.
   // Returns stream as I/O status.
   istream &get_logical_line(istream &s, string &line)
   {
     while (getline(s, line)) {
         string::iterator j = line.end();
-        line.erase(find(line.begin(), j, '#'), j); // truncate at comment
-        line = trim(line);                     // trim surrounding spaces
-        j = line.end() - 1;             // pointer to last char
-        if (*j == '\\' || *j == '+') {  // concatenate next line
-          *j = ' ';
-          string next_line;
-          if (!get_logical_line(s, next_line)) return s;
-          line.append(next_line);
+        line.erase(find(line.begin(), j, '#'), j); // remove trailing comment
+        line = trim(line);      // remove surrounding spaces
+        if (!line.empty()) {    // got non-blank stripped physical line
+          j = line.end() - 1;             
+          if (*j == '\\' || *j == '+') {  // concatenate rest of line
+            *j = ' ';
+            string rest;        // continuation line(s)
+            get_logical_line(s, rest);
+            line.append(rest);
+          }
+          break;                // got non-blank stripped logical line
         }
-        if (line.size() != 0) return s;
-      }
+        // got blank stripped physical line; process next physical line
+    }          
     return s;
   }
 
@@ -158,5 +176,64 @@ namespace ndatk {
       is >> s;
     }
     return is;
+  }
+
+  // Does first logical line of file contain magic string?
+  bool file_starts_with(const string &filename, const string& magic)
+  {
+    ifstream s(filename.c_str());
+    string first_line;
+ 
+    if (s && get_logical_line(s, first_line))
+      return first_line.find(magic) != string::npos;
+    else
+      return false;
+  }
+
+  // Wrap POSIX getenv to get environment string with C++ interface
+  string get_env(const std::string &name)
+  {
+    char *buf;
+    if ((buf = getenv(name.c_str())))
+      return string(buf);
+    else
+      return string("");
+  }
+
+  // Wrap POSIX getcwd to get current working directory with C++ interface
+  string get_cwd(void)
+  {
+    char buf[PATH_MAX];
+    if (getcwd(buf, PATH_MAX))
+      return string(buf);
+    else
+      return string("");
+  }
+
+  // Wrap POSIX gethostname
+  string get_hostname(void)
+  {
+    char buf[HOST_NAME_MAX];
+    if (gethostname(buf, HOST_NAME_MAX) == 0)
+      return string(buf);
+    else
+      return string("");
+  }
+
+  // Wrap POSIX access to test if file exists and is readable
+  bool is_readable(const string &filename)
+  {
+    return access(filename.c_str(), R_OK) == 0;
+  }
+
+  // Wrap POSIX realpath
+  string get_realpath(const string &path)
+  {
+    char buf[PATH_MAX];
+    if (realpath(path.c_str(), buf)) {
+      return string(buf);
+    } else {
+      return string("");
+    }
   }
 }

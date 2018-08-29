@@ -10,8 +10,15 @@ namespace ndatk
 {
   using namespace std;
 
-  // Read an Extended cross section directory from a stream
-  istream &operator>>(istream &s, Exsdir &e)
+  const string Exsdir::default_path=
+    "/opt/local/codes/data/nuclear/ndatk/data:"
+    "/opt/local/codes/data/nuclear/ndatk/1.0.2:"
+    "/usr/projects/data/nuclear/ndatk/data:"
+    "/usr/projects/data/nuclear/ndatk/1.0.2:"
+    "/usr/gapps/lanl-data/nuclear/ndatk/data:"
+    "/usr/gapps/lanl-data/nuclear/ndatk/1.0.2";
+
+  istream& Exsdir::get_xsdir(istream& s)
   {
     string line;
     enum states {START, AWR, DIR};
@@ -24,18 +31,24 @@ namespace ndatk
       } else if (starts_with_nocase(line, "ATOMIC WEIGHT RATIOS")) {
         state = AWR;
       } else if (is_date(line)) {
-        e.date = line;
+        continue;
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
         fields = split(line);
-        ifstream f1(fields[1].c_str());
-        if (!f1) {
-          cerr << "Cannot open file " << fields[1] << endl;
-          exit(1);
+        // Include file if not already included
+        if (include_guard.find(fields[1]) == include_guard.end()) {
+          include_guard.insert(fields[1]); // add to include list
+          // Should I check for a provenance type?
+          ifstream f1(aFinder.abs_path(fields[1]).c_str());
+          if (!f1) {
+            string e("Cannot open file ");
+            e += fields[1] + "!";
+            throw ifstream::failure(e.c_str());
+          }
+          get_xsdir(f1);
+          f1.close();
         }
-        f1 >> e;
-        f1.close();
       } else if (state == AWR) {
         continue;               // TODO: add AWR parse here
       } else if (state == DIR) {
@@ -45,25 +58,42 @@ namespace ndatk
         r >> id >> d.awr >> d.name >> d.route >> d.type
           >> d.address >> d.tbl_len >> d.rcd_len >> d.epr
           >> d.temp >> d.ptable;
-        e.directory.insert(Exsdir::Directory_map::value_type(id, d));
-        e.order.push_back(id);
+        directory.insert(Exsdir::Directory_map::value_type(id, d));
+        order.push_back(id);
       }
     }
     return s;
   }
 
-  // Construct Exsdir from data on named file
-  Exsdir::Exsdir(const string filename)
+  // Read an Extended cross section directory from a stream
+  istream &operator>>(istream &s, Exsdir &e)
   {
-    ifstream s(filename.c_str());
+    e.get_header(s);
+    e.get_xsdir(s);
+    return s;
+  }
+
+  // Default construct Exsdir
+  Exsdir::Exsdir(void): CuratedData(), order(), directory(), 
+                        aFinder(Exsdir::default_path)
+  {
+  }
+
+  // Construct Exsdir from data on named file with optional path
+  Exsdir::Exsdir(const string filename,
+                 const string path): CuratedData(), order(), directory(),
+                                         aFinder(path)
+  {
+    string abs_filename(aFinder.abs_path(filename, type()));
+    ifstream s(abs_filename.c_str());
     if (!s) {
-      cerr << "Cannot open file " << filename << endl;
-      exit(1);
+      string e("Cannot open file ");
+      e += filename + "!";
+      throw ifstream::failure(e.c_str());
     }
+    include_guard.insert(filename); // add filename to include list
     s >> *this;
     s.close();
-    this->id = filename;
-    this->info = "Exsdir";
   }
 
   // Is object in valid state?
@@ -78,97 +108,110 @@ namespace ndatk
     return true;
   }
 
-  vector<string>::const_iterator p;
-  // Number of tables
-  int Exsdir::number_of_tables(void) const
-  {
-    return order.size();
-  }
-
-  // Table identifier by index
-  string Exsdir::table_identifier(int i) const
-  {
-    return order.at(i);
-  }
-
   // Table identifier by (partial) name
   string Exsdir::table_identifier(string name) const
   {
-    for (Id_vector::const_iterator p = order.begin();
-         p != order.end(); p++)
-      if (starts_with(*p, name))
-        return *p;              // Policy: return first match
-    return string("");
+    Id_vector::const_iterator p = 
+      find_if(order.begin(), order.end(), 
+              bind2nd(ptr_fun(starts_with), name)); 
+    if (p == order.end())
+      return string("");
+    else
+      return *p;
   }
+
+  void Exsdir::at(string id) const
+  {
+    if (id != current_id) {
+      current_data = map_at(directory, id);
+      current_id = id;
+    }
+    return;
+  } 
 
   // Line or record number by table identifier
   int Exsdir::address(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.address;
+    this->at(id);
+    return current_data.address;
   }
 
   // Length of binary data block or zero by table identifier
   int Exsdir::table_length(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.tbl_len;
+    this->at(id);
+    return current_data.tbl_len;
   }
 
-  // Lenght of binary record or zero by table identifier
+  // Length of binary record or zero by table identifier
   int Exsdir::record_length(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.rcd_len;
+    this->at(id);
+    return current_data.rcd_len;
   }
 
   // Number of binary entries per record or zero by table identifier 
   int Exsdir::entries_per_record(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.epr;
+    this->at(id);
+    return current_data.epr;
   }
 
   // File name by table identifier
   string Exsdir::file_name(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.name;
+    this->at(id);
+    return current_data.name;
+  }
+
+  // Absolute path to readable file by table identifier
+  // N.B. This routine does not use access route!!!
+  string Exsdir::abs_file_name(string id) const
+  {
+    this->at(id);
+    return aFinder.abs_path(current_data.name);
+  }
+
+  // Absolute path to readable file with magic string by table identifier
+  string Exsdir::abs_file_name(string id, string magic) const
+  {
+    this->at(id);
+    return aFinder.abs_path(current_data.name, magic);
   }
 
   // Directory access route by identifier
   string Exsdir::access_route(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.route;
+    this->at(id);
+    return current_data.route;
   }
 
   // Probability table flag by table identifier
   bool Exsdir::probability_table_flag(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.ptable == "ptable";
+    this->at(id);
+    return current_data.ptable == "ptable";
   }
 
   // Atomic weight by table identifier
   double Exsdir::atomic_weight(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.awr * neutron_mass;
+    this->at(id);
+    return current_data.awr * neutron_mass;
   }
 
   // Atomic weight ratio by table identifier
   double Exsdir::atomic_weight_ratio(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.awr;
+    this->at(id);
+    return current_data.awr;
   }
 
   // Temperature by table identifier
   double Exsdir::temperature(string id) const
   {
-    DirectoryData d = map_at(directory, id);
-    return d.temp;
+    this->at(id);
+    return current_data.temp;
   }
 
   // Iterator to start of table identifiers in Exsdir

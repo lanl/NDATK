@@ -1,17 +1,18 @@
 digraph Package {
-        size="7.5,10";
+        /* label="ndatk Package Diagram"; */
         center=1;
         ratio=fill
-        node[fontsize=18];
+        node[fontsize=10];
         compound=true;
-        edge[style=dashed,minlen=2];
+        edge[style=dashed, minlen=2];
 
         subgraph cluster0 {
                  label="ndatk";
-                 Chart[shape=box];
-                 Library[shape=box];
-                 Exsdir[shape=box];
-                 CuratedData[shape=box];
+                 Chart[label="\<\<interface\>\>\nChart",shape=box,color=green];
+                 Library[label="\<\<interface\>\>\nLibrary",shape=box,color=blue];
+                 Exsdir[label="\<\<interface\>\>\nExsdir",shape=box,color=red];
+                 CuratedData[label="{abstract}\nCuratedData",shape=box];
+                 Finder[shape=box];
                  constants[shape=plaintext];
                  utils[shape=plaintext];
                  translate_isomer[shape=plaintext];
@@ -26,18 +27,22 @@ digraph Package {
                  Chart -> utils;
                  Chart -> CuratedData;
                  Chart -> Exsdir;
-
+   
                  Exsdir -> constants;
                  Exsdir -> utils;
                  Exsdir -> CuratedData;
+                 Exsdir -> Finder;
         
-                translate_isomer -> utils;
+                 translate_isomer -> utils;
         }
+
         subgraph cluster1 {
-                 label="STL";
-                 vector[shape=box];
-                 string[shape=box];
+                 label="STL-03";
+                 algorithm[label="...",shape=box];
                  map[shape=box];
+                 string[shape=box];
+                 vector[shape=box];
+
         }
-        utils -> string[ltail=cluster0,lhead=cluster1];
+        constants -> string[ltail=cluster0,lhead=cluster1];
 }

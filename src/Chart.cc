@@ -8,6 +8,14 @@
 #include "utils.hh"
 #include "constants.hh"
 
+// Copyright Los Alamos National Laboratory 2013.  All Rights Reserved.
+
+// File Description:
+// Chart - Provide periodic table and chart of the nuclides data
+// See: "Nuclides and Isotopes", 16ed
+
+// Authors: Mark G. Gray <gray@lanl.gov>
+
 namespace ndatk
 {
   using namespace std;
@@ -25,34 +33,41 @@ namespace ndatk
   istream &operator>>(istream &s, Chart &c)
   {
     string line;
-    enum states {START, TABLE, CHART}; // Parser states
-    states state = START;
 
-    int sza;
-    
+    c.get_header(s);
+
+    // Read rest of file
     while (get_logical_line(s, line)) {
-      if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, c.id);
-      } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, c.date);
-      } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, c.info);
-      } else if (starts_with_nocase(line, "PERIODIC_TABLE:")) {
-        state = TABLE;
-      } else if (starts_with_nocase(line, "CHART_OF_THE_NUCLIDES:")) {
-        state = CHART;
-      } else if (state == TABLE) {
-        // function split: tokenize line into words
-        istringstream iline(line);
-        Chart::ElementData e;
-        iline >> sza >> e.symbol >> e.at_wgt >> e.name;
-        c.element.push_back(e);
-      } else if (state == CHART) {
-        // function split: tokenize line into words
-        istringstream iline(line);
-        Chart::NuclideData n;
-        iline >> sza >> n.awr >> n.abundance >> n.half_life;
-        c.nuclide.insert(Chart::Nuclide_map::value_type(sza, n));
+      if (starts_with_nocase(line, CuratedData::begin_provenance)) {
+        c.append_ProvenanceVector(s);
+      } else if (starts_with_nocase(line, "periodic_table:")) {
+        // c.append_ElementVector(s);
+        while (get_logical_line(s, line)) {
+          if (starts_with_nocase(line, "%%")) {
+            break;
+          } else {
+            istringstream iline(line);
+            int sza;
+            Chart::ElementData e;
+            iline >> sza >> e.symbol >> e.at_wgt >> e.name;
+            c.elements.push_back(e);
+          }
+        }
+      } else if (starts_with_nocase(line, "chart_of_the_nuclides:")) {
+        // c.append_NuclideMap(s);
+        while (get_logical_line(s, line)) {
+          if (starts_with_nocase(line, "%%")) {
+            break;
+          } else {
+            istringstream iline(line);
+            Chart::NuclideData n;
+            int sza;
+            iline >> sza >> n.awr >> n.abundance >> n.half_life;
+            c.nuclides.insert(Chart::NuclideMap::value_type(sza, n));
+          }
+        }
+      } else {
+        continue;               // Ignore unrecognized line
       }
     }
     return s;
@@ -63,10 +78,10 @@ namespace ndatk
   {
     ifstream s(filename.c_str());
     if (!s) {
-      cerr << "Cannot open file " << filename << endl;
-      exit(1);
+      string e("Cannot open file ");
+      e += filename + "!";
+      throw ifstream::failure(e.c_str());
     }
-    s.open(filename.c_str());
     s >> *this;
     s.close();
   }
@@ -74,11 +89,12 @@ namespace ndatk
   // Construct Chart from id and Exsdir
   Chart::Chart(string id, Exsdir &e)
   {
-    string filename = e.file_name(id);
+    string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
-      cerr << "Cannot open file " << filename << endl;
-      exit(1);
+      string e("Cannot open file ");
+      e += filename + "!";
+      throw ifstream::failure(e.c_str());
     }
     s >> *this;
     s.close();
@@ -87,13 +103,13 @@ namespace ndatk
   // Number of elements in element
   int Chart::number_of_elements(void) const
   {
-    return element.size();
+    return elements.size();
   }
 
   // Number of nuclides in nuclide
   int Chart::number_of_nuclides(void) const
   {
-    return nuclide.size();
+    return nuclides.size();
   }
   
   // Vector of isotopes in element by atomic number
@@ -101,11 +117,11 @@ namespace ndatk
   {
     vector<int> result;
     int n = canonicalize(Z);
-    for (Nuclide_map::const_iterator it = nuclide.begin();
-         it != nuclide.end(); it++)
+    for (NuclideMap::const_iterator it = nuclides.begin();
+         it != nuclides.end(); it++)
       if (it->first/1000 == n)
         result.push_back(it->first);
-      return result;
+    return result;
   }
 
   // Vector of isotopes in element by chemical symbol
@@ -120,8 +136,8 @@ namespace ndatk
   {
     vector<int> result;
     int n = canonicalize(sza);
-    for (Nuclide_map::const_iterator it = nuclide.begin();
-         it != nuclide.end(); it++)
+    for (NuclideMap::const_iterator it = nuclides.begin();
+         it != nuclides.end(); it++)
       if (it->first % 1000000 == n % 1000000)
         result.push_back(it->first);
     return result;
@@ -138,13 +154,13 @@ namespace ndatk
   string Chart::chemical_symbol(int Z) const
   {
     int n = canonicalize(Z);
-    return element.at(n).symbol;
+    return elements.at(n).symbol;
   }
   // Element name by atomic number
   string Chart::element_name(int Z) const
   {
     int n = canonicalize(Z);
-    return element.at(n).name;
+    return elements.at(n).name;
   }
 
   // Element name by isomer name
@@ -158,10 +174,10 @@ namespace ndatk
   double Chart::atomic_weight(int sza) const
   {
     unsigned int n = canonicalize(sza);
-    if (n < element.size()) { 
-      return element.at(n).at_wgt;
+    if (n < elements.size()) { 
+      return elements.at(n).at_wgt;
     } else {
-      NuclideData d = map_at(nuclide, n);
+      NuclideData d = map_at(nuclides, n);
       return d.awr * neutron_mass;
     }
   }
@@ -177,10 +193,10 @@ namespace ndatk
   double Chart::atomic_weight_ratio(int sza) const
   {
     unsigned int n = canonicalize(sza);
-    if (n < element.size()) {
-      return element.at(n).at_wgt / neutron_mass;
+    if (n < elements.size()) {
+      return elements.at(n).at_wgt / neutron_mass;
     } else {
-      NuclideData d = map_at(nuclide, n);
+      NuclideData d = map_at(nuclides, n);
       return d.awr;
     }
   }
@@ -196,7 +212,7 @@ namespace ndatk
   double Chart::natural_abundance(int sza) const
   {
     int n = canonicalize(sza);
-    NuclideData d = map_at(nuclide, n);
+    NuclideData d = map_at(nuclides, n);
     return d.abundance;
   }
 
@@ -211,7 +227,7 @@ namespace ndatk
   double Chart::half_life(int sza) const
   {
     unsigned int n = canonicalize(sza);
-    NuclideData d = map_at(nuclide, n);
+    NuclideData d = map_at(nuclides, n);
     return d.half_life;
   }
 
@@ -220,5 +236,42 @@ namespace ndatk
   {
     int sza = translate_isomer(name);
     return this->half_life(sza);
+  }
+
+  // Atom composition of isomer name
+  map<int, double> Chart::atom_comp_of(string name) const
+  {
+    map<int, double> result;
+ 
+    int sza = translate_isomer(name);
+    if (nuclides.find(ground_state(sza)) != nuclides.end())
+      result[sza] = 1.0;
+    else if (is_element(sza))
+      for (auto isotope: isotopes(extract_Z(sza))) {
+        double NA = natural_abundance(isotope);
+        if (NA > 0.0)
+          result[isotope] = NA;
+      }
+    return result;
+  }
+
+  // Mass composition of isomer name
+  map<int, double> Chart::mass_comp_of(string name) const
+  {
+    map<int, double> result;
+ 
+    int sza = translate_isomer(name);
+    if (nuclides.find(ground_state(sza)) != nuclides.end())
+      result[sza] = 1.0;
+    else if (is_element(sza)) {
+      double atomic_weight_element = atomic_weight(sza);
+      for (auto isotope: isotopes(extract_Z(sza))) {
+        double NA = natural_abundance(isotope);
+        if (NA > 0.0)
+          result[isotope] = NA * 
+            atomic_weight(isotope)/atomic_weight_element;
+      }
+    }
+    return result;
   }
 }

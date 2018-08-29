@@ -10,6 +10,8 @@ static Exsdir exsdir_data(void)
 {
 
 static istringstream exsdir_dat(
+"type: ndatk_exsdir_1.0\n"
+"name: test_exsdir\n"
 "atomic weight ratios\n"
 "   0001  1.000000   0001  1.000000\n"
 "   1000  0.99931697 1001   0.99916733   1002   1.99679968\n"   
@@ -45,28 +47,28 @@ static istringstream exsdir_dat(
   return result;
 }
 
-static std::vector<std::string> library_data(void)
-{
-  std::vector<std::string> result;
-
-  result.push_back("1001.80c");
-  result.push_back("1002.80c");
-  result.push_back("1003.80c");
-  result.push_back("1001.81c");
-  result.push_back("1002.81c");
-  result.push_back("1002.81c");
-  result.push_back("1003.80c");
-  result.push_back("1003.81c");
-  result.push_back("1003.82c");
-  return result;
-}
+static istringstream library_data(
+"type: ndatk_library_1.0\n"
+"name: test_library\n"
+"ids:\n"
+"1001 1001.80c\n"
+"1002 1002.80c\n"
+"1003 1003.80c\n"
+"1001 1001.81c\n"
+"1002 1002.81c\n"
+"1002 1002.81c\n"
+"1003 1003.80c\n"
+"1003 1003.81c\n"
+"1003 1003.82c\n"
+"%%\n");
 
 
 class LibraryTest: public UnitTest
 {
 public:
-  LibraryTest(): x(exsdir_data()), y(library_data(), x) {} 
+  LibraryTest(): x(exsdir_data()), y(library_data, x) {} 
   void runTest();
+  map<int, double> comp(string name) const;
 
 private:
   Exsdir x;

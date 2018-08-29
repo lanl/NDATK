@@ -5,6 +5,7 @@
 
 #include "Library.hh"
 #include "utils.hh"
+#include "constants.hh"
 #include "translate_isomer.hh"
 
 namespace ndatk
@@ -15,86 +16,118 @@ namespace ndatk
   void Library::parse(istream &s)
   {
     string line;
-    enum states {START, IDS};
-    states state = START;
+    int sza;
+    string id;
 
+    this->get_header(s);
     while (get_logical_line(s, line)) {
-      if (starts_with_nocase(line, "NAME:")) {
-        get_logical_line(s, id);
-      } else if (starts_with_nocase(line, "DATE:")) {
-        get_logical_line(s, date);
-      } else if (starts_with_nocase(line, "INFO:")) {
-        get_logical_line(s, info);
-      } else if (starts_with_nocase(line, "IDS:")) {
-        state = IDS;
-      } else if (state == IDS) {
-        ids.push_back(line);
+      if (starts_with_nocase(line, "IDS:")) {
+        while (get_logical_line(s, line)) {
+          if (starts_with_nocase(line, "%%")) {
+            break;
+          } else {
+            istringstream r(line);
+            r >> sza >> id;
+            ids.insert(Library::TableIdentifiers::value_type(sza, id));
+          }
+        }
       }
     }
+  }
+
+  // Construct library from stream and Exsdir
+  Library::Library(istream &s, const Exsdir &x): CuratedData(), ids(), e(x)
+  {
+    Library::parse(s);
   }
 
   // Construct library from id and Exsdir
   Library::Library(string id, const Exsdir &x): CuratedData(), ids(), e(x) 
   {
-    string filename = e.file_name(id);
+    string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
-      cerr << "Cannot open file " << filename << endl;
-      exit(1);
+      string e("Cannot open file ");
+      e += filename + "!";
+      throw ifstream::failure(e.c_str());
     }
     Library::parse(s);
     s.close();
   }
 
-  // Construct library from vector<string> and Exsdir
-  Library::Library(const vector<string> &ids_, const Exsdir &x):
-    CuratedData(), ids(ids_), e(x)
-  {
-  }
-
-  // Number of tables
-  int Library::number_of_tables(void) const
-  {
-    return ids.size();
-  }
-
-  // Is object in valid state?
-  bool Library::is_valid(void) const
-  {
-    for (vector<string>::const_iterator p = ids.begin(); 
-         p != ids.end(); p++)
-      if (e.table_identifier(*p) != *p)
-        return false;
-    return true;
-  }
-  
   // Return table identifier isomer name
   string Library::table_identifier(string name)
   {
     string::size_type d;
-    string result(""); 
+    string result; 
 
-    if ((d = name.find('.')) != name.npos) { // Policy: lookup name in Exsdir
-      int sza = translate_isomer(name.substr(0,d));
-      string s = lexical_cast<string, int>(sza) + name.substr(d);
-      result = e.table_identifier(s);
-    } else {                    // Policy: lookup name in Library
-      int sza = translate_isomer(name);
-      string s = lexical_cast<string, int>(sza) + ".";
-      for (vector<string>::const_iterator p = ids.begin();
-           p != ids.end(); p++) {
-        if (starts_with(*p, s)) {
-          result = *p;
-          break;                // Policy: return first match
-        }
-      }
+    if ((d = name.find('.')) != name.npos) { // pszaid (partial szaid)
+      // Policy: lookup partial szaid in Exsdir
+      // N.B. this is an order of magnitude more expensive than local lookup
+      int sza = translate_isomer(name.substr(0,d)); // canonical sza
+      string s = lexical_cast<string, int>(sza) + name.substr(d); // pszaid
+      result = current_isomer = e.table_identifier(s);
+      szaids.clear();
+      szaids[this->temperature()] = current_isomer;
+    } else { // sza
+      // Policy: lookup sza in Library
+      result = table_identifier(translate_isomer(name)); // canonical sza
     }
-    if (result != "")               // Change only if valid
-      current_isomer = result;
     return result;
   }
 
-  std::string Library::table_identifier(void) const
+  // Return table identifier by sza
+  string Library::table_identifier(int sza)
+  {
+    string result;
+
+    // Find canonical sza(s) in ids 
+    typedef pair<Library::TableIdentifiers::const_iterator, 
+                 Library::TableIdentifiers::const_iterator> ip_type;
+    ip_type ip = ids.equal_range(sza);
+    // Copy matches to szaids by temperature 
+    szaids.clear();
+    for (Library::TableIdentifiers::const_iterator it = ip.first; 
+         it != ip.second; it++) {
+      string szaid = it->second;
+      double temp = e.temperature(szaid);
+      szaids[temp] = szaid;
+    }
+    if (szaids.empty()) {     // No matching zaid found
+      result = current_isomer = "";
+    } else {      
+      // Policy: default to room temperature
+      double room_temp = 293.15 * boltzmann_constant; // K * MeV/K
+      this->temperature(room_temp);
+      result = current_isomer;
+    }
+    return result;
+  }
+
+  // Find temperature nearest temp, set current_isomer, return temperature
+  double Library::temperature(double temp)
+  {
+    double result = -1.0;
+    if (!szaids.empty()) {
+      // Find iterator of closest temperature in szaids to temp
+      Library::temp_map::const_iterator p = szaids.upper_bound(temp);
+      if (p == szaids.begin()) {               // temp < smallest
+        /* no op */
+      } else if (p == szaids.end()) {        // temp > largest
+        p--;
+      } else {                    // smallest <= temp <= largest
+        Library::temp_map::const_iterator b = p--; 
+        // p->first <= temp <= b->first
+        if ((b-> first - temp) < (temp - p->first)) // closer to b
+          p = b;
+      }
+      result = p->first;
+      current_isomer = p->second;
+    }
+    return result;
+  }
+
+  string Library::table_identifier(void) const
   {
     return current_isomer;
   }
@@ -128,6 +161,12 @@ namespace ndatk
     return e.file_name(current_isomer);
   }
 
+  // Absolute file name by table identifier
+  std::string Library::abs_file_name(void) const
+  {
+    return e.abs_file_name(current_isomer);
+  }
+
   // Directory access route or zero by table identifier
   std::string Library::access_route(void) const
   {
@@ -158,15 +197,42 @@ namespace ndatk
     return e.temperature(current_isomer);
   }
 
-  // Iterator to start of table identifiers in Library
-  Library::const_iterator Library::begin(void) const
+  // Vector of temperatures
+  vector<double> Library::temperatures(void) const
   {
-    return ids.begin();
+    vector<double> v;
+    for (Library::temp_map::const_iterator it = szaids.begin(); 
+         it != szaids.end(); it++)
+      v.push_back(it->first);
+    return v;
   }
 
-  // Iterator to end of table identifiers in Library
-  Library::const_iterator Library::end(void) const
+  // Composition of map in Library
+  map<int, double> Library::comp_of(const map<int, double> &composition) const
   {
-    return ids.end();
+    map<int, double> result;
+    for (auto const &x: composition) 
+      if (ids.find(x.first) != ids.end()) // sza in this library
+        result[x.first] = x.second;
+    return result;
+  }
+
+  // Library composition of name from f
+  // Chart c example: l.comp_of(name, bind(&Chart::atom_comp_of, c, _1));
+  map<int, double> Library::comp_of(string name, 
+                                    function<map<int, double>(string)> f) const
+  {
+    map<int, double> result;
+    try {
+      int sza = translate_isomer(name); // may throw bad_cast or out_of_range
+      if (ids.find(sza) != ids.end())
+        result[sza] = 1.0;      // use table found in library
+      else
+        result = comp_of(f(name)); // try composition provided by f
+    } catch (exception &e) {       // name unrecognized
+      result = comp_of(f(name));   // try composition provided by f
+    }
+    return result;
   }
 }
+

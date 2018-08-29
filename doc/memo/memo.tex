@@ -1,0 +1,433 @@
+% Template larmemos -- 13 Jan 99
+
+\documentclass[12pt]{lamemo}
+\usepackage{times}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+\DeclareGraphicsRule{*}{mps}{*}{}
+
+\usepackage{color}
+\definecolor{amber}{rgb}{1,.5,0}
+\usepackage[normalem]{ulem}
+
+%\usepackage{newcent}
+%\pagestyle{secret}             % use this pagestyle for SRD
+%\pagestyle{unclassified}       % use this pagestyle for U
+%\pagestyle{official}           % use this pagestyle for OUO
+\pagestyle{unmarked}           % use this pagestyle for no marking
+% Fixed information
+% All lines are required.
+\divisionname{Computational Physics}	% center, project, or divison name 
+\groupname{XCP--5}		% organization number and/or name
+\phone{7-5341, 5-2879}		% sender phone, FAX number
+\fromms{Mark G. Gray, F663}	% sender initials, mail stop
+\originator{mgg}		% memo originator
+\typist{mgg}			% memo typist
+
+% Information on this memo
+% The \toms, \refno, and \subject commands are required.
+
+\toms{Robert C. Little, B218} % recipient initials, mail stop
+
+\refno{XCP--5:15--005(U)} % reference number 
+
+\subject{The Nuclear Data Access Tool Kit}
+
+\date{November 14, 2014}
+
+% Optional information:
+\adc{dkp}
+% \thru{nobody, MSnowhere}       % person(s) to send memo through
+% \cy{aaa\\bbb}                  % copy list
+\distribution{Stephanie C. Frankle, B259\\
+Albert C. Kahler, B214\\
+Kevin G. Honnell, F663\\
+Jon A. Dahl, D409\\
+Terry R. Adams, F605\\
+Steven D. Nolen, F605\\
+Jeremy E. Sweezy, A143\\
+XCP--5 File}    % distribution list
+% \enc{aaa\\bbb}                 % list of enclosures
+% \encas                         % Enc. a/s 
+% \attachments{aaa\\bbb}         % list of attachments
+% \attachmentas                  % attachment as stated
+% \attachmentsas                 % attachments as stated
+% Text of the memo
+
+\newcommand{\ndatk}{\texttt{ndatk}}
+\newcommand{\MCATK}{\texttt{MCATK}}
+\newcommand{\NDI}{\texttt{NDI}}
+\newcommand{\zaid}{\texttt{SZAID}}
+
+\begin{document}
+\lstset{language=C++}
+
+\maketitle			% make memo header
+
+\section{Summary}
+% I want to tell Bob that...
+The Nuclear Data Access Tool Kit, which provides continuous energy
+neutron libraries corresponding to multigroup neutron libraries, is
+now available for production use.  The code and \texttt{lanl2006},
+\texttt{endf71x}, and \texttt{mtmg08} continuous energy neutron data
+libraries are available on the open and secure X-LAN, open and secure
+HPC network, and on Livermore's Sequoia computer.
+
+\section{Background}
+
+On December 10, 2012 the Nuclear Data Team and its management met with
+the Monte Carlo Application Tool Kit\cite{adams14} (\MCATK) team and
+its users to discuss the translation of multigroup neutron table
+identifiers into continuous energy neutron table identifiers for the
+comparison of transport methods.  At two subsequent meetings (December
+20, 2012 and January 23, 2013) we decided that grouping continuous
+energy tables in multigroup like libraries was sufficient, and that
+this could best be done through an access interface code, the Nuclear
+Data Access Tool Kit (\ndatk).
+
+On May 30, 2013 I demonstrated the alpha version of \ndatk, with
+support for the single temperature continuous energy neutron library
+\texttt{lanl2006}, and provided \ndatk\ alpha to \MCATK\ developers
+the next day.  On November 15, 2013 I demonstrated the beta version of
+\ndatk, with the addition of the multi-temperature continuous energy
+neutron library \texttt{endf71x}, and provided \ndatk\ beta to
+\MCATK\ developers on January 17, 2014.  On May 18, 2014 I
+demonstrated the production version of \ndatk\ with the addition of
+the multi-temperature neutron partial library \texttt{mtmg08}, standard
+library install directories, and automatic path search for data.
+After passing \MCATK\ acceptance tests, the code was distributed to
+LANL platforms September 3, 2014 and LLNL platforms November 13, 2014.
+
+This memo describes the completion of the initial production version of \ndatk.
+\newpage
+
+\section{Discussion}
+
+The planning meetings produced the following list of desirable
+features for \ndatk:
+\begin{enumerate}
+\item Translate from multigroup to continuous energy \zaid s,
+\item Access through polyvalent program pattern\cite[p. 281]{raymond04},
+\item Provide Nuclear Data Interface\cite{campbell98} (\NDI)
+  multi-temperature features,
+\item Provide \NDI\ \zaid\ translation features,
+\item Support curated data,
+\item Support continuous energy libraries.
+\end{enumerate}
+
+Because of the limited resources available to the \ndatk\ project, I
+decided to:
+\begin{itemize}
+\item analyze the desirables to produce a (hopefully smaller) set of
+  requirements, 
+\item design from existing code and data formats whenever possible,
+\item prototype extensively using an interpreted language
+\item prioritize functionality and stage delivery,
+\end{itemize}
+as a means to both manage the schedule and mitigate the risks.
+
+\subsection{\hspace{-1.5em}Analysis of Desirables: }
+Although the initial conception of \ndatk\ focused on translating from
+multigroup to continuous energy \zaid s (Desirable 1), I focused on
+the creation of named libraries (Desirable 6) as a means to match the
+\NDI\ specification of library, \texttt{SZA}, and possibly temperature
+(Desirable 3) for table access, obviating the need for Desirable 1 and
+further providing the means for both \zaid\ translation (Desirable 4)
+and data curation (Desirable 5).  And although the initial desire was
+for a multi-language API (Desirable 2), I focused on delivering a
+\texttt{C++} API since that's the language used by the primary
+customer (\MCATK).
+
+Based on this analysis the requirements for the first production
+version of \ndatk\ are:
+\begin{enumerate}
+\item Support continuous energy libraries,
+\item Access through \texttt{C++},
+\item Provide \NDI\ multi-temperature features,
+\item Provide \NDI\ \zaid\ translation features,
+\item Support Curated Data.
+\end{enumerate}
+
+
+\subsection{\hspace{-1.5em}Design from Existing Code and Data: }
+Figure~\ref{fig:frame} shows the commanded information frame, similar
+to the one used for \NDI, chosen to address these requirements.
+\begin{figure}\centering
+\hrulefill \\
+\includegraphics[height=3in,width=5in]{ndatk.10}
+\caption{The commanded information frame\cite[p. 215]{jackson01} of
+  \ndatk.  When the user's code makes a request to \ndatk\ (UC!R), it
+  responds by consulting the nuclear data sources available to it
+  (ndatk!ND) and returning user data (ndatk!UD) that fulfills the
+  request.  The requirement (R) for \ndatk\ is to make the user's data
+  (UD) correspond to the nuclear data (ND) and report its
+  status.} \label{fig:frame} \hrulefill\\
+\end{figure}
+The design of \ndatk\ is thus levelized, with the Application
+Programming Interface (API) providing data surrogates visible to
+users, the Finite State Machine (FSM) layer maintaining state, various
+Readers accessing nuclear data files, and a Utilities layer providing
+various general algorithms.  The fundamental requirement (R) for
+\ndatk\ is to respond to a user's request, say for data from a named
+library by \texttt{SZA} and temperature, by consulting its available
+nuclear data files and returning to the user the requested data's
+location and a status indicator of success.
+
+The data handles\cite{gray04} of \NDI, which act as opaque pointers to
+its GENeral DIRectory (\texttt{gendir}) and multigroup neutron data
+files translate directly into the design of \texttt{C++} interface
+objects as resource handles in \ndatk.  The cross(X) Section
+DIRrectory\cite[Appendix F]{briesmeister00} (\texttt{xsdir}) of
+\texttt{MCNP}\cite{briesmeister00} provides the basic format and
+initial implementation of the Extended cross(X) Section DIRectory
+(\texttt{Exsdir}) file in \ndatk.  The record-jar
+format\cite[p. 116]{raymond04} used by \NDI\ multigroup neutron
+files\cite{campbell98a} provides the template for \ndatk's data file
+formats.
+
+The \ndatk\ package (\texttt{C++} namespace)
+contains five class and three function modules as shown in
+Figure~\ref{fig:package}.  It relies only on a standard
+\texttt{C++03} (ISO/IEC 14882:2003) compiler and the Standard Template
+Library.
+\begin{figure}[h!]\centering
+\hrulefill\\
+\includegraphics[height=3in,width=5in]{package.pdf}
+\caption{UML Package Diagram for \ndatk. The package consists of five
+  class and three function modules, and relies solely on
+  the \texttt{C++} Standard Template Library.} \label{fig:package}
+\hrulefill\\
+\end{figure}
+
+The three interface classes, shown in Figure~\ref{fig:class} provide
+the API representation of Extended cross(X) Section DIRectories
+(\texttt{Exsdir}) data which map continuous energy \zaid s to table
+meta-data including temperature, file name, and line offset;
+continuous energy neutron libraries (\texttt{Library}) data
+which multi-map \texttt{SZA} and temperature to \zaid; and chart of
+the nuclides (\texttt{Chart}) data which map elements and isotopes to their
+(scalar) physical properties.
+\begin{figure}\centering
+\hrulefill\\
+\includegraphics[height=6in,width=5in]{class.pdf}
+\caption{UML Class Diagram for \ndatk.  The \texttt{Exsdir},
+  \texttt{Library}, and \texttt{Chart} interface classes all derive
+  their provenance features from the \texttt{CuratedData} abstract
+  base class.  A \texttt{Chart} object uses an \texttt{Exsdir} object
+  to find its data at its creation, while the \texttt{Library} object
+  maintains a reference to the \texttt{Exsdir} object to find table
+  data throughout its lifetime.  An \texttt{Exsdir} object owns a
+  \texttt{Finder} object which it uses to search for files in standard
+  places.  The public methods shown are those necessary to satisfy
+  \ndatk's three use cases.  For more details see
+  \emph{\ndatk\ Technical Documentation}.} \label{fig:class}
+\hrulefill\\
+\end{figure}
+The \texttt{CuratedData} abstract base class provides each of the data
+interface classes with provenance features.  The \texttt{Finder} class
+provides default file location and search behavior for the
+\texttt{Exsdir} class.
+
+In order to guarantee provenance of its data, the \ndatk\ production
+release includes the data libraries shown in Table~\ref{tbl:data}.
+\begin{table}\centering
+\hrulefill\\
+\caption{Data libraries in \ndatk.  The production release of
+  \ndatk\ contains three data libraries: a set of single temperature
+  continuous energy tables which correspond to the \texttt{lanl2006}
+  single temperature multigroup library, a set of multi-temperature
+  continuous energy tables which come from the same evaluation as the
+  \texttt{mendf71x} single temperature multigroup library, and a set
+  of multi-temperature continuous energy tables which come from a
+  subset of the evaluations used for the \texttt{mtmg08}
+  multi-temperature multigroup library.} \label{tbl:data}
+\begin{tabular}{rrr|l}\hline
+CE Library & Isotopes & Temperatures & MG Library \\ \hline
+lanl2006 & 180 & 1 & $\approx$ lanl2006 \\
+endf71x & 423 & 7 & $\supset$ mendf71x \\
+mtmg08 & 63 & 10 & $\subset$ mtmg08 \\ 
+\end{tabular}\\
+\hrulefill
+\end{table}
+
+\subsection{\hspace{-1.5em}Prototype extensively: }
+Table~\ref{tbl:code} shows the line counts for the prototype and
+production code.  The design was prototyped extensively using
+\texttt{Python} for rapid analysis of many different configurations, as
+evidenced by the large number of lines of prototype code.
+\begin{table}\centering
+\hrulefill\\
+\caption{Code line count for \ndatk.  The production release of
+  \ndatk\ contains a code library, 275,343 unit tests and 3 use cases
+  which were designed and prototyped based on \texttt{Python} code.
+  The basic \texttt{COCOMO}\cite{boehm81} model predicts a 4
+  person-month effort for the total amount of production code, which
+  compares favorably to the actual 1/4 person times 17 month
+  effort.} \label{tbl:code}
+\begin{tabular}{lr|l}\hline
+\ndatk & Lines of Code & Language \\ \hline
+Prototype Code & 6442 & \texttt{Python} \\ \hline
+Library Code & 830 & \texttt{C++} \\
+Unit Test Code & 316 & \texttt{C++} \\
+Use Case Code & 131 & \texttt{C++} \\ \hline
+Total Production Code & 1277 & \texttt{C++}
+\end{tabular}\\
+\hrulefill
+\end{table}
+As a result this upfront experimentation, the production code tightly
+focuses on only the necessary functionality.
+
+\subsection{\hspace{-1.5em}Prioritize Functionality and Stage Delivery:}
+The \ndatk\ project focused on satisfying three use cases:
+\begin{enumerate}\setcounter{enumi}{-1}
+\item Single Temperature Library Access: create \texttt{Exsdir} by
+  name; create \texttt{Library} by name and \texttt{Exsdir}; retrieve
+  isotope file name and line number offset by isomer name.  See
+  Appendix~I, page~\pageref{app:use0}. 
+\item Calculate Elemental Atomic Weight Ratios (AWR) from Isotopic
+  Data: create \texttt{Exsdir} by name; create \texttt{Chart} by name
+  and \texttt{Exsdir}; calculate elemental atomic weight ratio from
+  isotopic abundances and atomic weight ratios.  See Appendix~II,
+  page~\pageref{app:use1}.
+\item Multi-temperature Library Access: create \texttt{Exsdir} by
+  name; create \texttt{Library} by name and \texttt{Exsdir}; retrieve
+  isotope file name and line number offset by isomer name; for each
+  isomer temperature in library retrieve table name.  See
+  Appendix~III, page~\pageref{app:use2}.
+\end{enumerate}
+The first use case was satisfied by the alpha release, while the
+second and third were first partially satisfied by the beta release
+and then fully satisfied by the final release.
+
+\begin{table}\centering
+\hrulefill\\
+\caption{Release history of \ndatk\ requirements and use cases.} \label{tbl:hist}
+\begin{tabular}{l|ccc}\hline
+Requirements & alpha & beta & final \\ \hline 
+1. CE libraries & \texttt{lanl2006} & \texttt{lanl2006} &
+\texttt{lanl2006} \\
+       &  &
+\texttt{endf71x} &
+\texttt{endf71x} \\
+             &  & & \texttt{mtmg08}\\ 
+2. \texttt{C++} API & \textcolor{green}{\checkmark} &
+\textcolor{green}{\checkmark} & \textcolor{green}{\checkmark}
+\\ 3. Multi-temperature & \textcolor{red}{X} &
+\textcolor{amber}{\checkmark} & \textcolor{green}{\checkmark}
+\\ 4. \zaid\ translation & \textcolor{red}{X} &
+\textcolor{green}{\checkmark} & \textcolor{green}{\checkmark}
+\\ 5. Curated data & \textcolor{red}{X} & \textcolor{amber}{\checkmark} &
+\textcolor{green}{\checkmark} \\ \hline Use Cases & & & \\ \hline
+0. Single Temp. Library & \textcolor{green}{\checkmark} &
+\textcolor{green}{\checkmark} & \textcolor{green}{\checkmark}
+\\ 1. Calculate AWR & \textcolor{green}{\checkmark} &
+\textcolor{green}{\checkmark} & \textcolor{green}{\checkmark}
+\\ 2. Multi-temp. Library & \textcolor{red}{X} &
+\textcolor{green}{\checkmark} & \textcolor{green}{\checkmark} \\
+\end{tabular}\\
+\hrulefill
+\end{table}
+
+The production installation of \ndatk\ includes both the code library
+and header files, and the data library and associated tables.
+Table~\ref{tbl:hist} summarizes the release history of \ndatk\ and the
+requirements and use cases they satisfied.
+
+\clearpage
+\section{Conclusion}
+The Nuclear Data Access Tool Kit is now available for production use.
+The production version supports continuous energy neutron libraries
+through a \texttt{C++} API, with \NDI\ like multi-temperature and
+\zaid\ translation features.  All of the data available through
+\ndatk\ is curated.  It satisfies all of its initial production
+requirements and use cases.
+
+The \ndatk\ project was finished on budget despite an extended
+duration due to both initial and mid-cycle funding uncertainties.
+Much of its success is attributable to the use of \texttt{Python} as a
+rapid prototyping language which permitted rapid testing and refinement of
+ideas and maintained project continuity throughout funding uncertainties.
+
+The data libraries delivered with \ndatk\ meet the immediate
+continuous energy data needs\cite{lee13}; we anticipate releasing
+\texttt{mt71x}, based on the ENDF/B-VII.1 evaluations, as both
+multi-group (\NDI) and continuous energy (\ndatk) multi-temperature
+libraries.
+
+Several enhancements could be added to a future update of \ndatk,
+including: 
+\begin{itemize}
+\item Flat \texttt{C/Fortran} interface (Desirable 2)
+\item Command line interface (Desirable 2)
+\item Temperature match policy in Library
+\item \texttt{SZA} and \zaid\ search policies in Library
+\item Physical Constants class
+\end{itemize}
+The addition of a \texttt{C/Fortran} API would satisfy the polyvalent
+program desirable and make it easier for codes other than \MCATK\ to
+use \ndatk; a command line interface similar to \NDI's
+\texttt{ndicl} would provide some scripting capabilities to the data
+interface that has proved surprisingly useful in the case of
+\texttt{ndicl}.  The current version of \ndatk\ returns the nearest
+temperature to the one specified (similar to \NDI); a user define-able
+policy could be added to the \texttt{Library} class to specify how
+temperatures are matched.  Similarly, in the current version the
+\texttt{SZA} or \zaid\ must match exactly some entry in the library; a
+user definable policy could be added to the \texttt{Library} class to
+permit substitution of other data if an exact match is not found.
+Finally, although \ndatk\ does provide a handful of physical constants
+in cross section data specific units, a \texttt{PhysicalConstants}
+class could be added to \ndatk\ that would provide curated physical
+constants in user specified units.
+
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{adams14} T. Adams et al., \emph{Monte Carlo Application
+  ToolKit (MCATK)}, Ann. Nucl. Energy (2014),
+  http://dx.doi.org/10.1016/j.anucene.2014.08.047
+
+\bibitem{raymond04} Eric S. Raymond, \emph{The Art of \texttt{UNIX}
+  Programming}, Addison-Wesley, 2004
+
+\bibitem{campbell98} J. M. Campbell et al., \emph{A Nuclear Data
+  Interface for the ASCI Codes}, LAUR--98--5429, October 1998
+
+\bibitem{jackson01} Michael Jackson, \emph{Problem Frames},
+  Addison-Wesley, 2001
+
+\bibitem{gray04} Mark G. Gray, \emph{\NDI\ 2.0 Interface
+  Specification: Gendir and Multi-group Handles}, CCN--12:04--05,
+    February 19, 2004
+
+\bibitem{briesmeister00} Judith F. Briesmeister, Ed.,
+  \emph{\texttt{MCNP} ---A General Monte Carlo N-Particle Transport
+    Code}, LA--12709--M, March 2000 
+
+\bibitem{campbell98a} J. M. Campbell and R. C. Little, \emph{A New
+  Multigroup Library Format for ASCII Text Files}, XCI:98--77, May 22,
+  1998
+ 
+\bibitem{boehm81} B. Boehm, \emph{Software Engineering Economics},
+  Prentice-Hall, 1981 
+
+\bibitem{lee13} M. Beth Lee, \emph{Multi-temperature Continuous Energy
+  Data for \texttt{MCATK}}, XCP--5:13--035(U), October 16, 2013
+
+\end{thebibliography}
+
+\footnotesize
+\newpage
+\section{Appendix~I: \texttt{use0\_Library.cc}}\label{app:use0}
+\lstinputlisting{../../test/use0_Library.cc}
+\newpage
+\section{Appendix~II: \texttt{use1\_Chart.cc}}\label{app:use1}
+\lstinputlisting{../../test/use1_Chart.cc}
+\newpage
+\section{Appendix~III: \texttt{use2\_Library.cc}}\label{app:use2}
+\lstinputlisting{../../test/use2_Library.cc}
+
+\end{document}
+

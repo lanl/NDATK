@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,9 +14,8 @@ int main(int argc, char *argv[])
   ndatk::Chart x(argv[1]);     // parse filename
 
   // Print file header
-  std::cout << x.identifier() << std::endl
-            << x.process_date() << std::endl
-            << x.information() << std::endl;
+  std::cout << x.name() <<": " << x.type() << std::endl;
+  std::cout << x.history();
 
   // Print Periodic Table entries for the first 10 elements
   std::cout << "Read " << 

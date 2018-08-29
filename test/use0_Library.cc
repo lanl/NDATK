@@ -7,13 +7,13 @@ using namespace std;
 
 const char *zaids[] = { "1001", "1002", "3H", 
                         "235-U", "238U",
-                        "am-242m1", "240m1-Am" }; 
+                        "242m1-Am", "Am242"  }; 
 const char n = sizeof zaids / sizeof zaids[0];
 
 int main(int argc, char *argv[])
 {
-  if (argc != 2) {
-    std::cout << "Usage: " << argv[0] << " filename" << std::endl;
+  if (argc != 3) {
+    std::cout << "Usage: " << argv[0] << " Exsdir_filename library" << std::endl;
     exit(1);
   }
 
@@ -24,20 +24,21 @@ int main(int argc, char *argv[])
        << endl << endl;
 
   ndatk::Exsdir x(argv[1]);     // parse filename
-  cout << "Created Exsdir " << x.identifier() 
+  cout << "Created Exsdir " << x.name()
        << " with " << x.number_of_tables() << " tables." << endl;
 
-  ndatk::Library l("lanl2006", x);
-  cout << "Created Library " << l.identifier()
+  ndatk::Library l(argv[2], x);
+  cout << "Created Library " << l.name()
        << " with " << l.number_of_tables() << " tables." << endl;
 
   for (int i = 0; i < n; i++) {
     string s(zaids[i]);
+    cout << s;
     string szaid = l.table_identifier(s);
     if (szaid == "") 
       cout << "Couldn't find " << s << " in Library!" << endl;
     else
-      cout << s << "(" << szaid <<"): " 
+      cout << "(" << szaid <<"): " 
            << l.file_name() << "@" << l.address() << endl;
   }
 }

@@ -4,8 +4,9 @@
 void ExsdirTest::runTest(void)
 {
   UT_ASSERT(x.is_valid());
-  // Exsdir header info
-  UT_ASSERT(x.process_date() == "09/03/2008");
+
+  UT_ASSERT(x.type() == "ndatk_exsdir_1.0");
+  UT_ASSERT(x.name() == "test_exsdir");
 
   // Exsdir table info
   UT_ASSERT(x.number_of_tables() == 21);
