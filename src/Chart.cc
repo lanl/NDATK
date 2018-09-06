@@ -38,7 +38,7 @@ namespace ndatk
 
     // Read rest of file
     while (get_logical_line(s, line)) {
-      if (starts_with_nocase(line, CuratedData::begin_provenance)) {
+      if (starts_with_nocase(line, c.begin_provenance)) {
         c.append_ProvenanceVector(s);
       } else if (starts_with_nocase(line, "periodic_table:")) {
         // c.append_ElementVector(s);
