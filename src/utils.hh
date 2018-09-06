@@ -309,11 +309,7 @@ namespace ndatk {
   const typename T::value_type::second_type &
   map_at(const T &container, const typename T::value_type::first_type key)
   {
-    typename T::const_iterator it = container.find(key); // O(lg n)
-    if (it == container.end()) {
-      throw std::out_of_range(key + " not found in map!");
-    }
-    return it -> second;
+    return container.at(key);
   }
 
   /**

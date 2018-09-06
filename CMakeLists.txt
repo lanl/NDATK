@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.10)
 
 if( DEFINED PROJECT_NAME )
   set( subproject ON )
@@ -6,8 +6,8 @@ else()
   set( subproject OFF )
 endif()
 
-project(ndatk 
-  VERSION 1.1.0 
+project(ndatk
+  VERSION 1.1.1
   DESCRIPTION "Library Abstraction for ACE-format Nuclear Data"
   LANGUAGES CXX)
 
@@ -24,12 +24,12 @@ option(ndatk.shared_library
 
 CMAKE_DEPENDENT_OPTION(ndatk.position_independent_code
   "Build the ndatk library with position independent code"
-  "${position_independent_code}"
+  "${CMAKE_POSITION_INDEPENDENT_CODE}"
   "NOT ndatk_shared_library" ON)
 
 CMAKE_DEPENDENT_OPTION(ndatk.tests
   "Build the ndatk tests and integrate with ctest"
-  ON "BUILD_TESTING; NOT is_subproject" OFF)
+  ON "BUILD_TESTING; NOT subproject" OFF)
 
 if(ndatk.shared_library)
   add_library(ndatk SHARED "")
@@ -47,7 +47,7 @@ set_target_properties(ndatk PROPERTIES
   WARN_ALL ON
   WARN_ERROR ON)
 
-target_link_libraries(ndatk PRIVATE 
+target_link_libraries(ndatk PRIVATE
   $<BUILD_INTERFACE:Warnings::Warnings_CXX>)
 
 add_subdirectory(src)
@@ -58,25 +58,24 @@ install(TARGETS ndatk
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
-  PERMISSIONS OWNER_EXECUTE OWNER_READ 
+  PERMISSIONS OWNER_EXECUTE OWNER_READ
               GROUP_EXECUTE GROUP_READ
-              WORLD_EXECUTE WORLD_READ
-  INCLUDES DESTINATION include/ndatk)
+              WORLD_EXECUTE WORLD_READ)
 
 install(DIRECTORY src/
   DESTINATION include/ndatk
-  PATTERN "*Test*" EXCLUDE 
+  PATTERN "*Test*" EXCLUDE
   PATTERN "*.hh"
-  PERMISSIONS OWNER_READ 
-              GROUP_READ 
+  PERMISSIONS OWNER_READ OWNER_WRITE
+              GROUP_READ
               WORLD_READ)
 
 install(EXPORT ndatkConfig
   FILE ndatkConfig.cmake
   NAMESPACE ndatk
   DESTINATION share/cmake/ndatk
-  PERMISSIONS OWNER_READ 
-              GROUP_READ 
+  PERMISSIONS OWNER_READ OWNER_WRITE
+              GROUP_READ
               WORLD_READ)
 
 write_basic_package_version_file("ndatkConfigVersion.cmake"
@@ -85,7 +84,7 @@ write_basic_package_version_file("ndatkConfigVersion.cmake"
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ndatkConfigVersion.cmake"
   DESTINATION share/cmake/ndatk
-  PERMISSIONS OWNER_READ 
+  PERMISSIONS OWNER_READ OWNER_WRITE
               GROUP_READ
               WORLD_READ)
 
