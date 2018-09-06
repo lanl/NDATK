@@ -171,7 +171,6 @@ namespace ndatk
     static std::string end_provenance;   ///< Provenance section terminator 
     std::string name_;                   ///< Unique identifier
     ProvenanceVector provenance; ///< Event description paragraphs 
-
   };
 }
 #endif

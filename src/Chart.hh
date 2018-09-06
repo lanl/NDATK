@@ -292,7 +292,7 @@ namespace ndatk
     };
     typedef std::map<int, NuclideData> NuclideMap;
     NuclideMap nuclides;        // Chart of the Nuclides
-
+    friend std::istream &operator>>(std::istream &s, Chart &c);
     };
 }
 
