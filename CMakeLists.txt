@@ -7,7 +7,7 @@ else()
 endif()
 
 project(ndatk
-  VERSION 1.1.0
+  VERSION 1.1.1
   DESCRIPTION "Library Abstraction for ACE-format Nuclear Data"
   LANGUAGES CXX)
 
