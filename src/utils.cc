@@ -213,11 +213,18 @@ namespace ndatk {
   // Wrap POSIX gethostname
   string get_hostname(void)
   {
+#if defined _WIN32
+    auto name = getenv("COMPUTERNAME");
+    return name ? std::string{name} : std::string{};
+#elif defined __APPLE__
+    auto name = getenv("HOSTNAME");
+    return name ? std::string{name} : std::string{};
+#elif defined __linux__
     char buf[HOST_NAME_MAX];
-    if (gethostname(buf, HOST_NAME_MAX) == 0)
-      return string(buf);
-    else
-      return string("");
+    return gethostname(buf, HOST_NAME_MAX) ? string{""} : string{buf};
+#else
+    return {};
+#endif
   }
 
   // Wrap POSIX access to test if file exists and is readable

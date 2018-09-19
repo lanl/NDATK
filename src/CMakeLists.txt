@@ -30,7 +30,6 @@ target_sources(ndatk PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Library.cc
     ${CMAKE_CURRENT_LIST_DIR}/element_composition.cc
     ${CMAKE_CURRENT_LIST_DIR}/translate_isomer.cc
-    ${CMAKE_CURRENT_LIST_DIR}/translate_isomerTest.cc
     ${CMAKE_CURRENT_LIST_DIR}/utils.cc> )
 
 target_sources(ndatk PUBLIC
