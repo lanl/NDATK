@@ -4,10 +4,6 @@ target_include_directories(ndatk PUBLIC
   # Why is the include directory after installation not prefixed by the
   # project name?
   #
-  # The original author used the MCATK project as a reference for best
-  # practices. This an unfortunate practice inherited from that
-  # project.
-  #
   $<INSTALL_INTERFACE:include/ndatk>)
 
 #
