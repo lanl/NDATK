@@ -109,15 +109,13 @@ namespace ndatk
   }
 
   // Table identifier by (partial) name
-  string Exsdir::table_identifier(string name) const
+  string Exsdir::table_identifier(string prefix) const
   {
-    Id_vector::const_iterator p = 
-      find_if(order.begin(), order.end(), 
-              bind2nd(ptr_fun(starts_with), name)); 
-    if (p == order.end())
-      return string("");
-    else
-      return *p;
+	  auto p = find_if(order.begin(), order.end(), [=](const std::string& name) { return starts_with(name, prefix); });
+	  if (p == order.end())
+          return string("");
+      else
+          return *p;
   }
 
   void Exsdir::at(string id) const

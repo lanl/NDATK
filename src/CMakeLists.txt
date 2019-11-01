@@ -27,7 +27,7 @@ target_sources(ndatk PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/element_composition.cc
     ${CMAKE_CURRENT_LIST_DIR}/translate_isomer.cc
     ${CMAKE_CURRENT_LIST_DIR}/utils.cc> )
-
+ 
 target_sources(ndatk PUBLIC
   $<BUILD_INTERFACE:
     ${CMAKE_CURRENT_LIST_DIR}/Chart.hh

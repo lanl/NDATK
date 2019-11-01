@@ -92,22 +92,22 @@ namespace ndatk
     string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
-      string e("Cannot open file ");
-      e += filename + "!";
-      throw ifstream::failure(e.c_str());
+      string err("Cannot open file ");
+      err += filename + "!";
+      throw ifstream::failure(err.c_str());
     }
     s >> *this;
     s.close();
   }    
 
   // Number of elements in element
-  int Chart::number_of_elements(void) const
+  std::size_t Chart::number_of_elements(void) const noexcept
   {
     return elements.size();
   }
 
   // Number of nuclides in nuclide
-  int Chart::number_of_nuclides(void) const
+  std::size_t Chart::number_of_nuclides(void) const noexcept
   {
     return nuclides.size();
   }

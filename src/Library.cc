@@ -47,9 +47,9 @@ namespace ndatk
     string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
-      string e("Cannot open file ");
-      e += filename + "!";
-      throw ifstream::failure(e.c_str());
+      string err("Cannot open file ");
+      err += filename + "!";
+      throw ifstream::failure(err.c_str());
     }
     Library::parse(s);
     s.close();
@@ -224,12 +224,12 @@ namespace ndatk
   {
     map<int, double> result;
     try {
-      int sza = translate_isomer(name); // may throw bad_cast or out_of_range
+      auto sza = translate_isomer(name); // may throw bad_cast or out_of_range
       if (ids.find(sza) != ids.end())
         result[sza] = 1.0;      // use table found in library
       else
         result = comp_of(f(name)); // try composition provided by f
-    } catch (exception &e) {       // name unrecognized
+    } catch (exception &) {     // name unrecognized
       result = comp_of(f(name));   // try composition provided by f
     }
     return result;

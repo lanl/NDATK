@@ -91,14 +91,14 @@ namespace ndatk
 
        \return Number of elements in Chart
     */
-    int number_of_elements(void) const;
+    size_t number_of_elements(void) const noexcept;
 
     /** 
         Number of nuclides in Chart
         
         \return Number of nuclides in Chart
     */
-    int number_of_nuclides(void) const;
+    size_t number_of_nuclides(void) const noexcept;
 
     /** 
         Vector of isotopes in element by atomic number in Chart.

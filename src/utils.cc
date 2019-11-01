@@ -1,6 +1,16 @@
 #include <cstdlib>
 #include <cstdio>
+#if _WIN32
+#include <process.h>
+#include <windows.h>
+#define PATH_MAX _MAX_PATH
+#include <direct.h>
+#include <io.h>
+bool realpath(const char* rel, char* abs) { return _fullpath(abs, rel, _MAX_PATH) != NULL; }
+#pragma warning( disable : 4244 4996)
+#else
 #include <unistd.h>
+#endif
 #include <limits.h>
 #include "utils.hh"
 
@@ -57,7 +67,7 @@ namespace ndatk {
          p1 != s1.end() && p2 != s2.begin(); p1++, p2++)
       if (toupper(*p1) != toupper(*p2))
         return (toupper(*p1) < toupper(*p2)) ? -1: 1;
-    return s2.size() - s1.size();
+    return s2.size() > s1.size() ? 1 : -1;
   }
 
   // Compare the start of the first string with the second, ignoring case.
@@ -78,10 +88,8 @@ namespace ndatk {
   string title(const string &s)
   {
     string t = s;
-    for (string::size_type i = 0; i < t.size(); i++)
-      if (i == 0)
-        t[i] = toupper(t[i]);   // Uppercase first character
-      else
+	t[0] = toupper(t[0]);   // Uppercase first character
+	for (auto i = 1; i < t.size(); i++)
         t[i] = tolower(t[i]);   // Lowercase remaining characters
     return t;
   }
@@ -193,8 +201,8 @@ namespace ndatk {
   // Wrap POSIX getenv to get environment string with C++ interface
   string get_env(const std::string &name)
   {
-    char *buf;
-    if ((buf = getenv(name.c_str())))
+    const char *buf = getenv(name.c_str());
+    if (buf != NULL)
       return string(buf);
     else
       return string("");
@@ -204,7 +212,11 @@ namespace ndatk {
   string get_cwd(void)
   {
     char buf[PATH_MAX];
-    if (getcwd(buf, PATH_MAX))
+#if _WIN32
+    if (_getcwd(buf, PATH_MAX))
+#else
+	if (getcwd(buf, PATH_MAX))
+#endif
       return string(buf);
     else
       return string("");
@@ -214,8 +226,7 @@ namespace ndatk {
   string get_hostname(void)
   {
 #if defined _WIN32
-    auto name = getenv("COMPUTERNAME");
-    return name ? std::string{name} : std::string{};
+	  return "localhost";
 #elif defined __APPLE__
     auto name = getenv("HOSTNAME");
     return name ? std::string{name} : std::string{};
@@ -230,7 +241,11 @@ namespace ndatk {
   // Wrap POSIX access to test if file exists and is readable
   bool is_readable(const string &filename)
   {
-    return access(filename.c_str(), R_OK) == 0;
+#if _WIN32
+    return _access_s(filename.c_str(), 4) == 0;
+#else
+	return access(filename.c_str(), R_OK) == 0;
+#endif
   }
 
   // Wrap POSIX realpath

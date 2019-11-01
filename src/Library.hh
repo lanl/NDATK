@@ -96,7 +96,7 @@ namespace ndatk
 
        \return number of tables int
     */
-    int number_of_tables(void) const {return ids.size();} 
+    auto number_of_tables(void) const {return ids.size();} 
 
     /// Return current table identifier
     std::string table_identifier(void) const;
@@ -135,7 +135,7 @@ namespace ndatk
     double temperature(void) const;
 
     /// Return number of temperatures for set SZA
-    int number_of_temperatures(void) const {return szaids.size();}
+    auto number_of_temperatures(void) const {return szaids.size();}
 
     /// Return vector of temperatures for set SZA
     std::vector<double> temperatures(void) const;

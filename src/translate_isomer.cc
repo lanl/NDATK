@@ -51,7 +51,7 @@ namespace ndatk
   {
     map<string, int> x;
 
-    for (vector<string>::size_type i = 0; i < Z_to_symbol.size(); i++)
+    for (auto i = 0; i < Z_to_symbol.size(); i++)
       x[Z_to_symbol[i]] = i;
     return x;
   }

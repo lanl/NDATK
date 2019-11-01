@@ -3,7 +3,14 @@
 #include <limits.h>
 #include <cstdlib>
 #include <cstring>
+#if _WIN32
+#include <windows.h>
+#define PATH_MAX _MAX_PATH
+void realpath(const char* rel, char* abs) { _fullpath( abs, rel, _MAX_PATH ); }
+#pragma warning (disable : 4996)
+#else
 #include <pwd.h>
+#endif
 #include "utils.hh"
 #include "FileStat.hh"
 
@@ -146,12 +153,15 @@ namespace ndatk {
 
   string FileStat::agent_of_release(void) const
   {
-    struct passwd *pwd;
-
-    pwd = getpwuid(file_info.st_uid);
-    if (pwd-> pw_gecos != 0)    // return real name
-      return string(pwd->pw_gecos); 
-    else                        // return user name
-      return string(pwd->pw_name);
+#if _WIN32
+	  return { "unknown" };
+#else
+	  struct passwd *pwd;
+      pwd = getpwuid(file_info.st_uid);
+      if (pwd-> pw_gecos != 0)    // return real name
+          return string(pwd->pw_gecos); 
+      else                        // return user name
+          return string(pwd->pw_name);
+#endif
   } 
 }

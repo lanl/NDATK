@@ -89,7 +89,7 @@ namespace ndatk
 
         \return number of tables in directory.
     */
-    int number_of_tables(void) const { return order.size(); }
+    auto number_of_tables(void) const { return order.size(); }
 
     /**
        Table identifier by index.
