@@ -84,14 +84,6 @@ void utilsTest::runTest() {
   UT_ASSERT(get_logical_line(s, line).good());
   UT_ASSERT(line == string("line"));
 
-  istringstream s1("Now \"is the time\" for all good men");
-  string first, second, third;
-  s1 >> first;
-  quoted_str(s1, second) >> third;
-  UT_ASSERT(first == "Now");
-  UT_ASSERT(second == "is the time");
-  UT_ASSERT(third == "for");
-
   map<int, string> m;
   m[1] = "foo";
   m[7] = "bar";
@@ -106,8 +98,6 @@ void utilsTest::runTest() {
   UT_ASSERT((lexical_cast<int, string>("42") == 42));
   UT_ASSERT((lexical_cast<string, int>(42) == "42"));
 
-  // Test some of the POSIX based functions
-  UT_ASSERT(get_realpath(".") == get_cwd());
   UT_ASSERT(is_readable("utilsTest.cc"));
   UT_ASSERT(file_starts_with("utilsTest.cc", "using"));
 

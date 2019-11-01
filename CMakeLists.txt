@@ -39,7 +39,7 @@ endif()
 
 add_library(ndatk::ndatk ALIAS ndatk)
 
-target_compile_features(ndatk PUBLIC cxx_std_11)
+target_compile_features(ndatk PUBLIC cxx_std_14)
 
 set_target_properties(ndatk PROPERTIES
   POSITION_INDEPENDENT_CODE "${ndatk.position_independent_code}"

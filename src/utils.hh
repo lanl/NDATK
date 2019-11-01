@@ -273,15 +273,6 @@ namespace ndatk {
   extern std::istream &get_logical_line(std::istream &s, std::string &line);
 
   /**
-     Get quoted string from stream.
-     
-     \param[in,out] is a std::istream.
-     \param[out] s a std::string;
-     \return std::istream.
-  */
-  extern std::istream &quoted_str(std::istream &is, std::string &s);
-
-  /**
      Does first logical line of file contain magic string?
 
      \param[in] Filename a std::string;
@@ -423,11 +414,5 @@ namespace ndatk {
   */
   extern bool is_readable(const std::string &filename);
 
-  /**
-     Wrap POSIX realpath with C++ interface.
-
-     \return absolute path as string.
-  */
-  extern std::string get_realpath(const std::string &path);
 }
 #endif

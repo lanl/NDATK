@@ -1,3 +1,5 @@
+cmake_policy( SET CMP0079 NEW )
+
 target_include_directories(ndatk PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
   #
@@ -15,6 +17,10 @@ target_include_directories(ndatk PUBLIC
 #
 file(COPY utilsTest.cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY FinderTest.cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+find_package( Boost COMPONENTS filesystem REQUIRED )
+
+target_link_libraries( ndatk PUBLIC Boost::filesystem )
 
 target_sources(ndatk PRIVATE
   $<BUILD_INTERFACE:

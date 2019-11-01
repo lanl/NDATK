@@ -13,6 +13,8 @@ bool realpath(const char* rel, char* abs) { return _fullpath(abs, rel, _MAX_PATH
 #endif
 #include <limits.h>
 #include "utils.hh"
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 namespace ndatk {
   using namespace std;
@@ -20,19 +22,13 @@ namespace ndatk {
   // Is string blank or all alphas?
   bool is_all_alphas(const string &s)
   {
-    for (string::size_type i = 0; i < s.size(); i++)
-      if (!isalpha(s[i]))
-        return false;
-    return true;
+      return boost::algorithm::all(s, boost::algorithm::is_alpha());
   }
 
   // Is string blank or all decimal digits?
   bool is_all_digits(const string &s)
   {
-    for (string::size_type i = 0; i < s.size(); i++)
-      if (!isdigit(s[i]))
-        return false;
-    return true;
+      return boost::algorithm::all(s, boost::algorithm::is_digit());
   }
 
   // Compare start of string to pattern "\d\d/\d\d/\d\d"
@@ -59,69 +55,39 @@ namespace ndatk {
   // See B. Stroustrup, "The C++ Programming Language, 3ed, p. 591
   int cmp_nocase(const string &s1, const string &s2)
   {
-    typedef string::const_iterator iter;
-    iter p1;
-    iter p2;
-
-    for (p1 = s1.begin(), p2 = s2.begin(); 
-         p1 != s1.end() && p2 != s2.begin(); p1++, p2++)
-      if (toupper(*p1) != toupper(*p2))
-        return (toupper(*p1) < toupper(*p2)) ? -1: 1;
-    return s2.size() > s1.size() ? 1 : -1;
+      return boost::algorithm::iequals(s1, s2) ? 0 : 1;
   }
 
   // Compare the start of the first string with the second, ignoring case.
   bool starts_with_nocase(const string &s1, const string s2)
   {
-    typedef string::const_iterator iter;
-    iter p1;
-    iter p2;
-
-    for (p1 = s1.begin(), p2 = s2.begin(); 
-         p1 != s2.end() && p2 != s2.end(); p1++, p2++)
-      if (toupper(*p1) != toupper(*p2))
-        return false;
-    return (s2.size() > s1.size()) ? false: true;
+      return boost::algorithm::istarts_with(s1, s2);
   }
 
   // Capitalize first character, lowercase remaining characters
   string title(const string &s)
   {
-    string t = s;
-	t[0] = toupper(t[0]);   // Uppercase first character
-	for (auto i = 1; i < t.size(); i++)
-        t[i] = tolower(t[i]);   // Lowercase remaining characters
-    return t;
+      auto result = boost::algorithm::to_lower_copy(s);
+      result[0] = ::toupper(result[0]);   // Uppercase first character
+      return result;
   }
 
   // Split space delimited string into vector of words.
   // See "Accelerated C++" p. 103
-  vector<string> split(const string &s)
+  std::vector<std::string> split(const string &s)
   {
-    typedef string::const_iterator iter;
-    iter i, j, k;
-    vector<string> ret;
-    
-    for (i = s.begin(), k = s.end(); i != k; i = j) {
-      i = find_if(i, k, not_space); // find begin of next word
-      j = find_if(i, k, is_space);  // find end of next word
-      if (i != k)
-        ret.push_back(string(i, j));
-    }
+    std::vector<std::string> ret;
+    boost::algorithm::split(ret, s, boost::algorithm::is_space(), boost::algorithm::token_compress_off);
     return ret;
   }
 
   // Split character delimited string into vector of words.
-  vector<string> split(const string &s, char c)
+  std::vector<std::string> split(const string &s, char c)
   {
-    string::size_type start;
-    string::size_type end;
-    vector<string> ret;
-    
-    for (start = 0; (end = s.find(c, start)) != string::npos; start = end+1)
-      ret.push_back(s.substr(start, end-start));
-    ret.push_back(s.substr(start));
-    return ret;
+      std::string delim{ c };
+      std::vector<std::string> ret;
+      boost::algorithm::split(ret, s, boost::algorithm::is_any_of(delim), boost::algorithm::token_compress_off);
+      return ret;
   }
 
   // Get Logical Line
@@ -154,42 +120,10 @@ namespace ndatk {
     return s;
   }
 
-  // Get quoted string from stream
-  istream &quoted_str(istream &is, string &s)
-  {
-    char c;
-    is >> c;
-    if (c == '\"') {
-      s = "";
-      bool end = false;
-      do {
-        if (is.get(c)) {
-          switch(c) {
-          case '\"':
-            end = true;
-            break;
-          case '\\':
-            if (is.get(c)) s += c;
-            break;
-          default:
-            s += c;
-            break;
-          }
-        } else {
-          end = true;
-        }
-      } while (!end);
-    } else {
-      is.putback(c);
-      is >> s;
-    }
-    return is;
-  }
-
   // Does first logical line of file contain magic string?
   bool file_starts_with(const string &filename, const string& magic)
   {
-    ifstream s(filename.c_str());
+    ifstream s(filename);
     string first_line;
  
     if (s && get_logical_line(s, first_line))
@@ -211,15 +145,7 @@ namespace ndatk {
   // Wrap POSIX getcwd to get current working directory with C++ interface
   string get_cwd(void)
   {
-    char buf[PATH_MAX];
-#if _WIN32
-    if (_getcwd(buf, PATH_MAX))
-#else
-	if (getcwd(buf, PATH_MAX))
-#endif
-      return string(buf);
-    else
-      return string("");
+      return boost::filesystem::current_path().string();
   }
 
   // Wrap POSIX gethostname
@@ -241,6 +167,8 @@ namespace ndatk {
   // Wrap POSIX access to test if file exists and is readable
   bool is_readable(const string &filename)
   {
+//     auto accessFlags = boost::filesystem::status(filename).permissions();
+//     return (accessFlags & boost::filesystem::perms::others_read) != boost::filesystem::perms::no_perms;
 #if _WIN32
     return _access_s(filename.c_str(), 4) == 0;
 #else
@@ -248,14 +176,4 @@ namespace ndatk {
 #endif
   }
 
-  // Wrap POSIX realpath
-  string get_realpath(const string &path)
-  {
-    char buf[PATH_MAX];
-    if (realpath(path.c_str(), buf)) {
-      return string(buf);
-    } else {
-      return string("");
-    }
-  }
 }

@@ -66,7 +66,7 @@ namespace ndatk
     /**
        Initialize Finder with empty path.
     */
-    Finder(void);
+    Finder(void) = default;
 
     /**
        Initialize Finder with colon delimited search path.
