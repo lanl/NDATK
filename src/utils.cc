@@ -101,7 +101,7 @@ namespace ndatk {
   // Returns stream as I/O status.
   istream &get_logical_line(istream &s, string &line)
   {
-    while (getline(s, line)) {
+      while (getline(s, line)) {
         string::iterator j = line.end();
         line.erase(find(line.begin(), j, '#'), j); // remove trailing comment
         line = trim(line);      // remove surrounding spaces
@@ -123,9 +123,9 @@ namespace ndatk {
   // Does first logical line of file contain magic string?
   bool file_starts_with(const string &filename, const string& magic)
   {
+      if (filename.empty()) { return false; }
     ifstream s(filename);
     string first_line;
- 
     if (s && get_logical_line(s, first_line))
       return first_line.find(magic) != string::npos;
     else

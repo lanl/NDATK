@@ -36,9 +36,10 @@ namespace ndatk
   class Exsdir: public CuratedData
   {
   public:
+      using PathList_t = Finder::PathList_t;
 
     // Default data path
-    static const std::string default_path;
+    static const PathList_t default_path;
     
     // Default constructor
     Exsdir(void);
@@ -49,8 +50,8 @@ namespace ndatk
        \param[in] filename string
        \param[in] path string
     */
-    Exsdir(const std::string filename,
-           const std::string path=Exsdir::default_path);
+    Exsdir(const std::string& filename,
+           const PathList_t& path=Exsdir::default_path);
 
     /** 
         Read Exsdir from stream.
@@ -66,7 +67,7 @@ namespace ndatk
 
        \param[in] path std::string Search path
     */
-    void set_path(const std::string path) {
+    void set_path(const PathList_t& path) {
       aFinder.set_path(path);
     }
       

@@ -8,7 +8,7 @@ void FinderTest::runTest(void)
   // Test default construction
   UT_ASSERT(x.get_path() == "");
   
-#ifdef LINUX
+#ifndef _WIN32
   // Test push back, push front
   x.set_path("foo:bar");
   UT_ASSERT(x.get_path() == "foo:bar");

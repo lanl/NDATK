@@ -4,7 +4,13 @@
 #include <boost/algorithm/string.hpp>
 
 namespace ndatk {
+#if _WIN32
+    const char Finder::PATH_SEP = ';';
+#else
+    const char Finder::PATH_SEP = ':';
+#endif
     using namespace std;
+    namespace fs = boost::filesystem;
 
     // Construct a Finder with colon delimited path string.
     Finder::Finder(const string& path) : path_list(parse_path(path)) {}
@@ -15,19 +21,30 @@ namespace ndatk {
         path_list = parse_path(path);
     }
 
+    // Construct a Finder with array of paths.
+    Finder::Finder(const PathList_t& paths) { set_path(paths);  }
+    // Set a Finder's search path an array of paths.
+    void Finder::set_path(const PathList_t& paths)
+    {
+        for (const auto& p : paths) {
+            if (fs::exists(p)) path_list.push_back(p);
+        }
+    }
+
     // Return absolute path of first readable file with name in search path.
     string Finder::abs_path(const std::string& name) const
     {
-        auto filepath = boost::filesystem::path(name);
-        if (boost::filesystem::is_regular_file(filepath) && is_readable(filepath.string())) {
-            return boost::filesystem::absolute(filepath).string();
+        auto filepath = fs::path(name);
+        if (fs::is_regular_file(filepath) && is_readable(filepath.string())) {
+            return fs::absolute(filepath).string();
         }
 
         for (const auto& p : path_list) {
-            boost::filesystem::path f = boost::filesystem::path{ p } / name;
+            auto f = fs::path{ p } / name;
 
-            if (is_readable(f.string()))
-                return boost::filesystem::absolute(f).string();
+            if (is_readable(f.string())) {
+                return fs::absolute(f).string();
+            }
         }
         return std::string{};          // readable name not found
     }
@@ -35,11 +52,10 @@ namespace ndatk {
     // Return absolute path of first readable file with name in search path
     // starting with magic string.
     string Finder::abs_path(const std::string& name,
-        const std::string& magic) const
+                            const std::string& magic) const
     {
         auto fname = abs_path(name);
-        if (!fname.empty() && file_starts_with(name, magic)) return fname;
-        return std::string{};
+        return file_starts_with(fname, magic) ? fname : std::string{};
     }
 
     // Convert search path to colon delimited string.
@@ -48,11 +64,7 @@ namespace ndatk {
         string s;
         for (const auto& p : path_list) {
             if (!s.empty()) {
-#ifdef LINUX
-                s += ":";
-#else
-                s += ";";
-#endif
+                s += PATH_SEP;
             }
             s += p;
         }
@@ -64,11 +76,7 @@ namespace ndatk {
     {
         vector<string> new_path;
         if (path.empty()) return new_path;
-#ifdef LINUX
-        vector<string> in_path(split(path, ':')); // tokenize path
-#else
-        vector<string> in_path(split(path, ';')); // tokenize path
-#endif
+        vector<string> in_path(split(path, PATH_SEP)); // tokenize path
 
         // Copy in_path to new_path, expanding CURRENT_PATH and ENVIRONMENT
         for (const auto& p : in_path) {
