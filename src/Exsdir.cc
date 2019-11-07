@@ -15,11 +15,11 @@ namespace ndatk
     "C:\\Users\\Public\\NuclearData\\ndatk\\1.0.2",
     "C:\\Users\\Public\\NuclearData\\ndatk\\data" 
 #else
-    "/opt/local/codes/data/nuclear/ndatk/data"
-    "/opt/local/codes/data/nuclear/ndatk/1.0.2"
-    "/usr/projects/data/nuclear/ndatk/data"
-    "/usr/projects/data/nuclear/ndatk/1.0.2"
-    "/usr/gapps/lanl-data/nuclear/ndatk/data"
+    "/opt/local/codes/data/nuclear/ndatk/data",
+    "/opt/local/codes/data/nuclear/ndatk/1.0.2",
+    "/usr/projects/data/nuclear/ndatk/data",
+    "/usr/projects/data/nuclear/ndatk/1.0.2",
+    "/usr/gapps/lanl-data/nuclear/ndatk/data",
     "/usr/gapps/lanl-data/nuclear/ndatk/1.0.2"
 #endif
   };
