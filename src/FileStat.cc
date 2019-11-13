@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #if _WIN32
-#include <windows.h>
+#include <Windows.h>
 #define PATH_MAX _MAX_PATH
 void realpath(const char* rel, char* abs) { _fullpath( abs, rel, _MAX_PATH ); }
 #pragma warning (disable : 4996)
