@@ -63,13 +63,7 @@ namespace ndatk
         r >> id >> d.awr >> d.name >> d.route >> d.type
           >> d.address >> d.tbl_len >> d.rcd_len >> d.epr
           >> d.temp >> d.ptable;
-        if (id.find("1001") != id.npos) {
-            std::cout << "ID: " << id << std::endl;
-        }
-        auto result = directory.insert(Exsdir::Directory_map::value_type(id, d));
-        if (!result.second) {
-            std::cout << "FAILURE:  Unable to insert " << id << std::endl;
-        }
+        directory.insert(Exsdir::Directory_map::value_type(id, d));
         order.push_back(id);
       }
     }
