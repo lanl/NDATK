@@ -16,4 +16,6 @@ int main(int argc, char *argv[])
   std::cout << s.num_link() << std::endl;
   std::cout << s.file_size() << std::endl; 
   std::cout << s.access_time("%m/%d/%Y") << std::endl;
+
+  return 0;
 }

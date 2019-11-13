@@ -1,12 +1,7 @@
-#include <cstdlib>
+#include <cstdlib> // getenv
 #include <cstdio>
 #if _WIN32
-#include <process.h>
-#include <windows.h>
-#define PATH_MAX _MAX_PATH
-#include <direct.h>
-#include <io.h>
-bool realpath(const char* rel, char* abs) { return _fullpath(abs, rel, _MAX_PATH) != NULL; }
+#include <io.h> // _access_s
 #pragma warning( disable : 4244 4996)
 #else
 #include <unistd.h>
@@ -14,7 +9,14 @@ bool realpath(const char* rel, char* abs) { return _fullpath(abs, rel, _MAX_PATH
 #include <limits.h>
 #include "utils.hh"
 #include <boost/algorithm/string.hpp>
+
+#ifdef USING_CXX17
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
 #include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#endif
 
 namespace ndatk {
   using namespace std;
@@ -139,13 +141,13 @@ namespace ndatk {
     if (buf != NULL)
       return string(buf);
     else
-      return string("");
+        return string{};
   }
 
   // Wrap POSIX getcwd to get current working directory with C++ interface
   string get_cwd(void)
   {
-      return boost::filesystem::current_path().string();
+      return fs::current_path().string();
   }
 
   // Wrap POSIX gethostname
@@ -167,8 +169,8 @@ namespace ndatk {
   // Wrap POSIX access to test if file exists and is readable
   bool is_readable(const string &filename)
   {
-//     auto accessFlags = boost::filesystem::status(filename).permissions();
-//     return (accessFlags & boost::filesystem::perms::others_read) != boost::filesystem::perms::no_perms;
+//     auto accessFlags = fs::status(filename).permissions();
+//     return (accessFlags & fs::perms::others_read) != fs::perms::no_perms;
 #if _WIN32
     return _access_s(filename.c_str(), 4) == 0;
 #else

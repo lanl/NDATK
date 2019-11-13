@@ -18,4 +18,4 @@ include ./xsdir.beta3
  95042.06c 239.980100 am_2006 0 1 103443 164084 0 0 2.5301E-08 ptable
  95242.06c 239.980100 am_2006 0 1 144476 143284 0 0 2.5301E-08 ptable
  95243.06c 240.973400 am_2006 0 1 180309 313586 0 0 2.5301E-08 ptable
-include /usr/projects/data/nuclear/mc/special/mcatkmt/xsdir.mt
+%%include /usr/projects/data/nuclear/mc/special/mcatkmt/xsdir.mt

@@ -29,7 +29,6 @@ namespace ndatk
     string line;
     enum states {START, AWR, DIR};
     states state = START;
-    vector<string> fields;
 
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "DATAPATH")) {
@@ -41,7 +40,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
-        fields = split(line);
+        const auto fields = split(line);
         // Include file if not already included
         if (include_guard.find(fields[1]) == include_guard.end()) {
           include_guard.insert(fields[1]); // add to include list
@@ -64,7 +63,13 @@ namespace ndatk
         r >> id >> d.awr >> d.name >> d.route >> d.type
           >> d.address >> d.tbl_len >> d.rcd_len >> d.epr
           >> d.temp >> d.ptable;
-        directory.insert(Exsdir::Directory_map::value_type(id, d));
+        if (id.find("1001") != id.npos) {
+            std::cout << "ID: " << id << std::endl;
+        }
+        auto result = directory.insert(Exsdir::Directory_map::value_type(id, d));
+        if (!result.second) {
+            std::cout << "FAILURE:  Unable to insert " << id << std::endl;
+        }
         order.push_back(id);
       }
     }
@@ -93,7 +98,7 @@ namespace ndatk
     ifstream s(abs_filename);
     if (!s) {
       string e("Cannot open file ");
-      e += filename + "  " + abs_filename + "[ " + aFinder.get_path() + "] !";
+      e += filename + " -> " + abs_filename + " in [ " + aFinder.get_path() + "] !";
       throw ifstream::failure(e.c_str());
     }
     include_guard.insert(filename); // add filename to include list

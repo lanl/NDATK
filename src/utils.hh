@@ -25,7 +25,6 @@
 #include <sstream>
 #include <fstream>
 #include <map>
-
 /**
    \namespace ndatk
 
@@ -300,7 +299,7 @@ namespace ndatk {
   const typename T::value_type::second_type &
   map_at(const T &container, const typename T::value_type::first_type key)
   {
-    return container.at(key);
+      return container.at(key);
   }
 
   /**

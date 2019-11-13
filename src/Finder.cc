@@ -1,7 +1,16 @@
 #include "utils.hh"
 #include "Finder.hh"
-#include <boost/filesystem.hpp>
+
 #include <boost/algorithm/string.hpp>
+
+#ifdef USING_CXX17
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#endif
+
 
 namespace ndatk {
 #if _WIN32
@@ -10,7 +19,6 @@ namespace ndatk {
     const char Finder::PATH_SEP = ':';
 #endif
     using namespace std;
-    namespace fs = boost::filesystem;
 
     // Construct a Finder with colon delimited path string.
     Finder::Finder(const string& path) : path_list(parse_path(path)) {}
