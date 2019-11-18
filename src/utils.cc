@@ -118,20 +118,20 @@ namespace ndatk {
           break;                // got non-blank stripped logical line
         }
         // got blank stripped physical line; process next physical line
-    }          
-    return s;
+      }          
+      return s;
   }
 
   // Does first logical line of file contain magic string?
   bool file_starts_with(const string &filename, const string& magic)
   {
       if (filename.empty()) { return false; }
-    ifstream s(filename);
-    string first_line;
-    if (s && get_logical_line(s, first_line))
-      return first_line.find(magic) != string::npos;
-    else
-      return false;
+      ifstream s(filename);
+      string first_line;
+      if (s && get_logical_line(s, first_line))
+          return first_line.find(magic) != string::npos;
+      else
+          return false;
   }
 
   // Wrap POSIX getenv to get environment string with C++ interface
@@ -139,7 +139,7 @@ namespace ndatk {
   {
     const char *buf = getenv(name.c_str());
     if (buf != NULL)
-      return string(buf);
+        return string(buf);
     else
         return string{};
   }
@@ -169,6 +169,7 @@ namespace ndatk {
   // Wrap POSIX access to test if file exists and is readable
   bool is_readable(const string &filename)
   {
+      // This is a possible alternative implementation.
 //     auto accessFlags = fs::status(filename).permissions();
 //     return (accessFlags & fs::perms::others_read) != fs::perms::no_perms;
 #if _WIN32

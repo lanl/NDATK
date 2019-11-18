@@ -20,10 +20,10 @@ namespace ndatk {
 #endif
     using namespace std;
 
-    // Construct a Finder with colon delimited path string.
+    // Construct a Finder with a token delimited path string.
     Finder::Finder(const string& path) : path_list(parse_path(path)) {}
 
-    // Set a Finder's search path to colon delimited path string.
+    // Set a Finder's search path to a token delimited path string.
     void Finder::set_path(const std::string& path)
     {
         path_list = parse_path(path);
@@ -66,7 +66,7 @@ namespace ndatk {
         return file_starts_with(fname, magic) ? fname : std::string{};
     }
 
-    // Convert search path to colon delimited string.
+    // Convert search path to token delimited string.
     string Finder::get_path(void) const
     {
         string s;
@@ -79,7 +79,7 @@ namespace ndatk {
         return s;
     }
 
-    // Parse colon delimited path string and return vector of elements.
+    // Parse token delimited path string and return vector of elements.
     vector<string> Finder::parse_path(const string& path) const
     {
         vector<string> new_path;
