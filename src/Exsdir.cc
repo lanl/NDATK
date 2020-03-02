@@ -10,20 +10,25 @@ namespace ndatk
 {
   using namespace std;
 
-  const string Exsdir::default_path=
-    "/opt/local/codes/data/nuclear/ndatk/data:"
-    "/opt/local/codes/data/nuclear/ndatk/1.0.2:"
-    "/usr/projects/data/nuclear/ndatk/data:"
-    "/usr/projects/data/nuclear/ndatk/1.0.2:"
-    "/usr/gapps/lanl-data/nuclear/ndatk/data:"
-    "/usr/gapps/lanl-data/nuclear/ndatk/1.0.2";
+  const Exsdir::PathList_t Exsdir::default_path = {
+#if _WIN32
+    "C:\\Users\\Public\\NuclearData\\ndatk\\1.2.0",
+    "C:\\Users\\Public\\NuclearData\\ndatk\\data" 
+#else
+    "/opt/local/codes/data/nuclear/ndatk/data",
+    "/opt/local/codes/data/nuclear/ndatk/1.2.0",
+    "/usr/projects/data/nuclear/ndatk/data",
+    "/usr/projects/data/nuclear/ndatk/1.2.0",
+    "/usr/gapps/lanl-data/nuclear/ndatk/data",
+    "/usr/gapps/lanl-data/nuclear/ndatk/1.2.0"
+#endif
+  };
 
   istream& Exsdir::get_xsdir(istream& s)
   {
     string line;
     enum states {START, AWR, DIR};
     states state = START;
-    vector<string> fields;
 
     while (get_logical_line(s, line)) {
       if (starts_with_nocase(line, "DATAPATH")) {
@@ -35,7 +40,7 @@ namespace ndatk
       } else if (starts_with_nocase(line, "DIRECTORY")) {
         state = DIR;
       } else if (starts_with_nocase(line, "INCLUDE")) {
-        fields = split(line);
+        const auto fields = split(line);
         // Include file if not already included
         if (include_guard.find(fields[1]) == include_guard.end()) {
           include_guard.insert(fields[1]); // add to include list
@@ -74,21 +79,20 @@ namespace ndatk
   }
 
   // Default construct Exsdir
-  Exsdir::Exsdir(void): CuratedData(), order(), directory(), 
-                        aFinder(Exsdir::default_path)
+  Exsdir::Exsdir(void): aFinder(Exsdir::default_path)
   {
   }
 
   // Construct Exsdir from data on named file with optional path
-  Exsdir::Exsdir(const string filename,
-                 const string path): CuratedData(), order(), directory(),
-                                         aFinder(path)
+  Exsdir::Exsdir(const string& filename,
+                 const PathList_t& path): aFinder(path)
   {
     string abs_filename(aFinder.abs_path(filename, type()));
-    ifstream s(abs_filename.c_str());
+
+    ifstream s(abs_filename);
     if (!s) {
       string e("Cannot open file ");
-      e += filename + "!";
+      e += filename + " -> " + abs_filename + " in [ " + aFinder.get_path() + "] !";
       throw ifstream::failure(e.c_str());
     }
     include_guard.insert(filename); // add filename to include list
@@ -99,25 +103,14 @@ namespace ndatk
   // Is object in valid state?
   bool Exsdir::is_valid(void) const
   {
-    
-    // Every identifier in vector of table ids must be in directory
-    for (vector<string>::const_iterator p = order.begin(); 
-         p != order.end(); p++)
-      if (directory.find(*p) == directory.end())
-        return false;
-    return true;
+      return std::none_of(order.begin(), order.end(), [&](const auto& n) { return directory.find(n) == directory.end(); });
   }
 
   // Table identifier by (partial) name
-  string Exsdir::table_identifier(string name) const
+  string Exsdir::table_identifier(string prefix) const
   {
-    Id_vector::const_iterator p = 
-      find_if(order.begin(), order.end(), 
-              bind2nd(ptr_fun(starts_with), name)); 
-    if (p == order.end())
-      return string("");
-    else
-      return *p;
+	  auto p = find_if(order.begin(), order.end(), [=](const std::string& name) { return starts_with(name, prefix); });
+      return p != order.end() ? *p : std::string{};
   }
 
   void Exsdir::at(string id) const

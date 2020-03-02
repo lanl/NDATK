@@ -7,7 +7,7 @@ else()
 endif()
 
 project(ndatk
-  VERSION 1.1.2
+  VERSION 1.2.0
   DESCRIPTION "Library Abstraction for ACE-format Nuclear Data"
   LANGUAGES CXX)
 
@@ -39,7 +39,15 @@ endif()
 
 add_library(ndatk::ndatk ALIAS ndatk)
 
-target_compile_features(ndatk PUBLIC cxx_std_11)
+option( ndatk.use_cxx17
+        "Build ndatk using c++17 capabilities"
+        OFF )
+if( ndatk.use_cxx17 )
+    target_compile_features(ndatk PRIVATE cxx_std_17)
+    target_compile_definitions( ndatk PRIVATE USING_CXX17 )
+else()
+    target_compile_features(ndatk PRIVATE cxx_std_14)
+endif()
 
 set_target_properties(ndatk PROPERTIES
   POSITION_INDEPENDENT_CODE "${ndatk.position_independent_code}"

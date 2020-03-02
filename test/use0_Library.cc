@@ -31,14 +31,20 @@ int main(int argc, char *argv[])
   cout << "Created Library " << l.name()
        << " with " << l.number_of_tables() << " tables." << endl;
 
-  for (int i = 0; i < n; i++) {
-    string s(zaids[i]);
-    cout << s;
-    string szaid = l.table_identifier(s);
-    if (szaid == "") 
-      cout << "Couldn't find " << s << " in Library!" << endl;
-    else
-      cout << "(" << szaid <<"): " 
-           << l.file_name() << "@" << l.address() << endl;
+  try {
+      for (int i = 0; i < n; i++) {
+          string s(zaids[i]);
+          string szaid = l.table_identifier(s);
+          if (szaid == "")
+              cout << "Couldn't find " << s << " in Library!" << endl;
+          else
+              cout << "(" << szaid << "): " << l.file_name() << "@" << l.address() << endl;
+      }
   }
+  catch (std::exception & err) {
+      std::cerr << "FAILURE:  " << err.what() << std::endl;
+      return 1;
+  }
+
+  return 0;
 }

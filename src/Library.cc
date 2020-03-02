@@ -47,9 +47,9 @@ namespace ndatk
     string filename = e.abs_file_name(id, type());
     ifstream s(filename.c_str());
     if (!s) {
-      string e("Cannot open file ");
-      e += filename + "!";
-      throw ifstream::failure(e.c_str());
+      string err("Cannot open file ");
+      err += filename + "!";
+      throw ifstream::failure(err.c_str());
     }
     Library::parse(s);
     s.close();
@@ -58,10 +58,10 @@ namespace ndatk
   // Return table identifier isomer name
   string Library::table_identifier(string name)
   {
-    string::size_type d;
+    const auto d = name.find('.');
     string result; 
 
-    if ((d = name.find('.')) != name.npos) { // pszaid (partial szaid)
+    if ( d != name.npos ) { // pszaid (partial szaid)
       // Policy: lookup partial szaid in Exsdir
       // N.B. this is an order of magnitude more expensive than local lookup
       int sza = translate_isomer(name.substr(0,d)); // canonical sza
@@ -79,29 +79,26 @@ namespace ndatk
   // Return table identifier by sza
   string Library::table_identifier(int sza)
   {
-    string result;
+    szaids.clear();
 
     // Find canonical sza(s) in ids 
-    typedef pair<Library::TableIdentifiers::const_iterator, 
-                 Library::TableIdentifiers::const_iterator> ip_type;
-    ip_type ip = ids.equal_range(sza);
+    auto ip = ids.equal_range(sza);
+
     // Copy matches to szaids by temperature 
-    szaids.clear();
-    for (Library::TableIdentifiers::const_iterator it = ip.first; 
-         it != ip.second; it++) {
+    for (auto it = ip.first; it != ip.second; it++) {
       string szaid = it->second;
       double temp = e.temperature(szaid);
       szaids[temp] = szaid;
     }
+
     if (szaids.empty()) {     // No matching zaid found
-      result = current_isomer = "";
+      current_isomer.clear();
     } else {      
       // Policy: default to room temperature
       double room_temp = 293.15 * boltzmann_constant; // K * MeV/K
       this->temperature(room_temp);
-      result = current_isomer;
     }
-    return result;
+    return current_isomer;
   }
 
   // Find temperature nearest temp, set current_isomer, return temperature
@@ -224,12 +221,12 @@ namespace ndatk
   {
     map<int, double> result;
     try {
-      int sza = translate_isomer(name); // may throw bad_cast or out_of_range
+      auto sza = translate_isomer(name); // may throw bad_cast or out_of_range
       if (ids.find(sza) != ids.end())
         result[sza] = 1.0;      // use table found in library
       else
         result = comp_of(f(name)); // try composition provided by f
-    } catch (exception &e) {       // name unrecognized
+    } catch (exception &) {     // name unrecognized
       result = comp_of(f(name));   // try composition provided by f
     }
     return result;

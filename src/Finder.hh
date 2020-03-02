@@ -62,18 +62,20 @@ namespace ndatk
   {
 
   public:
+      using PathList_t = std::vector<std::string>;
 
     /**
        Initialize Finder with empty path.
     */
-    Finder(void);
+    Finder(void) = default;
 
     /**
        Initialize Finder with colon delimited search path.
 
        \param[in] path std::string
     */
-    explicit Finder(const std::string &path);
+    explicit Finder(const std::string& path);
+    explicit Finder(const PathList_t& path);
 
     // Commands
     /**
@@ -85,7 +87,8 @@ namespace ndatk
 
        \param[in] path std::string
     */
-    void set_path(const std::string &path); // set path to parsed string
+    void set_path(const std::string& path); // set path to parsed string
+    void set_path(const PathList_t& path); // set path to parsed string
 
     // Queries
     /**
@@ -113,7 +116,8 @@ namespace ndatk
        \return path string
      */
     std::string get_path(void) const;
-
+    auto pathList(void) const { return path_list; }
+    const static char PATH_SEP;
   private:
 
     /**
@@ -122,9 +126,9 @@ namespace ndatk
        \param[in] path colon delimited path
        \return vector of expanded path 
     */
-    std::vector<std::string> parse_path(const std::string &path) const;
+      PathList_t parse_path(const std::string &path) const;
 
-    std::vector<std::string> path_list; // path list
+      PathList_t path_list; // path list
 
   };
 }

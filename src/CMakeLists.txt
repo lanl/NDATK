@@ -1,3 +1,5 @@
+cmake_policy( SET CMP0079 NEW )
+
 target_include_directories(ndatk PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
   #
@@ -16,6 +18,14 @@ target_include_directories(ndatk PUBLIC
 file(COPY utilsTest.cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY FinderTest.cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+if( ndatk.use_cxx17 )
+    find_package( Boost REQUIRED )
+    target_include_directories( ndatk PRIVATE ${Boost_INCLUDE_DIRS} )
+else()
+    find_package( Boost COMPONENTS filesystem REQUIRED )
+    target_link_libraries( ndatk PUBLIC Boost::filesystem )
+endif()
+
 target_sources(ndatk PRIVATE
   $<BUILD_INTERFACE:
     ${CMAKE_CURRENT_LIST_DIR}/Chart.cc
@@ -27,7 +37,7 @@ target_sources(ndatk PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/element_composition.cc
     ${CMAKE_CURRENT_LIST_DIR}/translate_isomer.cc
     ${CMAKE_CURRENT_LIST_DIR}/utils.cc> )
-
+ 
 target_sources(ndatk PUBLIC
   $<BUILD_INTERFACE:
     ${CMAKE_CURRENT_LIST_DIR}/Chart.hh
