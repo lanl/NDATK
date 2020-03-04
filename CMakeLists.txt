@@ -80,7 +80,7 @@ install(DIRECTORY src/
 
 install(EXPORT ndatkConfig
   FILE ndatkConfig.cmake
-  NAMESPACE ndatk
+  NAMESPACE ndatk::
   DESTINATION share/cmake/ndatk
   PERMISSIONS OWNER_READ OWNER_WRITE
               GROUP_READ
