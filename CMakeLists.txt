@@ -25,7 +25,7 @@ option(ndatk.shared_library
 CMAKE_DEPENDENT_OPTION(ndatk.position_independent_code
   "Build the ndatk library with position independent code"
   "${CMAKE_POSITION_INDEPENDENT_CODE}"
-  "NOT ndatk_shared_library" ON)
+  "ndatk_shared_library" ON)
 
 CMAKE_DEPENDENT_OPTION(ndatk.tests
   "Build the ndatk tests and integrate with ctest"
