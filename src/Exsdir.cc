@@ -12,15 +12,15 @@ namespace ndatk
 
   const Exsdir::PathList_t Exsdir::default_path = {
 #if _WIN32
-    "C:\\Users\\Public\\NuclearData\\ndatk\\1.2.0",
+    "C:\\Users\\Public\\NuclearData\\ndatk\\1.1.1",
     "C:\\Users\\Public\\NuclearData\\ndatk\\data" 
 #else
     "/opt/local/codes/data/nuclear/ndatk/data",
-    "/opt/local/codes/data/nuclear/ndatk/1.2.0",
+    "/opt/local/codes/data/nuclear/ndatk/1.1.1",
     "/usr/projects/data/nuclear/ndatk/data",
-    "/usr/projects/data/nuclear/ndatk/1.2.0",
+    "/usr/projects/data/nuclear/ndatk/1.1.1",
     "/usr/gapps/lanl-data/nuclear/ndatk/data",
-    "/usr/gapps/lanl-data/nuclear/ndatk/1.2.0"
+    "/usr/gapps/lanl-data/nuclear/ndatk/1.1.1"
 #endif
   };
 
