@@ -24,6 +24,9 @@ if( ndatk.use_cxx17 )
 else()
     find_package( Boost COMPONENTS filesystem REQUIRED )
     target_link_libraries( ndatk PUBLIC Boost::filesystem )
+    if( Boost_VERSION_STRING VERSION_LESS 1.66 )
+        target_compile_definitions( ndatk PRIVATE BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED )
+    endif()
 endif()
 
 target_sources(ndatk PRIVATE
