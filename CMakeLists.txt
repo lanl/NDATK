@@ -96,6 +96,9 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ndatkConfigVersion.cmake"
               GROUP_READ
               WORLD_READ)
 
+include(cmake/InstallLibFiles.cmake)
+install_lib_files()
+
 if(NOT subproject)
   include( InstallRequiredSystemLibraries )
   set( CPACK_PACKAGE_VENDOR "Los Alamos National Laboratory" )
