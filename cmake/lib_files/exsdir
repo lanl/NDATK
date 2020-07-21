@@ -1,0 +1,37 @@
+type: ndatk_exsdir_1.0
+name: exsdir
+provenance:
+Provenance header added by Mark G. Gray on 2014-08-12.
+%%
+provenance:
+mcplib84 added by Mark G. Gray on 2015-03-13.
+%%
+provenance:
+mendf71x added by Mark G. Gray on 2015-05-18.
+%%
+provenance:
+reorganized libraries by Mark G. Gray on 2015-12-14.
+%%
+provenance:
+mt71x/xsdir_pt added by Mark G. Gray on 2016-04-01.
+%%
+provenance:
+mt80 added by Thomas G. Saller on 2020-03-11.
+%%
+DIRECTORY
+chart 0.0 endf71x/chart
+lanl2006 0.0 lanl2006.lib
+endf71x 0.0 endf71x.lib
+mtmg08 0.0 mtmg08.lib
+mcplib84 0.0 mcplib84.lib
+e68g_103 0.0 e68g_103.lib
+mendf71x 0.0 mendf71x.lib
+mt71x 0.0 mt71x.lib
+mt80 0.0 mt80.lib
+include lanl2006/xsdir
+include endf71x/xsdir
+include mtmg08/xsdir
+include mcplib84/xsdir
+include mendf71x/xsdir
+include mt71x/xsdir_pt
+include mt80/xsdir
