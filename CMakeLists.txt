@@ -99,6 +99,10 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ndatkConfigVersion.cmake"
 include(cmake/InstallLibFiles.cmake)
 install_lib_files()
 
+# Users expect NDATK to be installed under a directory containing its version #.  
+# This link enables this directory structure to persist when using applications like spack to install NDATK.
+INSTALL(CODE "execute_process(COMMAND cmake -E create_symlink . ${CMAKE_INSTALL_PREFIX}/${CMAKE_PROJECT_VERSION})")
+
 if(NOT subproject)
   include( InstallRequiredSystemLibraries )
   set( CPACK_PACKAGE_VENDOR "Los Alamos National Laboratory" )
