@@ -2,7 +2,7 @@
 # This function checks those three paths to determine which one is valid and sets NDATK_DATAPATH cmake variable
 function(install_lib_files)
   if (DEFINED ENV{NDATK_DATAPATH})
-    set(NDATK_DATAPATH $ENV{NDATK_DATAPATH})
+    set(NDATK_DATAPATH $ENV{NDATK_DATAPATH}) 
   else()
     set(searchPaths 
       "/opt/local/codes/data/nuclear/ndatk/data" 
@@ -23,6 +23,7 @@ function(install_lib_files)
   endif()
 
   set(libraries 
+    "e68g_103"
     "endf71x"
     "lanl2006"
     "mcplib84"
