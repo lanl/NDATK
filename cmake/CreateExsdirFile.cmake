@@ -18,10 +18,8 @@ function(create_exsdir_file)
   endforeach()
 
   # handle e68g_103 since it doesn't have an associated directory
-  if (EXISTS ${NDATK_DATAPATH}/mt71x)
-    if (EXISTS ${NDATK_DATAPATH}/mcplib84)
-      file(APPEND ${filename} "e68g_103 0.0 e68g_103.lib\n")
-    endif()
+  if (EXISTS ${NDATK_DATAPATH}/mcplib84)
+    file(APPEND ${filename} "e68g_103 0.0 e68g_103.lib\n")
   endif()
 
   # write include lines
