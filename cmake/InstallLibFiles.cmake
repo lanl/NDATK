@@ -23,7 +23,6 @@ function(install_lib_files)
   endif()
 
   set(libraries 
-    "e68g_103"
     "endf71x"
     "lanl2006"
     "mcplib84"
@@ -42,6 +41,15 @@ function(install_lib_files)
                     WORLD_READ)
     endif()
   endforeach()
+
+  # handle e68g_103 since it doesn't have an associated directory
+  if (EXISTS ${NDATK_DATAPATH}/mcplib84)
+    INSTALL(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lib_files/e68g_103.lib"
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
+      PERMISSIONS OWNER_READ OWNER_WRITE
+                  GROUP_READ
+                  WORLD_READ)
+  endif()
 
 # install exsdir file based on libraries available in NDATK_DATAPATH
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CreateExsdirFile.cmake)
