@@ -51,6 +51,15 @@ function(install_lib_files)
                   WORLD_READ)
   endif()
 
+  # handle mendf80 since it doesn't have an associated directory
+  if (EXISTS ${NDATK_DATAPATH}/mt80)
+    INSTALL(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lib_files/mendf80.lib"
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
+      PERMISSIONS OWNER_READ OWNER_WRITE
+                  GROUP_READ
+                  WORLD_READ)
+  endif()
+
 # install exsdir file based on libraries available in NDATK_DATAPATH
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CreateExsdirFile.cmake)
   create_exsdir_file()
