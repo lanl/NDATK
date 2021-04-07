@@ -18,6 +18,9 @@ mt71x/xsdir_pt added by Mark G. Gray on 2016-04-01.
 provenance:
 mt80 added by Thomas G. Saller on 2020-03-11.
 %%
+provenance:
+mendf80 added by Thomas G. Saller on 2021-04-07
+%%
 DIRECTORY
 chart 0.0 endf71x/chart
 lanl2006 0.0 lanl2006.lib
@@ -28,6 +31,7 @@ e68g_103 0.0 e68g_103.lib
 mendf71x 0.0 mendf71x.lib
 mt71x 0.0 mt71x.lib
 mt80 0.0 mt80.lib
+mendf80 0.0 mendf80.lib
 include lanl2006/xsdir
 include endf71x/xsdir
 include mtmg08/xsdir
